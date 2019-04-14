@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using Babylon.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/3.3.0/babylon.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec2 uv;
+uniform   mat4 worldViewProjection;
+varying   vec2 vTexCoord;
+
+void main() {
+    vTexCoord = uv;
+    gl_Position = worldViewProjection * vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture_;
+varying   vec2 vTexCoord;
+
+void main() {
+    gl_FragColor = texture2D(texture_, vTexCoord);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+
+<script src="index.js"></script>
+</body>
+</html>
