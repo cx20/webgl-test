@@ -1,10 +1,8 @@
 var c, gl;
-var v = "attribute vec3 position; void main() { gl_Position = vec4(position, 1.0); }";
-var f = "precision mediump float; void main() { gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0); }";
 
 function initWebGL() {
     c = document.getElementById("c");
-    gl = c.getContext("experimental-webgl");
+    gl = c.getContext("webgl");
 }
 
 function initShaders() {
