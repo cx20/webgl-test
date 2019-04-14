@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using TWGL.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- <script src="https://rawcdn.githack.com/greggman/twgl.js/ae88dfe4d7a7d44a5b739fcbe50bccccd0e1a1fd/dist/twgl.js"></script> -->
+  <script src="https://rawcdn.githack.com/greggman/twgl.js/ae88dfe4d7a7d44a5b739fcbe50bccccd0e1a1fd/dist/twgl-full.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec2 texcoord;
+uniform mat4 u_worldViewProjection;
+varying vec4 vColor;
+varying vec2 v_texCoord;
+
+void main() {
+    v_texCoord = texcoord;
+    gl_Position = (u_worldViewProjection * vec4(position, 1.0));
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D u_texture;
+varying vec2 v_texCoord;
+
+void main() {
+    gl_FragColor = texture2D(u_texture, v_texCoord);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+
+<script src="index.js"></script>
+</body>
+</html>
