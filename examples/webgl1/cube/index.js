@@ -24,13 +24,20 @@ function initShaders() {
     gl.useProgram(p);
     aLoc[0] = gl.getAttribLocation(p, "position");
     aLoc[1] = gl.getAttribLocation(p, "color");
-    uLoc[0] = gl.getUniformLocation(p, 'matAxisX');
-    uLoc[1] = gl.getUniformLocation(p, 'matAxisY');
+    uLoc[0] = gl.getUniformLocation(p, "uPMatrix");
+    uLoc[1] = gl.getUniformLocation(p, "uMVMatrix");
     gl.enableVertexAttribArray(aLoc[0]);
     gl.enableVertexAttribArray(aLoc[1]);
 }
 
-function draw() {
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
+
+var vertexPositionBuffer;
+var vertexColorBuffer;
+var vertexIndexBuffer;
+
+function initBuffers() {
     // Cube data
     //             1.0 y 
     //              ^  -1.0 
@@ -82,11 +89,13 @@ function draw() {
         -0.5, -0.5, -0.5  // v4
     ];
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    vertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    vertexColorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
     var colors = [
         [1.0, 0.0, 0.0, 1.0], // Front face
         [1.0, 1.0, 0.0, 1.0], // Back face
@@ -105,7 +114,8 @@ function draw() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[1], 4, gl.FLOAT, false, 0, 0);
                 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+    vertexIndexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
     var indices = [
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
@@ -116,37 +126,38 @@ function draw() {
     ];
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-    var rad = 0;
-    (function(){
-        rad += Math.PI * 1.0 / 180.0;
-
-        var c = Math.cos(rad);
-        var s = Math.sin(rad);
-
-        var matAxisX = [
-            1.0, 0.0, 0.0, 0.0,
-            0.0,   c,  -s, 0.0,
-            0.0,   s,   c, 0.0,
-            0.0, 0.0, 0.0, 1.0
-        ];
-
-        var matAxisY = [
-              c, 0.0,   s, 0.0,
-              0, 1.0, 0.0, 0.0,
-             -s, 0.0,   c, 0.0,
-              0, 0.0, 0.0, 1.0
-        ];
-        gl.uniformMatrix4fv(uLoc[0], false, new Float32Array(matAxisX));
-        gl.uniformMatrix4fv(uLoc[1], false, new Float32Array(matAxisY));
-
-        gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
-        gl.flush();
-        
-        requestAnimationFrame(arguments.callee);
-    })();
-
 }
+
+var rad = 0;
+function draw() {
+    rad += Math.PI * 1.0 / 180.0;
+    mat4.perspective(pMatrix, 45, 465 / 465, 0.1, 100.0);
+    mat4.identity(mvMatrix);
+    var translation = vec3.create();
+    vec3.set(translation, 0.0, 0.0, -2.0);
+    mat4.translate(mvMatrix, mvMatrix, translation);
+    mat4.rotate(mvMatrix, mvMatrix, rad, [1, 1, 1]);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
+    gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
+    gl.vertexAttribPointer(aLoc[1], 4, gl.FLOAT, false, 0, 0);
+    
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
+    gl.uniformMatrix4fv(uLoc[0], false, pMatrix);
+    gl.uniformMatrix4fv(uLoc[1], false, mvMatrix);
+    
+    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+}
+
+function animate() {
+    draw();
+    requestAnimationFrame(animate);
+}
+
 
 initWebGL();
 initShaders();
-draw();
+initBuffers();
+animate();

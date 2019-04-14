@@ -3,19 +3,20 @@
 <head>
   <title>Testing Cube Using WebGL</title>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="../../../libs/gl-matrix.js"></script>
 </head>
 <body>
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
-uniform mat4 matAxisX;
-uniform mat4 matAxisY;
+uniform mat4 uMVMatrix;
+uniform mat4 uPMatrix;
 attribute vec4 color;
 varying   vec4 vColor;
 
 void main()
 {
     vColor = color;
-    gl_Position = matAxisX * matAxisY * vec4(position, 1.0);
+    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
 }
 </script>
 
