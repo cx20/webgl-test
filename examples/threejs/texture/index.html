@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using three.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec2 uv;
+uniform   mat4 modelViewMatrix;
+uniform   mat4 projectionMatrix;
+varying   vec2 vTexCoord;
+
+void main() {
+    vTexCoord = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2 vTexCoord;
+
+void main() {
+    gl_FragColor = texture2D(texture, vTexCoord);
+}
+</script>
+
+<div id="container"></div>
+
+<script src="index.js"></script>
+</body>
+</html>
