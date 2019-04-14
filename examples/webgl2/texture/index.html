@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using WebGL 2.0</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="../../../libs/gl-matrix.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 position;
+in  vec2 textureCoord;
+uniform mat4 uPMatrix;
+uniform mat4 uMVMatrix;
+out vec2 vTextureCoord;
+
+void main() {
+    vTextureCoord = textureCoord;
+    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+uniform sampler2D uTexture;
+in  vec2 vTextureCoord;
+out vec4 fragColor;
+
+void main() {
+    fragColor = texture(uTexture, vTextureCoord);
+}
+</script>
+
+
+<canvas id="c" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
