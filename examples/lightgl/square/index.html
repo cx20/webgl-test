@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Square Using lightgl.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="http://evanw.github.io/lightgl.js/lightgl.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+varying   vec4 color;
+void main()
+{
+    color = gl_Color;
+    gl_Position = gl_Vertex;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+varying   vec4 color;
+void main()
+{
+    gl_FragColor = color;
+}
+</script>
+
+<script src="index.js"></script>
+</body>
+</html>
