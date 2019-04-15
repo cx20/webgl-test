@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Triangle Using lightgl.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="http://evanw.github.io/lightgl.js/lightgl.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+void main()
+{
+    gl_Position = gl_Vertex;
+}    
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+void main()
+{
+    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+}
+</script>
+
+<script src="index.js"></script>
+</body>
+</html>
