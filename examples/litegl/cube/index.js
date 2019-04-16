@@ -1,5 +1,8 @@
-var gl = GL.create({width: 465, height:465});
-document.body.appendChild(gl.canvas);
+//create the rendering context
+var container = document.body;
+
+var gl = GL.create({width: container.offsetWidth, height: container.offsetHeight});
+container.appendChild(gl.canvas);
 
 // Cube data
 //             1.0 y 
@@ -106,7 +109,7 @@ var temp = mat4.create();
 var identity = mat4.create();
 
 //set the camera position
-mat4.perspective(persp, 45 * DEG2RAD, 465 /465, 0.1, 1000);
+mat4.perspective(persp, 45 * DEG2RAD, gl.canvas.width / gl.canvas.height, 0.1, 1000);
 mat4.lookAt(view, [0,1,3], [0,0,0], [0,1,0]);
 
 var rad = 0;
