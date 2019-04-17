@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using PicoGL.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/tsherif/picogl.js/0c0e9c014c770f4fb872c8095a543af0d5e38a33/build/picogl.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec2 textureCoord;
+uniform mat4 matAxisX;
+uniform mat4 matAxisY;
+varying   vec2 vTextureCoord;
+void main()
+{
+    vTextureCoord = textureCoord;
+    gl_Position = matAxisX * matAxisY * vec4(position, 1.0);
+}    
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2      vTextureCoord;
+
+void main()
+{
+    gl_FragColor  = texture2D(texture, vTextureCoord);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+
+<script src="index.js"></script>
+</body>
+</html>
