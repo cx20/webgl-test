@@ -4,20 +4,20 @@
   <title>Testing Cube Using PicoGL.js</title>
   <link rel="stylesheet" type="text/css" href="style.css">
   <script src="https://rawcdn.githack.com/tsherif/picogl.js/0c0e9c014c770f4fb872c8095a543af0d5e38a33/build/picogl.js"></script>
+  <script src="../../../libs/gl-matrix.js"></script>
 </head>
 <body>
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
 attribute vec4 color;
-uniform mat4 matAxisX;
-uniform mat4 matAxisY;
+uniform mat4 uMVMatrix;
+uniform mat4 uPMatrix;
 varying   vec4 vColor;
 void main()
 {
     vColor = color;
-    //gl_Position = vec4(position, 1.0);
-    gl_Position = matAxisX * matAxisY * vec4(position, 1.0);
-}    
+    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
+}
 </script>
 
 <script id="fs" type="x-shader/x-fragment">

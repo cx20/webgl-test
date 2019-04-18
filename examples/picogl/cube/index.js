@@ -109,38 +109,21 @@ window.onresize = function() {
     app.resize(window.innerWidth, window.innerHeight);
 };
 
-var matAxisX = new Float32Array([
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-]);
-
-var matAxisY = new Float32Array([
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-]);
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
 
 var rad = 0;
 function draw() {
     rad += Math.PI * 1.0 / 180.0;
-    
-    var c = Math.cos(rad);
-    var s = Math.sin(rad);
-    matAxisX[5]  = c;
-    matAxisX[6]  = -s;
-    matAxisX[9]  = s;
-    matAxisX[10] = c;
+    mat4.perspective(pMatrix, 45, window.innerWidth / window.innerHeight, 0.1, 100.0);
+    mat4.identity(mvMatrix);
+    var translation = vec3.create();
+    vec3.set(translation, 0.0, 0.0, -2.0);
+    mat4.translate(mvMatrix, mvMatrix, translation);
+    mat4.rotate(mvMatrix, mvMatrix, rad, [1, 1, 1]);
 
-    matAxisY[0]  = c;
-    matAxisY[2]  = s;
-    matAxisY[8]  = -s;
-    matAxisY[10] = c;
-
-    drawCall.uniform("matAxisX", matAxisX);
-    drawCall.uniform("matAxisY", matAxisY);
+    drawCall.uniform("uPMatrix", pMatrix);
+    drawCall.uniform("uMVMatrix", mvMatrix);
     app.clear();
     drawCall.draw();
     requestAnimationFrame(draw);
