@@ -6,6 +6,16 @@ function initWebGL() {
     c = document.getElementById("c");
     gl = c.getContext("webgl2");
     gl.enable(gl.DEPTH_TEST);
+    resizeCanvas();
+    window.addEventListener("resize", function(){
+        resizeCanvas();
+    });
+}
+
+function resizeCanvas() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    gl.viewport(0, 0, c.width, c.height);
 }
 
 function initShaders() {
@@ -131,7 +141,7 @@ function initBuffers() {
 var rad = 0;
 function draw() {
     rad += Math.PI * 1.0 / 180.0;
-    mat4.perspective(pMatrix, 45, 465 / 465, 0.1, 100.0);
+    mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 100.0);
     mat4.identity(mvMatrix);
     var translation = vec3.create();
     vec3.set(translation, 0.0, 0.0, -2.0);
