@@ -1,6 +1,16 @@
 "use strict";
 var m4 = twgl.m4;
 var gl = twgl.getWebGLContext(document.getElementById("c"));
+resizeCanvas();
+window.addEventListener("resize", function(){
+    resizeCanvas();
+});
+
+function resizeCanvas() {
+    gl.canvas.width = window.innerWidth;
+    gl.canvas.height = window.innerHeight;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+}
 var programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 
 // Cube data

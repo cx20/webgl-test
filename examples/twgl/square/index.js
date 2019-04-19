@@ -1,5 +1,15 @@
 var c = document.getElementById("c");
 var gl = twgl.getWebGLContext(c);
+resizeCanvas();
+window.addEventListener("resize", function(){
+    resizeCanvas();
+});
+
+function resizeCanvas() {
+    gl.canvas.width = window.innerWidth;
+    gl.canvas.height = window.innerHeight;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+}
 var programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 
 var arrays = {
