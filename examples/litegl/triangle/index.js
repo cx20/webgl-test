@@ -1,4 +1,15 @@
 var gl = GL.create({width: 465, height:465});
+resizeCanvas();
+window.addEventListener("resize", function(){
+    resizeCanvas();
+});
+
+function resizeCanvas() {
+    gl.canvas.width = window.innerWidth;
+    gl.canvas.height = window.innerHeight;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+}
+
 document.body.appendChild(gl.canvas);
 
 var vertices = [
