@@ -2,9 +2,9 @@ var gl = GL.create({width: 465, height:465});
 document.body.appendChild(gl.canvas);
 
 var vertices = [
-     0.0, 0.5, 0.0, 
-    -0.5,-0.5, 0.0, 
-     0.5,-0.5, 0.0
+     0.0, 0.5, 0.0, // v0
+    -0.5,-0.5, 0.0, // v1
+     0.5,-0.5, 0.0  // v2
 ];
 
 var mesh = GL.Mesh.load({vertices: vertices});
