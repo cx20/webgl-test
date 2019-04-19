@@ -44,11 +44,6 @@ const colors = [
   [0.0, 0.0, 1.0, 1.0]  // Left face
 ];
 
-var mat4 = {};
-mat4.scale = scale;
-mat4.lookAt = lookAt;
-mat4.perspective = perspective;
-
 const drawTriangle = regl({
   vert: document.getElementById("vs").textContent,
   frag: document.getElementById("fs").textContent,
