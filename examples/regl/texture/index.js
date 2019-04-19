@@ -55,48 +55,45 @@ const textureCoords = [
   [0.0, 1.0],
 ];
 
-var mat4 = {};
-mat4.scale = scale;
-mat4.lookAt = lookAt;
-mat4.perspective = perspective;
-
 var img = new Image();
 img.src = "../../../assets/textures/frog.jpg";  // 256x256
-
-const drawTriangle = regl({
-  vert: document.getElementById("vs").textContent,
-  frag: document.getElementById("fs").textContent,
-  attributes: {
-    position: position,
-    textureCoord: textureCoords
-  },
-  elements: indices,
-  uniforms: {
-    texture: regl.texture(img),
-    view: ({tick}) => {
-      const t = 0.01 * tick
-      return mat4.lookAt([],
-        [5 * Math.cos(t), 2.5 * Math.sin(t), 5 * Math.sin(t)],
-        [0, 0.0, 0],
-        [0, 1, 0])
+img.onload = function(){
+  const drawTriangle = regl({
+    vert: document.getElementById("vs").textContent,
+    frag: document.getElementById("fs").textContent,
+    attributes: {
+      position: position,
+      textureCoord: textureCoords
     },
-    projection: ({viewportWidth, viewportHeight}) =>
-      mat4.perspective([],
-        Math.PI / 4,
-        viewportWidth / viewportHeight,
-        0.01,
-        10),
-  },
-  primitive: "triangles",
-  count: 36
-})
-
-regl.frame(({time}) => {
-  regl.clear({
-    color: [0, 0, 0, 0],
-    depth: 1
+    elements: indices,
+    uniforms: {
+      texture: regl.texture(img),
+      view: ({tick}) => {
+        const t = 0.01 * tick
+        return mat4.lookAt([],
+          [5 * Math.cos(t), 2.5 * Math.sin(t), 5 * Math.sin(t)],
+          [0, 0.0, 0],
+          [0, 1, 0])
+      },
+      projection: ({viewportWidth, viewportHeight}) =>
+        mat4.perspective([],
+          Math.PI / 4,
+          viewportWidth / viewportHeight,
+          0.01,
+          10),
+    },
+    primitive: "triangles",
+    count: 36
   })
-
-  drawTriangle({
+  
+  regl.frame(({time}) => {
+    regl.clear({
+      color: [0, 0, 0, 0],
+      depth: 1
+    })
+  
+    drawTriangle({
+    })
   })
-})
+};
+
