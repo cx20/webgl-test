@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Triangle Using regl</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://npmcdn.com/regl/dist/regl.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+precision mediump float;
+attribute vec2 position;
+void main() {
+  gl_Position = vec4(position, 0, 1);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform vec4 color;
+void main() {
+  gl_FragColor = color;
+}
+</script>
+<canvas id="c" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
