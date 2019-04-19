@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Cube Using regl</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://npmcdn.com/regl/dist/regl.js"></script>
+  <script src="https://cdn.rawgit.com/stackgl/gl-mat4/master/scale.js"></script>
+  <script src="https://cdn.rawgit.com/stackgl/gl-mat4/master/lookAt.js"></script>
+  <script src="https://cdn.rawgit.com/stackgl/gl-mat4/master/perspective.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+precision mediump float;
+attribute vec3 position;
+uniform mat4 projection, view;
+attribute vec2 textureCoord;
+varying   vec2 vTextureCoord;
+void main() {
+  vTextureCoord = textureCoord;
+  gl_Position = projection * view * vec4(position * 2.0, 1);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2      vTextureCoord;
+void main() {
+  gl_FragColor  = texture2D(texture, vTextureCoord);
+}
+</script>
+<canvas id="c" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
