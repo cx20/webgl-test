@@ -1,0 +1,15 @@
+material {
+    name : cube,
+    requires : [
+        color
+    ],
+    shadingModel : unlit,
+    doubleSided : true
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = getColor();
+    }
+}
