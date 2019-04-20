@@ -26,8 +26,6 @@ function initShaders() {
     gl.shaderSource(fs, f);
     gl.compileShader(vs);
     gl.compileShader(fs);
-    console.log(gl.getShaderInfoLog(vs));
-    console.log(gl.getShaderInfoLog(fs));
     gl.attachShader(p, vs);
     gl.attachShader(p, fs);
     gl.linkProgram(p);
@@ -37,13 +35,13 @@ function initShaders() {
 }
 
 function draw() {
-    var position = [ 
-        0.0,  0.5, 0.0, 
-       -0.5, -0.5, 0.0, 
-        0.5, -0.5, 0.0 
+    var positions = [ 
+         0.0, 0.5, 0.0, // v0
+        -0.5,-0.5, 0.0, // v1
+         0.5,-0.5, 0.0  // v2
     ];
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(position), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);

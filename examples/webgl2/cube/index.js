@@ -28,8 +28,6 @@ function initShaders() {
     gl.shaderSource(fs, f);
     gl.compileShader(vs);
     gl.compileShader(fs);
-    console.log(gl.getShaderInfoLog(vs));
-    console.log(gl.getShaderInfoLog(fs));
     gl.attachShader(p, vs);
     gl.attachShader(p, fs);
     gl.linkProgram(p);
@@ -72,7 +70,7 @@ function initBuffers() {
     //       |/       |/
     //      [0]------[1]
     //
-    var position = [ 
+    var positions = [ 
         // Front face
         -0.5, -0.5,  0.5, // v0
          0.5, -0.5,  0.5, // v1
@@ -104,7 +102,7 @@ function initBuffers() {
         -0.5,  0.5, -0.5, // v7
         -0.5, -0.5, -0.5  // v4
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(position), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
     vertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
