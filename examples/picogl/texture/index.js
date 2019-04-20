@@ -11,8 +11,8 @@ var fsSource = document.getElementById("fs").textContent;
 
 var program = app.createProgram(vsSource, fsSource);
 
-
 var image = new Image();
+image.src = "../../../assets/textures/frog.jpg"; // 256x256
 
 image.onload = function() {
     var texture = app.createTexture2D(image);
@@ -151,5 +151,3 @@ image.onload = function() {
     draw();
 
 }
-
-image.src = "../../../assets/textures/frog.jpg"; // 256x256

@@ -11,9 +11,9 @@ var fsSource = document.getElementById("fs").textContent;
 var program = app.createProgram(vsSource, fsSource);
 
 var positions = app.createVertexBuffer(PicoGL.FLOAT, 3, new Float32Array([
-     0.0, 0.5, 0.0, 
-    -0.5,-0.5, 0.0, 
-     0.5,-0.5, 0.0
+     0.0, 0.5, 0.0, // v0
+    -0.5,-0.5, 0.0, // v1
+     0.5,-0.5, 0.0  // v2
 ]));
 
 var vertexArray = app.createVertexArray().vertexAttributeBuffer(0, positions);
