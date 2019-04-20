@@ -31,8 +31,8 @@ function initShaders() {
     gl.linkProgram(p);
     gl.useProgram(p);
     aLoc[0] = gl.getAttribLocation(p, "position");
-    gl.enableVertexAttribArray(aLoc[0]);
     aLoc[1] = gl.getAttribLocation(p, "color");
+    gl.enableVertexAttribArray(aLoc[0]);
     gl.enableVertexAttribArray(aLoc[1]);
 }
 
@@ -53,14 +53,14 @@ function draw() {
     //         |        |
     //        [2]------[3]
     //
-    var data = [ 
+    var positions = [ 
         -0.5, 0.5, 0.0, // v0
          0.5, 0.5, 0.0, // v1 
         -0.5,-0.5, 0.0, // v2
          0.5,-0.5, 0.0  // v3
     ];
     
-    var color = [ 
+    var colors = [ 
          1.0, 0.0, 0.0, 1.0, // v0
          0.0, 1.0, 0.0, 1.0, // v1
          0.0, 0.0, 1.0, 1.0, // v2
@@ -68,15 +68,14 @@ function draw() {
     ];
 
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
     
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[1], 4, gl.FLOAT, false, 0, 0);
     
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    //gl.drawArrays(gl.POINTS, 0, 4);
     gl.flush();
 }
 
