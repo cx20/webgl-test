@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using ClayGL</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/pissang/claygl/b157bb50cf8c725fa20f90ebb55481352777f0a7/dist/claygl.js"></script>
+</head>
+<body>
+<script type="x-shader/x-vertex" id="vs">
+attribute vec3 position: POSITION;
+attribute vec2 uv: TEXCOORD_0;
+uniform mat4 worldViewProjection: WORLDVIEWPROJECTION;
+
+varying vec2 vTexCoord;
+void main() {
+    vTexCoord = uv;
+    gl_Position = worldViewProjection * vec4(position, 1.0);
+}
+ </script>
+
+<script type="x-shader/x-fragment" id="fs">
+uniform sampler2D texture;
+varying vec2 vTexCoord;
+void main() {
+    gl_FragColor = texture2D(texture, vTexCoord);
+}
+</script>
+
+<div id="viewport"></div>
+<script src="index.js"></script>
+</body>
+</html>
