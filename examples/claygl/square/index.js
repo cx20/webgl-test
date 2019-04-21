@@ -41,12 +41,13 @@ var app = clay.application.create('#viewport', {
         geometry.attributes.color.fromArray(colors);
         geometry.initIndicesFromArray(indices);
 
-        var mesh = app.createMesh(geometry, {
-            shader: new clay.Shader({
-                vertex: document.getElementById('vs').textContent,
-                fragment: document.getElementById('fs').textContent
-            })
+        var vs = document.getElementById('vs').textContent;
+        var fs = document.getElementById('fs').textContent;
+        var material= new clay.Material({
+            shader: new clay.Shader(vs, fs)
         });
+        this._mesh = app.createMesh(geometry, material);
+        this._mesh.culling = false;
     },
 
     loop: function () {}
