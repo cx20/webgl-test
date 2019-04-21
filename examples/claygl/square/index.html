@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Square Using ClayGL</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/pissang/claygl/b157bb50cf8c725fa20f90ebb55481352777f0a7/dist/claygl.js"></script>
+</head>
+<body>
+<script type="x-shader/x-vertex" id="vs">
+attribute vec3 position: POSITION;
+attribute vec4 color: COLOR;
+varying vec4 vColor;
+
+void main() {
+    vColor = color;
+    gl_Position = vec4(position, 1.0);
+}
+</script>
+
+<script type="x-shader/x-fragment" id="fs">
+varying vec4 vColor;
+
+void main() {
+    gl_FragColor = vColor;
+}
+</script>
+
+<div id="viewport"></div>
+<script src="index.js"></script>
+</body>
+</html>
