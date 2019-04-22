@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Square Using Hilo3d</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/hiloteam/Hilo3d/3e4972db62cb0331ebf6ce8fcc375c13e4be6c56/build/Hilo3d.js"></script>
+</head>
+<body>
+<script type="x-shader/x-vertex" id="vs">
+precision HILO_MAX_VERTEX_PRECISION float;
+attribute vec3 a_position;
+attribute vec4 a_color;
+varying vec4 vColor;
+    
+void main(void) {
+    vColor = a_color;
+    gl_Position = vec4(a_position, 1.0);
+}
+</script>
+
+<script type="x-shader/x-fragment" id="fs">
+precision HILO_MAX_FRAGMENT_PRECISION float;
+varying vec4 vColor;
+void main(void) {
+    gl_FragColor = vec4(vColor);
+}
+</script>
+
+<div id="container"></div>
+<script src="index.js"></script>
+</body>
+</html>

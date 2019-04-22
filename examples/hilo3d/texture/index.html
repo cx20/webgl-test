@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using Hilo3d</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- <script src="https://rawcdn.githack.com/hiloteam/Hilo3d/3e4972db62cb0331ebf6ce8fcc375c13e4be6c56/build/Hilo3d.js"></script> -->
+  <script src="https://cx20.github.io/gltf-test/libs/Hilo3d/1.5.8/Hilo3d.js"></script>
+</head>
+<body>
+<script type="x-shader/x-vertex" id="vs">
+precision HILO_MAX_VERTEX_PRECISION float;
+attribute vec3 a_position;
+attribute vec2 a_texcoord0;
+
+uniform mat4 u_modelViewProjectionMatrix;
+
+varying vec2 vTexCoord;
+    
+void main(void) {
+    vTexCoord = a_texcoord0;
+    vec4 pos = vec4(a_position, 1.0);
+    gl_Position = u_modelViewProjectionMatrix * pos;
+}
+</script>
+
+<script type="x-shader/x-fragment" id="fs">
+precision HILO_MAX_FRAGMENT_PRECISION float;
+
+uniform sampler2D u_diffuse;
+varying vec2 vTexCoord;
+
+void main(void) {
+    vec3 diffuse = texture2D(u_diffuse, vTexCoord).rgb;
+    gl_FragColor = vec4(diffuse, 1.0);
+}
+</script>
+
+<div id="container"></div>
+<script src="index.js"></script>
+</body>
+</html>
