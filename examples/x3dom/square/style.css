@@ -2,10 +2,14 @@
   margin: 0;
   padding: 0;
   border: 0;
-  overflow: hidden;
+}
+
+body,html{
+    height:100%;
 }
 
 body {
   background: #fff;
   font: 30px sans-serif;
+  overflow: hidden;
 }
