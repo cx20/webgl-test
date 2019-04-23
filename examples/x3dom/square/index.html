@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Square Using X3DOM</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="http://www.x3dom.org/download/x3dom.js"></script>
+</head>
+<body>
+
+<x3d width='465px' height='465px'> 
+  <scene>
+    <viewpoint description='IndexedTriangleStripSet view' position='0 0 2.5'></viewpoint>
+    <background skyColor='1 1 1'></background>
+    <Transform DEF="square" rotation="0 1 0 3.14159265359">            
+      <shape>
+        <IndexedTriangleSet index='0 1 2 1 3 2' colorPerVertex="true" normalPerVertex="false"> 
+          <Coordinate point='
+          -0.5  0.5  0.0
+           0.5  0.5  0.0
+          -0.5 -0.5  0.0
+           0.5 -0.5  0.0'>
+          </Coordinate>
+          <color id="color" color='
+           1.0 0.0 0.0
+           0.0 1.0 0.0
+           0.0 0.0 1.0
+           1.0 1.0 0.0'>
+          </color>
+        </IndexedTriangleSet>
+      </shape>
+    </Transform>
+  </scene>
+</x3d>
+</body>
+</html>
