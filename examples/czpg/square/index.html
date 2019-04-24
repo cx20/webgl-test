@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Square Using CZPG</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/PrincessGod/CraZyPG/cddacb7fa0647b37ea79135b45b655e5c33c248b/czpg.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 position;
+in  vec4 color;
+out vec4 vColor;
+
+void main() {
+    vColor = color;
+    gl_Position = vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+
+in vec4 vColor;
+out vec4 fragColor;
+
+void main() {
+    fragColor = vColor;
+}
+</script>
+
+<div id="container">
+    <div id="canvas">
+        <canvas id="c"></canvas>
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
