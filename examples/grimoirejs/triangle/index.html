@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Triangle Using Grimoire.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://unpkg.com/grimoirejs-preset-basic/register/grimoire-preset-basic.js"></script>
+</head>
+<body>
+<script type="text/sort" id="shader" typeName="blueShader">
+@Pass{
+  FS_PREC(mediump, float)
+#ifdef VS
+  @POSITION
+  attribute vec3 position;
+  void main(){
+    gl_Position = vec4(position, 1.0);
+  }
+#endif
+
+#ifdef FS
+  void main(){
+    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+  }
+#endif
+}
+</script>
+<script type="text/goml" id="canvas">
+  <goml width="fit" height="fit">
+    <geometry type="custom" name="c1"/>
+    <scene>
+      <camera></camera>
+      <mesh material="new(blueShader)" geometry="c1"/>
+    </scene>
+  </goml>
+</script>
+<script src="index.js"></script>
+</body>
+</html>
