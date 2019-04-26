@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using glCubic.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/doxas/glcubic.js/f54ec385d2aa74a76deacd7be4d96253bfbaeefe/build/js/glcubic.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec2 texcoord;
+uniform   mat4 mvpMatrix;
+varying   vec2 vTexCoord;
+
+void main(){
+    vTexCoord = texcoord;
+    gl_Position = mvpMatrix * vec4(position, 1.0);
+}
+</script>
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2 vTexCoord;
+
+void main(){
+    gl_FragColor = texture2D(texture, vTexCoord);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
