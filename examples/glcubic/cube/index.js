@@ -120,6 +120,18 @@ function init() {
     mvpMatrix = mat4.identity(mat4.create());
     
     gl3.gl.enable(gl3.gl.DEPTH_TEST);
+
+    resizeCanvas();
+
+    window.addEventListener("resize", function(){
+        resizeCanvas();
+    });
+}
+
+function resizeCanvas() {
+    gl3.canvas.width = window.innerWidth;
+    gl3.canvas.height = window.innerHeight;
+    gl3.gl.viewport(0, 0, gl3.canvas.width, gl3.canvas.height);
 }
 
 function render(){
@@ -133,7 +145,7 @@ function render(){
     mat4.lookAt(cameraPosition, centerPoint, cameraUp, vMatrix);
 
     var fovy = 30;
-    var aspect = 1.0;
+    var aspect = gl3.canvas.width / gl3.canvas.height;
     var near = 0.1;
     var far = 5.0;
     mat4.perspective(fovy, aspect, near, far, pMatrix);

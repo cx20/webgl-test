@@ -110,6 +110,18 @@ function init(){
     ];
     IBO = gl3.createIbo(indices);
     gl3.createTextureFromFile('../../../assets/textures/frog.jpg',  0, initShader);  // 256x256
+
+    resizeCanvas();
+
+    window.addEventListener("resize", function(){
+        resizeCanvas();
+    });
+}
+
+function resizeCanvas() {
+    gl3.canvas.width = window.innerWidth;
+    gl3.canvas.height = window.innerHeight;
+    gl3.gl.viewport(0, 0, gl3.canvas.width, gl3.canvas.height);
 }
 
 function initShader() {
@@ -146,7 +158,7 @@ function render(){
     mat4.lookAt(cameraPosition, centerPoint, cameraUp, vMatrix);
 
     var fovy = 30;
-    var aspect = 1.0;
+    var aspect = gl3.canvas.width / gl3.canvas.height;
     var near = 0.1;
     var far = 5.0;
     mat4.perspective(fovy, aspect, near, far, pMatrix);

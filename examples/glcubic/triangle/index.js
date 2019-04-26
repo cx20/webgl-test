@@ -21,6 +21,18 @@ function init() {
     VBO = [
         gl3.createVbo(position)
     ];
+
+    resizeCanvas();
+
+    window.addEventListener("resize", function(){
+        resizeCanvas();
+    });
+}
+
+function resizeCanvas() {
+    gl3.canvas.width = window.innerWidth;
+    gl3.canvas.height = window.innerHeight;
+    gl3.gl.viewport(0, 0, gl3.canvas.width, gl3.canvas.height);
 }
 
 function render(){
