@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Cube Using XenoGL</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/kotofurumiya/xenogl/8ab6a66fdb585c2d6a3c207d4433e7097e80982c/build/xenogl.min.js"></script>
+  <script src="https://rawcdn.githack.com/kotofurumiya/matrixgl/42f8c89c6c6d8be8ab90970b22675c9d97064cb3/build/matrixgl.min.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 position;
+in  vec4 color;
+uniform mat4 uMVMatrix;
+uniform mat4 uPMatrix;
+out vec4 vColor;
+
+void main() {
+    vColor = color;
+    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+
+in vec4 vColor;
+out vec4 fragColor;
+
+void main() {
+    fragColor = vColor;
+}
+</script>
+<script src="index.js"></script>
+</body>
+</html>

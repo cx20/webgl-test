@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Triangle Using XenoGL</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/kotofurumiya/xenogl/8ab6a66fdb585c2d6a3c207d4433e7097e80982c/build/xenogl.min.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 position;
+
+void main() {
+    gl_Position = vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+out vec4 fragColor;
+
+void main() {
+    fragColor = vec4(0.0, 0.0, 1.0, 1.0);
+}
+</script>
+<script src="index.js"></script>
+</body>
+</html>
