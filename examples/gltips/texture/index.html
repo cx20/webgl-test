@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using glTips.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/emadurandal/glTips/155489f3b95947ad748db3a8b86977c7cd2ba026/glTips.js"></script>
+  <script src="../../../libs/gl-matrix.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+uniform mat4 pjMatrix;
+uniform mat4 mvMatrix;
+attribute vec2 textureCoord;
+varying   vec2 vTextureCoord;
+
+void main()
+{
+    vTextureCoord = textureCoord;
+    gl_Position = pjMatrix * mvMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2      vTextureCoord;
+
+void main()
+{
+    gl_FragColor  = texture2D(texture, vTextureCoord);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
