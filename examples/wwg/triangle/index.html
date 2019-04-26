@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Triangle Using WWG</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/WWG.js"></script>
+</head>
+<body>
+<script id="vshader" type="x-shader/x-vertex">
+uniform mat4 mvpMatrix;
+
+attribute vec3 position;
+
+void main() {
+    gl_Position = mvpMatrix * vec4(position, 1.0) ;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision highp float;
+
+void main() {
+    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+}
+</script>
+
+<canvas id="screen1" width="465px" height="465px"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
