@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using shree.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://unpkg.com/shree/dist/shree.js"></script>
+</head>
+<body>
+<script type="x-shader/x-vertex" id="vs">
+attribute vec3 position;
+attribute vec2 textureCoord;
+uniform mat4 mMatrix;
+uniform mat4 vMatrix;
+uniform mat4 pMatrix;
+uniform mat4 mvMatrix;
+varying vec2 vTextureCoord;
+
+void main(void){
+    vTextureCoord = textureCoord;
+    vec4 mvPosition = mvMatrix * vec4(position, 1.0);
+    gl_Position = pMatrix * mvPosition;
+}
+</script>
+<script type="x-shader/x-fragment" id="fs">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2 vTextureCoord;
+
+void main(void){
+    gl_FragColor = texture2D(texture, vTextureCoord);
+}
+</script>
+
+<div id="container"></div>
+<script src="index.js"></script>
+</body>
+</html>
