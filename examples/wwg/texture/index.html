@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using WWG</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/WWG.js"></script>
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/CanvasMatrix.js"></script>
+</head>
+<body>
+<script id="vshader" type="x-shader/x-vertex">
+uniform mat4 mvpMatrix;
+
+attribute vec3 position;
+attribute vec2 textureCoord;
+varying   vec2 vTextureCoord;
+
+void main() {
+    vTextureCoord = textureCoord;
+    gl_Position = mvpMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision highp float;
+
+uniform sampler2D tex;
+varying vec2      vTextureCoord;
+
+void main() {
+    gl_FragColor  = texture2D(tex, vTextureCoord);
+}
+</script>
+
+<canvas id="screen1" width="465px" height="465px"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
