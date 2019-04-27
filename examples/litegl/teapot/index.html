@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Teapot Using litegl.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="../../../libs/gl-matrix.js"></script>
+  <script src="https://rawcdn.githack.com/jagenjo/litegl.js/3d2c29cbbb8131eff07cd1c36456f69cb1b2cbf0/build/litegl.js"></script>
+  <script src="//code.jquery.com/jquery-3.4.0.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+precision highp float;
+attribute vec3 a_vertex;
+attribute vec3 a_normal;
+attribute vec2 a_coord;
+
+uniform mat4 u_mvp;
+uniform mat4 u_model;
+varying vec3 v_normal;
+varying vec2 v_coord;
+
+void main() {
+    v_normal = (u_model * vec4(a_normal,0.0)).xyz;
+    v_coord = a_coord;
+    gl_Position = u_mvp * vec4(a_vertex, 1.0); 
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision highp float;
+uniform sampler2D u_texture;
+uniform vec3 u_lightvector;
+varying vec3 v_normal;
+varying vec2 v_coord;
+
+void main()
+{
+    vec4 color = texture2D( u_texture, v_coord);
+    vec3 N = normalize(v_normal);
+    float NdotL = dot(u_lightvector,N) * 0.5 + 0.5;
+    NdotL *= NdotL;
+    gl_FragColor = color * max(0.0, NdotL);
+}
+</script>
+
+<script src="index.js"></script>
+</body>
+</html>
