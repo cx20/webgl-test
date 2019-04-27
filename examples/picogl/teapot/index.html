@@ -11,12 +11,18 @@
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
 attribute vec2 textureCoord;
+attribute vec3 normal;
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
+varying   vec3 vPosition;
 varying   vec2 vTextureCoord;
+varying   vec3 vNormal;
+
 void main()
 {
+    vPosition = (uMVMatrix * vec4(position.xyz, 1.0)).xyz;
     vTextureCoord = textureCoord;
+    vNormal = normal;
     gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
 }    
 </script>
@@ -24,11 +30,18 @@ void main()
 <script id="fs" type="x-shader/x-fragment">
 precision mediump float;
 uniform sampler2D texture;
-varying vec2      vTextureCoord;
+varying   vec3 vPosition;
+varying   vec2 vTextureCoord;
+varying   vec3 vNormal;
 
 void main()
 {
-    gl_FragColor  = texture2D(texture, vTextureCoord);
+    vec3 directionLightingLocation  = vec3(1.0, 0.0, 1.0);
+    vec3 lightDirection = normalize(directionLightingLocation - vPosition.xyz);
+    vec3 normal = normalize(vNormal);
+    float lightWeighting = max(dot(normal, lightDirection), 0.0);
+    vec4 fragmentColor  = texture2D(texture, vTextureCoord);
+    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
 }
 </script>
 
