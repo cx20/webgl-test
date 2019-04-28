@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Teapot Using Ashes</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/ashes3d@0.1.2/build/ashes.main.js"></script>
+  <script src="//code.jquery.com/jquery-3.4.0.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 POSITION;
+attribute vec3 NORMAL;
+attribute vec2 TEXCOORD_0;
+uniform mat4 M;
+uniform mat4 VP;
+
+varying vec3 vPosition;
+varying vec2 vTextureCoord;
+varying vec3 vNormal;
+
+void main() {
+    vec4 position = vec4(POSITION, 1.0);
+    position = M * position;
+    vPosition = position.xyz;
+    vNormal = NORMAL;
+    vTextureCoord = TEXCOORD_0;
+    gl_Position = VP * position;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+
+varying vec3 vPosition;
+varying vec2 vTextureCoord;
+varying vec3 vNormal;
+
+void main() {
+    vec3 directionLightingLocation  = vec3(0.0, 0.0, 100.0);
+    vec3 lightDirection = normalize(directionLightingLocation - vPosition.xyz);
+    vec3 normal = normalize(vNormal);
+    float lightWeighting = max(dot(normal, lightDirection), 0.0);
+    vec4 fragmentColor  = texture2D(texture, vTextureCoord);
+    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
+}
+</script>
+
+<canvas id="screen" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
