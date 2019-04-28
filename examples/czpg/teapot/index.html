@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Teapot Using CZPG</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.rawgit.com/cx20/gltf-test/91ebb79a/libs/czpg/20180503/czpg.js"></script>
+  <script src="//code.jquery.com/jquery-3.4.0.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 a_position;
+in  vec3 a_normal;
+in  vec2 a_textureCoord;
+uniform mat4 u_mvpMat;
+out vec3 vPosition;
+out vec2 vTextureCoord;
+out vec3 vNormal;
+
+void main() {
+    vPosition = (u_mvpMat * vec4(a_position, 1.0)).xyz;
+    vNormal = a_normal;
+    vTextureCoord = a_textureCoord;
+    gl_Position = u_mvpMat * vec4(a_position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+uniform sampler2D u_texture;
+in vec3 vPosition;
+in vec2 vTextureCoord;
+in vec3 vNormal;
+out vec4 fragColor;
+
+void main() {
+    vec3 directionLightingLocation  = vec3(1.0, 0.0, 1.0);
+    vec3 lightDirection = normalize(directionLightingLocation - vPosition.xyz);
+    vec3 normal = normalize(vNormal);
+    float lightWeighting = max(dot(normal, lightDirection), 0.0);
+    vec4 fragmentColor  = texture(u_texture, vTextureCoord);
+    fragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
+}
+</script>
+
+<div id="container">
+    <div id="canvas">
+        <canvas id="c"></canvas>
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>

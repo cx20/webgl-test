@@ -6,7 +6,7 @@ let camera = new CZPG.PerspectiveCamera(45, context.canvas.width/context.canvas.
 camera.transform.position = [0, 1, 3];
 camera.updateViewMatrix();
 
-// 立方体の座標データを用意
+// Cube data
 //             1.0 y 
 //              ^  -1.0 
 //              | / z
