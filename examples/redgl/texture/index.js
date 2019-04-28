@@ -17,7 +17,7 @@ RedGL(canvas, function (v) {
     var interleaveData;
     var indexData;
     var tInterleaveBuffer, tIndexBuffer;
-    // 立方体の座標データを用意
+    // Cube data
     //             1.0 y 
     //              ^  -1.0 
     //              | / z
