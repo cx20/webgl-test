@@ -2,7 +2,7 @@ var gl = GL.create();
 var mesh = new GL.Mesh({coords: true});
 var texture = GL.Texture.fromURL('../../../assets/textures/frog.jpg');    // 256x256
 
-// 立方体の座標データを用意
+// Cube data
 //             1.0 y 
 //              ^  -1.0 
 //              | / z
