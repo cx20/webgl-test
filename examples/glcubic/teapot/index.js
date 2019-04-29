@@ -9,7 +9,8 @@ var vpMatrix;
 var mvpMatrix;
 var rad = 0;
 
-$.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+$.getJSON("../../../assets/json/teapot.json", function (data) {
     var vertexPositions = data.vertexPositions;
     var vertexTextureCoords = data.vertexTextureCoords;
     var vertexNormals = data.vertexNormals;
@@ -23,6 +24,7 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
             gl3.createVbo(vertexNormals)
         ];
         IBO = gl3.createIbo(indices);
+        // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
         gl3.createTextureFromFile('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg',  0, initShader);
 
         resizeCanvas();
