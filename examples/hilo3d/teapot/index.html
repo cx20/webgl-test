@@ -33,16 +33,14 @@ void main(void) {
 precision HILO_MAX_FRAGMENT_PRECISION float;
 
 uniform sampler2D u_diffuse;
+uniform vec3 uPointLightingLocation;
 
 varying   vec3 vPosition;
 varying   vec2 vTextureCoord;
 varying   vec3 vNormal;
 
 void main(void) {
-    //vec3 diffuse = texture2D(u_diffuse, vTextureCoord).rgb;
-    //gl_FragColor = vec4(diffuse, 1.0);
-    vec3 directionLightingLocation  = vec3(1.0, 0.0, 1.0);
-    vec3 lightDirection = normalize(directionLightingLocation - vPosition.xyz);
+    vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
     vec3 normal = normalize(vNormal);
     float lightWeighting = max(dot(normal, lightDirection), 0.0);
     vec4 fragmentColor  = texture2D(u_diffuse, vTextureCoord);
