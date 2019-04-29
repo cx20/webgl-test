@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Teapot Using WWG</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/WWG.js"></script>
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/CanvasMatrix.js"></script>
+  <script src="//code.jquery.com/jquery-3.4.0.js"></script>
+</head>
+<body>
+<script id="vshader" type="x-shader/x-vertex">
+uniform mat4 mvpMatrix;
+
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 textureCoord;
+
+varying   vec3 vPosition;
+varying   vec2 vTextureCoord;
+varying   vec3 vNormal;
+
+void main() {
+    vPosition = (mvpMatrix * vec4(position.xyz, 1.0)).xyz;
+    vTextureCoord = textureCoord;
+    vNormal = normal;
+    gl_Position = mvpMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision highp float;
+
+uniform sampler2D tex;
+
+varying   vec3 vPosition;
+varying   vec2 vTextureCoord;
+varying   vec3 vNormal;
+
+void main() {
+    vec3 directionLightingLocation  = vec3(100.0, 0.0, 100.0);
+    vec3 lightDirection = normalize(directionLightingLocation - vPosition.xyz);
+    vec3 normal = normalize(vNormal);
+    float lightWeighting = max(dot(normal, lightDirection), 0.0);
+    vec4 fragmentColor  = texture2D(tex, vTextureCoord);
+    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
+}
+</script>
+
+<canvas id="screen1" width="465px" height="465px"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
