@@ -9,7 +9,8 @@ var indices;
 
 var img = new Image();
 img.onload = function(event) {
-    $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+    $.getJSON("../../../assets/json/teapot.json", function (data) {
         vertexPositions = data.vertexPositions;
         vertexTextureCoords = data.vertexTextureCoords;
         vertexNormals = data.vertexNormals;
@@ -19,6 +20,7 @@ img.onload = function(event) {
         animate();
     });
 }
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
 img.src = '../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg';
 
 function init() {
@@ -39,7 +41,9 @@ function init() {
     var material = new SHREE.Material({
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent,
-        uniforms: { texture: { type: 't', value: img } },
+        uniforms: { 
+            texture: { type: 't', value: img }
+        },
         side: 'SIDE_DOUBLE'
     });
 
