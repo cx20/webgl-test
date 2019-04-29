@@ -85,14 +85,14 @@ function initBuffers() {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
         gl.generateMipmap(gl.TEXTURE_2D);
+        animate();
     };
-    img.crossOrigin = "anonymous";
+    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
     img.src = "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg";
 }
 
 var rad = 0;
 function draw() {
-
     rad += Math.PI * 1.0 / 180.0;
     mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 100.0);
     mat4.identity(mvMatrix);
@@ -114,8 +114,10 @@ function draw() {
     gl.uniformMatrix4fv(uLoc[0], false, pMatrix);
     gl.uniformMatrix4fv(uLoc[1], false, mvMatrix);
 
-    var lightDirection = [1.0, 1.0, -1.0];
-    gl.uniform3fv(uLoc[2], lightDirection);
+    gl.uniform1i(uLoc[2], 0);
+
+    var pointLightingLocation = [100.0, 0.0, 100.0];
+    gl.uniform3fv(uLoc[3], pointLightingLocation);
 
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     gl.flush();
@@ -126,7 +128,8 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-$.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+$.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexPositions = data.vertexPositions;
     vertexTextureCoords = data.vertexTextureCoords;
     vertexNormals = data.vertexNormals;
@@ -134,6 +137,5 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
     initWebGL();
     initShaders();
     initBuffers();
-    animate();
 });
 
