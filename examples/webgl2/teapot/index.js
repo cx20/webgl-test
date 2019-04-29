@@ -87,7 +87,7 @@ function initBuffers() {
         gl.generateMipmap(gl.TEXTURE_2D);
     };
     img.crossOrigin = "anonymous";
-    img.src = "https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/arroway.de_metal+structure+06_d100_flat.jpg";
+    img.src = "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg";
 }
 
 var rad = 0;
