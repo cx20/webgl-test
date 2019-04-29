@@ -1,6 +1,7 @@
 let { Asset, EntityMgr, Camera, vec3, mat4, quat, Screen, MeshRenderer, Shader, Material, Mesh, Accessor, bufferView } = Ashes;
 
-$.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+$.getJSON("../../../assets/json/teapot.json", function (data) {
     let vertexPositions = data.vertexPositions;
     let vertexTextureCoords = data.vertexTextureCoords;
     let vertexNormals = data.vertexNormals;
@@ -36,13 +37,16 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
         let shader = new Shader(vs, fs, macro);
         let textureMat = new Material(shader);
         textureMat.doubleSided = true;
-        let frog = await Asset.loadTexture('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg', { minFilter: screen.gl.NEAREST_MIPMAP_NEAREST });
+        // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
+        let texture = await Asset.loadTexture('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg', { 
+            minFilter: screen.gl.NEAREST_MIPMAP_NEAREST 
+        });
 
         // Create a renderer component
         let textureMR = new MeshRenderer(screen, new TextureMesh(), textureMat);
 
         EntityMgr.addComponent(custom, textureMR);
-        Material.setTexture(textureMat, 'texture', frog);
+        Material.setTexture(textureMat, 'texture', texture);
         
         let angle = 0;
         let loop = () => {
