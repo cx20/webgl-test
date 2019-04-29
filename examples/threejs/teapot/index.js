@@ -25,7 +25,7 @@ function init() {
     
     var loader = new THREE.TextureLoader();
     loader.crossOrigin = 'anonymous';
-    var texture = loader.load('https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/arroway.de_metal+structure+06_d100_flat.jpg');
+    var texture = loader.load('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     var material = new THREE.MeshLambertMaterial({
