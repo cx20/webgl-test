@@ -8,20 +8,20 @@
 </head>
 <body>
 <script id="vs" type="x-shader/x-vertex">
-varying vec2 coord;
+varying vec2 vTextureCoord;
 void main()
 {
-    coord = gl_TexCoord.xy;
+    vTextureCoord = gl_TexCoord.xy;
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }
 </script>
 
 <script id="fs" type="x-shader/x-fragment">
 uniform sampler2D texture;
-varying vec2 coord;
+varying vec2 vTextureCoord;
 void main()
 {
-    gl_FragColor = texture2D(texture, coord);
+    gl_FragColor = texture2D(texture, vTextureCoord);
 }
 </script>
 <script src="index.js"></script>

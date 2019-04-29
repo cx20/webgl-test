@@ -12,7 +12,8 @@ var options = {
     wrapS: gl.REPEAT,
     wrapT: gl.REPEAT
 };
-//var texture = GL.Texture.fromURL('https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/arroway.de_metal+structure+06_d100_flat.jpg');
+
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
 var texture = GL.Texture.fromURL('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg', options);
 var vs = document.getElementById("vs").textContent;
 var fs = document.getElementById("fs").textContent;
@@ -36,8 +37,8 @@ gl.ondraw = function() {
     }).draw(mesh);
 }
 
-
-$.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+$.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexPositions = data.vertexPositions;
     vertexTextureCoords = data.vertexTextureCoords;
     vertexNormals = data.vertexNormals;
