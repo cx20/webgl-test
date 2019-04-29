@@ -68,12 +68,12 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
 
         prg.useProgram();
         prg.setAttribute(VBO, IBO);
-        var cameraPosition = [0.0, 0.0, 40.0];
+        var cameraPosition = [0.0, 0.0, 50.0];
         var centerPoint    = [0.0, 0.0, 0.0];
         var cameraUp       = [0.0, 1.0, 0.0];
         mat4.lookAt(cameraPosition, centerPoint, cameraUp, vMatrix);
 
-        var fovy = 30;
+        var fovy = 45;
         var aspect = gl3.canvas.width / gl3.canvas.height;
         var near = 0.1;
         var far = 1000.0;
