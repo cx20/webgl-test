@@ -12,7 +12,8 @@ var vertexNormals;
 var vertexTextureCoords;
 var indices;
 
-$.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+$.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexPositions = data.vertexPositions;
     vertexTextureCoords = data.vertexTextureCoords;
     vertexNormals = data.vertexNormals;
@@ -33,6 +34,7 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
     }
 
     var geometry = glBoostContext.createGeometry();
+    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
     var texture = glBoostContext.createTexture('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
     var material = glBoostContext.createClassicMaterial();
     material.setTexture(texture);
@@ -46,8 +48,9 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
     var mesh = glBoostContext.createMesh(geometry, material);
     scene.addChild(mesh);
     
-    var directionalLight = glBoostContext.createDirectionalLight(new GLBoost.Vector3(1, 1, 1), new GLBoost.Vector3(100, 0, -100));
-    scene.addChild( directionalLight );
+    var pointLight = glBoostContext.createPointLight(new GLBoost.Vector3(1.0, 1.0, 1.0));
+    pointLight.translate = new GLBoost.Vector3(100, 0, 100);
+    scene.addChild(pointLight);
 
     var camera = glBoostContext.createPerspectiveCamera({
         eye: new GLBoost.Vector3(0.0, 0.0, 50.0),
