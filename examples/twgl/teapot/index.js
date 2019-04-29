@@ -73,7 +73,7 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
 
     uniforms = {
         u_texture: tex,
-        u_directionLightingLocation: [100.0, 0.0, 100.0]
+        u_pointLightingLocation: [100.0, 0.0, 100.0]
     };
 
     render();

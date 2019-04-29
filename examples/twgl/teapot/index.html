@@ -28,14 +28,14 @@ void main() {
 <script id="fs" type="x-shader/x-fragment">
 precision mediump float;
 uniform sampler2D u_texture;
-uniform vec3 u_directionLightingLocation;
+uniform vec3 u_pointLightingLocation;
 varying vec4 vPosition;
 varying vec3 vNormal;
 varying vec2 vTextureCoord;
 
 void main()
 {
-    vec3 lightDirection = normalize(u_directionLightingLocation - vPosition.xyz);
+    vec3 lightDirection = normalize(u_pointLightingLocation - vPosition.xyz);
     vec3 normal = normalize(vNormal);
     float lightWeighting = max(dot(normal, lightDirection), 0.0);
     vec4 fragmentColor  = texture2D(u_texture, vTextureCoord);
