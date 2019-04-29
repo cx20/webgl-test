@@ -68,12 +68,12 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
 
     var tex = twgl.createTexture(gl, {
         crossOrigin: "anonymous",
-        src: "https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/arroway.de_metal+structure+06_d100_flat.jpg"
+        src: "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg"
     });
 
     uniforms = {
         u_texture: tex,
-        u_directionLightingLocation: [1.0, 1.0, -1.0]
+        u_directionLightingLocation: [100.0, 0.0, 100.0]
     };
 
     render();
