@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Teapot Using glTips.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/emadurandal/glTips/155489f3b95947ad748db3a8b86977c7cd2ba026/glTips.js"></script>
+  <script src="../../../libs/gl-matrix.js"></script>
+  <script src="//code.jquery.com/jquery-3.4.0.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 textureCoord;
+uniform mat4 pjMatrix;
+uniform mat4 mvMatrix;
+
+varying   vec3 vPosition;
+varying   vec2 vTextureCoord;
+varying   vec3 vNormal;
+
+void main()
+{
+    //vTextureCoord = textureCoord;
+    //gl_Position = pjMatrix * mvMatrix * vec4(position, 1.0);
+    vPosition = (mvMatrix * vec4(position, 1.0)).xyz;
+    vTextureCoord = textureCoord;
+    vNormal = normal;
+    vec4 mvPosition = mvMatrix * vec4(position, 1.0);
+    gl_Position = pjMatrix * mvPosition;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+
+varying   vec3 vPosition;
+varying   vec2 vTextureCoord;
+varying   vec3 vNormal;
+
+void main()
+{
+    //gl_FragColor  = texture2D(texture, vTextureCoord);
+    vec3 pointLightingLocation = vec3(1.0, 0.0, 1.0);
+    vec3 lightDirection = normalize(pointLightingLocation - vPosition.xyz);
+    vec3 normal = normalize(vNormal);
+    float lightWeighting = max(dot(normal, lightDirection), 0.0);
+    vec4 fragmentColor  = texture2D(texture, vTextureCoord);
+    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
