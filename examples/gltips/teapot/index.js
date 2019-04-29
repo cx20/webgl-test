@@ -120,7 +120,7 @@ window.onload = function() {
     glTips(); // Set glTips to be global callable
 
     // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
-    $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+    $.getJSON("../../../assets/json/teapot.json", function (data) {
         vertexPositions = data.vertexPositions;
         vertexTextureCoords = data.vertexTextureCoords;
         vertexNormals = data.vertexNormals;
