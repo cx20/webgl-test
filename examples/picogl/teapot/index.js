@@ -17,10 +17,12 @@ var fsSource = document.getElementById("fs").textContent;
 var program = app.createProgram(vsSource, fsSource);
 
 var image = new Image();
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
 image.src = "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg";
 image.onload = function() {
 
-    $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+    $.getJSON("../../../assets/json/teapot.json", function (data) {
         vertexPositions = data.vertexPositions;
         vertexTextureCoords = data.vertexTextureCoords;
         vertexNormals = data.vertexNormals;
@@ -52,7 +54,7 @@ image.onload = function() {
         var rad = 0;
         function draw() {
             rad += Math.PI * 1.0 / 180.0;
-            mat4.perspective(pMatrix, 45, window.innerWidth / window.innerHeight, 0.1, 100.0);
+            mat4.perspective(pMatrix, 45, window.innerWidth / window.innerHeight, 0.1, 1000.0);
             mat4.identity(mvMatrix);
             var translation = vec3.create();
             vec3.set(translation, 0.0, 0.0, -30.0);
@@ -61,6 +63,7 @@ image.onload = function() {
 
             drawCall.uniform("uPMatrix", pMatrix);
             drawCall.uniform("uMVMatrix", mvMatrix);
+            drawCall.uniform("uPointLightingLocation", [100.0, 0.0, 100.0]);
 
             app.clear();
             drawCall.draw();
