@@ -4,7 +4,8 @@ var uMVMatrix;
 var uPMatrix;
 var uTexture;
 
-$.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+// copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+$.getJSON("../../../assets/json/teapot.json", function (data) {
     var vertexPositions = data.vertexPositions;
     var vertexTextureCoords = data.vertexTextureCoords;
     var vertexNormals = data.vertexNormals;
@@ -73,6 +74,7 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
         
         program.addBuffer(indexBuffer);
 
+        // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
         const textureSource = await fetch('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg')
             .then((res) => res.blob())
             .then((blob) => createImageBitmap(blob));
@@ -99,12 +101,12 @@ $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d8
 
         rad += Math.PI * 1.0 / 180.0;
 
-        const camera = new Vector3(0, 0, 30);
+        const camera = new Vector3(0, 0, 50);
         const lookAt = new Vector3(0, 0, 0);
         const cameraUpDirection = new Vector3(0, 1, 0);
         const view = Matrix4.lookAt(camera, lookAt, cameraUpDirection);
 
-        const pMatrix = Matrix4.perspective({fovYRadian: 60 * Math.PI/180, aspectRatio: window.innerWidth / window.innerHeight, near: 0.1, far: 1000});
+        const pMatrix = Matrix4.perspective({fovYRadian: 45 * Math.PI/180, aspectRatio: window.innerWidth / window.innerHeight, near: 0.1, far: 1000});
         const identity = Matrix4.identity();
         const translation = Matrix4.translation(0, 0, 0);
         const axis = new Vector3(0, 1, 0).normalize();
