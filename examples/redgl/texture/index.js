@@ -1,8 +1,8 @@
-var canvas;
+let canvas;
 canvas = document.getElementById('canvas');
 document.body.appendChild(canvas);
 RedGL(canvas, function (v) {
-    var tWorld, tView, tScene, tController, tRenderer, tTexture, tMaterial
+    let tWorld, tView, tScene, tController, tRenderer, tTexture, tMaterial
     this['world'] = tWorld = RedWorld();
     tScene = RedScene(this);
     tScene.useBackgroundColor = true;
@@ -14,9 +14,9 @@ RedGL(canvas, function (v) {
     tView = RedView('HelloRedGL', this, tScene, tController);
     tWorld.addView(tView);
     
-    var interleaveData;
-    var indexData;
-    var tInterleaveBuffer, tIndexBuffer;
+    let interleaveData;
+    let indexData;
+    let tInterleaveBuffer, tIndexBuffer;
     // Cube data
     //             1.0 y 
     //              ^  -1.0 
@@ -96,8 +96,8 @@ RedGL(canvas, function (v) {
         indexData  // data
     );
     
-    var tTexture = RedBitmapTexture(this, '../../../assets/textures/frog.jpg'); // 256x256
-    var tMaterial = RedBitmapMaterial(this, tTexture);
+    let tTexture = RedBitmapTexture(this, '../../../assets/textures/frog.jpg'); // 256x256
+    let tMaterial = RedBitmapMaterial(this, tTexture);
     
     tGeometry = RedGeometry(tInterleaveBuffer, tIndexBuffer);
     tMesh = RedMesh(

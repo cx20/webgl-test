@@ -1,5 +1,5 @@
-var canvas = document.getElementById('c');
-var app = new pc.Application(canvas, {
+let canvas = document.getElementById('c');
+let app = new pc.Application(canvas, {
     mouse: new pc.Mouse(document.body),
     touch: new pc.TouchDevice(document.body)
 });
@@ -10,7 +10,7 @@ app.start();
 app.on("update", function (dt) {
 });
 
-var camera = new pc.Entity();
+let camera = new pc.Entity();
 camera.addComponent('camera', {
     clearColor: new pc.Color(0, 0, 0),
     farClip: 1000,
@@ -21,7 +21,7 @@ camera.translate(0,0,50);
 camera.lookAt(0,0,0);
 app.root.addChild(camera);
 
-var light = new pc.Entity();
+let light = new pc.Entity();
 light.addComponent('light', {
     type: "directional",
     color: new pc.Color(1, 1, 1),
@@ -29,10 +29,10 @@ light.addComponent('light', {
 light.rotate(90, 30, 0);
 app.root.addChild(light);
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {
@@ -41,24 +41,24 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexNormals = data.vertexNormals;
     indices = data.indices;
 
-    var Teapot = pc.createScript('teapot');
+    let Teapot = pc.createScript('teapot');
     Teapot.prototype.initialize = function () {
-        var node = new pc.scene.GraphNode();
-        var options = {
+        let node = new pc.scene.GraphNode();
+        let options = {
             indices: indices,
             normals: vertexNormals,
             uvs: vertexTextureCoords
         };
-        var mesh = pc.createMesh(app.graphicsDevice, vertexPositions, options);
+        let mesh = pc.createMesh(app.graphicsDevice, vertexPositions, options);
 
-        var material = new pc.StandardMaterial();
+        let material = new pc.StandardMaterial();
         material.diffuseMap = getTexture();
         material.cull = pc.CULLFACE_NONE;
 
         function getTexture () {
-            var texture = new pc.gfx.Texture(app.graphicsDevice);
+            let texture = new pc.gfx.Texture(app.graphicsDevice);
             
-            var img = new Image();
+            let img = new Image();
             img.onload = function () {
                 texture.minFilter = pc.gfx.FILTER_LINEAR;
                 texture.magFilter = pc.gfx.FILTER_LINEAR;
@@ -71,9 +71,9 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
             return texture;
         }
 
-        var instance = new pc.scene.MeshInstance(node, mesh, material);
+        let instance = new pc.scene.MeshInstance(node, mesh, material);
 
-        var model = new pc.scene.Model();
+        let model = new pc.scene.Model();
         model.graph = node;
         model.meshInstances = [ instance ];
 
@@ -85,7 +85,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
         this.entity.rotate(0, deltaTime * 50, 0);
     };
 
-    var teapot = new pc.Entity();
+    let teapot = new pc.Entity();
     app.root.addChild(teapot);
     teapot.addComponent('script');
     teapot.script.create('teapot');

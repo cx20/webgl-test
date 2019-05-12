@@ -24,10 +24,10 @@ fragment {
 }
 */
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 class App {
   constructor() {

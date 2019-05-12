@@ -1,6 +1,6 @@
-var prg;
-var VBO;
-var IBO;
+let prg;
+let VBO;
+let IBO;
 
 // Square data
 //             1.0 y 
@@ -18,21 +18,21 @@ var IBO;
 //         |        |
 //        [2]------[3]
 //
-var position = [ 
+let position = [ 
     -0.5, 0.5, 0.0, // v0
      0.5, 0.5, 0.0, // v1 
     -0.5,-0.5, 0.0, // v2
      0.5,-0.5, 0.0  // v3
 ];
 
-var color = [ 
+let color = [ 
      1.0, 0.0, 0.0, 1.0, // v0
      0.0, 1.0, 0.0, 1.0, // v1
      0.0, 0.0, 1.0, 1.0, // v2
      1.0, 1.0, 0.0, 1.0  // v3
 ];
 
-var indices = [0, 1, 2, 3];
+let indices = [0, 1, 2, 3];
 
 function init() {
     gl3.init('c');

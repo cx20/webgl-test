@@ -1,6 +1,7 @@
-var container;
-var camera, scene, renderer;
-var mesh;
+let container;
+let camera, scene, renderer;
+let mesh;
+let angle = 0;
 
 init();
 animate();
@@ -29,7 +30,7 @@ function init() {
     //       |/       |/
     //      [0]------[1]
     //
-    var vertexPositions = [
+    let vertexPositions = [
             // Front face
             [-0.5, -0.5,  0.5], // v0
             [ 0.5, -0.5,  0.5], // v1
@@ -61,13 +62,13 @@ function init() {
             [-0.5,  0.5, -0.5], // v7
             [-0.5, -0.5, -0.5]  // v4
     ];
-    var vertices = new Float32Array(vertexPositions.length * 3);
-    for (var i = 0; i < vertexPositions.length; i++) {
+    let vertices = new Float32Array(vertexPositions.length * 3);
+    for (let i = 0; i < vertexPositions.length; i++) {
         vertices[i * 3 + 0] = vertexPositions[i][0];
         vertices[i * 3 + 1] = vertexPositions[i][1];
         vertices[i * 3 + 2] = vertexPositions[i][2];
     }
-    var texcoord = new Float32Array([
+    let texcoord = new Float32Array([
         // Front face
         1, 0,
         0, 0,
@@ -100,7 +101,7 @@ function init() {
         1, 1
     ]);
     
-    var indices = new Uint16Array([
+    let indices = new Uint16Array([
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -109,15 +110,15 @@ function init() {
         20, 21, 22,   20, 22, 23   // Left face
     ]);
     
-    var geometry = new THREE.BufferGeometry();
+    let geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
     geometry.addAttribute('uv', new THREE.BufferAttribute(texcoord, 2));
     geometry.addAttribute('index', new THREE.BufferAttribute(indices, 1));
-    var uniforms = {
+    let uniforms = {
         texture : { type: "t", value: THREE.ImageUtils.loadTexture( '../../../assets/textures/frog.jpg' ) }  // 256x256
     };
 
-    var material = new THREE.RawShaderMaterial({
+    let material = new THREE.RawShaderMaterial({
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent,
         side: THREE.DoubleSide,
@@ -138,12 +139,10 @@ function animate() {
     render();
 }
 
-var angle = 0;
-
 function render() {
-    var axis = new THREE.Vector3(1,1,1).normalize();
+    let axis = new THREE.Vector3(1,1,1).normalize();
     angle += Math.PI / 180;
-    var q = new THREE.Quaternion();
+    let q = new THREE.Quaternion();
     q.setFromAxisAngle(axis,angle);
     mesh.quaternion.copy(q);
     

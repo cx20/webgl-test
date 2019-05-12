@@ -1,6 +1,6 @@
-var regl = createREGL();
+let regl = createREGL();
 
-var position = [
+let position = [
   [-0.5, +0.5, +0.5], [+0.5, +0.5, +0.5], [+0.5, -0.5, +0.5], [-0.5, -0.5, +0.5], // positive z face.
   [+0.5, +0.5, +0.5], [+0.5, +0.5, -0.5], [+0.5, -0.5, -0.5], [+0.5, -0.5, +0.5], // positive x face
   [+0.5, +0.5, -0.5], [-0.5, +0.5, -0.5], [-0.5, -0.5, -0.5], [+0.5, -0.5, -0.5], // negative z face
@@ -55,7 +55,7 @@ const textureCoords = [
   [0.0, 1.0],
 ];
 
-var img = new Image();
+let img = new Image();
 img.src = "../../../assets/textures/frog.jpg";  // 256x256
 img.onload = function(){
   const drawTriangle = regl({

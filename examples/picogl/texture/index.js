@@ -1,21 +1,21 @@
-var canvas = document.getElementById("c");
+let canvas = document.getElementById("c");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-var app = PicoGL.createApp(canvas)
+let app = PicoGL.createApp(canvas)
     .clearColor(1.0, 1.0, 1.0, 1.0)
     .depthTest();
 
-var vsSource = document.getElementById("vs").textContent;
-var fsSource = document.getElementById("fs").textContent;
+let vsSource = document.getElementById("vs").textContent;
+let fsSource = document.getElementById("fs").textContent;
 
-var program = app.createProgram(vsSource, fsSource);
+let program = app.createProgram(vsSource, fsSource);
 
-var image = new Image();
+let image = new Image();
 image.src = "../../../assets/textures/frog.jpg"; // 256x256
 
 image.onload = function() {
-    var texture = app.createTexture2D(image);
+    let texture = app.createTexture2D(image);
 
     // Cube data
     //             1.0 y 
@@ -35,7 +35,7 @@ image.onload = function() {
     //       |/       |/
     //      [0]------[1]
     //
-    var positions = app.createVertexBuffer(PicoGL.FLOAT, 3, new Float32Array([
+    let positions = app.createVertexBuffer(PicoGL.FLOAT, 3, new Float32Array([
         // Front face
         -0.5, -0.5,  0.5, // v0
          0.5, -0.5,  0.5, // v1
@@ -68,7 +68,7 @@ image.onload = function() {
         -0.5,  0.5, -0.5  // v7
     ]));
 
-    var textureCoords = app.createVertexBuffer(PicoGL.FLOAT, 2, new Float32Array([
+    let textureCoords = app.createVertexBuffer(PicoGL.FLOAT, 2, new Float32Array([
         // Front face
         0.0, 0.0,
         1.0, 0.0,
@@ -106,7 +106,7 @@ image.onload = function() {
         0.0, 1.0,
     ]));
 
-    var indices = app.createIndexBuffer(PicoGL.UNSIGNED_BYTE, 3, new Uint8Array([
+    let indices = app.createIndexBuffer(PicoGL.UNSIGNED_BYTE, 3, new Uint8Array([
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -115,27 +115,27 @@ image.onload = function() {
         20, 21, 22,   20, 22, 23   // Left face
     ]));
 
-    var vertexArray = app.createVertexArray()
+    let vertexArray = app.createVertexArray()
         .vertexAttributeBuffer(0, positions)
         .vertexAttributeBuffer(1, textureCoords)
         .indexBuffer(indices);
 
-    var drawCall = app.createDrawCall(program, vertexArray)
+    let drawCall = app.createDrawCall(program, vertexArray)
         .texture("texture", texture);
 
     window.onresize = function() {
         app.resize(window.innerWidth, window.innerHeight);
     };
 
-    var mvMatrix = mat4.create();
-    var pMatrix = mat4.create();
+    let mvMatrix = mat4.create();
+    let pMatrix = mat4.create();
 
-    var rad = 0;
+    let rad = 0;
     function draw() {
         rad += Math.PI * 1.0 / 180.0;
         mat4.perspective(pMatrix, 45, window.innerWidth / window.innerHeight, 0.1, 100.0);
         mat4.identity(mvMatrix);
-        var translation = vec3.create();
+        let translation = vec3.create();
         vec3.set(translation, 0.0, 0.0, -2.0);
         mat4.translate(mvMatrix, mvMatrix, translation);
         mat4.rotate(mvMatrix, mvMatrix, rad, [1, 1, 1]);

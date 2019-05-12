@@ -1,5 +1,5 @@
-var container;
-var camera, scene, renderer;
+let container;
+let camera, scene, renderer;
 
 init();
 animate();
@@ -11,27 +11,27 @@ function init() {
     camera.position.z = 2;
     scene = new THREE.Scene();
 
-    var vertexPositions = [
+    let vertexPositions = [
         [ 0.0,  0.5, 0.0], // v0
         [-0.5, -0.5, 0.0], // v1
         [ 0.5, -0.5, 0.0]  // v2
     ];
-    var vertices = new Float32Array(vertexPositions.length * 3);
-    for (var i = 0; i < vertexPositions.length; i++) {
+    let vertices = new Float32Array(vertexPositions.length * 3);
+    for (let i = 0; i < vertexPositions.length; i++) {
         vertices[i * 3 + 0] = vertexPositions[i][0];
         vertices[i * 3 + 1] = vertexPositions[i][1];
         vertices[i * 3 + 2] = vertexPositions[i][2];
     }
     
-    var geometry = new THREE.BufferGeometry();
+    let geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
     
-    var material = new THREE.RawShaderMaterial({
+    let material = new THREE.RawShaderMaterial({
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent
     });
 
-    var mesh = new THREE.Mesh(geometry, material);
+    let mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
     renderer = new THREE.WebGLRenderer();

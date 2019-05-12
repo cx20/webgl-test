@@ -1,8 +1,8 @@
-var canvas;
+let canvas;
 canvas = document.getElementById('canvas');
 document.body.appendChild(canvas);
 RedGL(canvas, function (v) {
-    var tWorld, tView, tScene, tController, tRenderer, tTexture, tMaterial
+    let tWorld, tView, tScene, tController, tRenderer, tTexture, tMaterial
     this['world'] = tWorld = RedWorld();
     tScene = RedScene(this);
     tScene.useBackgroundColor = true;
@@ -14,10 +14,10 @@ RedGL(canvas, function (v) {
     tView = RedView('HelloRedGL', this, tScene, tController);
     tWorld.addView(tView);
     
-    var interleaveData;
-    var indexData;
-    var tInterleaveBuffer, tIndexBuffer;
-    var self = this;
+    let interleaveData;
+    let indexData;
+    let tInterleaveBuffer, tIndexBuffer;
+    let self = this;
 
     // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
     $.getJSON("../../../assets/json/teapot.json", function (data) {
@@ -26,9 +26,9 @@ RedGL(canvas, function (v) {
         vertexNormals = data.vertexNormals;
         indices = data.indices;
 
-        var interleaveDataBuffer = [];
-        var len = vertexPositions.length / 3;
-        for (var i = 0; i < len; i++ ) {
+        let interleaveDataBuffer = [];
+        let len = vertexPositions.length / 3;
+        for (let i = 0; i < len; i++ ) {
             interleaveDataBuffer.push(vertexPositions[i*3+0]);
             interleaveDataBuffer.push(vertexPositions[i*3+1]);
             interleaveDataBuffer.push(vertexPositions[i*3+2]);
@@ -60,10 +60,10 @@ RedGL(canvas, function (v) {
         );
         
         // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
-        var tTexture = RedBitmapTexture(self, '../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
-        var tMaterial = RedStandardMaterial(self, tTexture);
+        let tTexture = RedBitmapTexture(self, '../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
+        let tMaterial = RedStandardMaterial(self, tTexture);
         
-        var tDLight = RedDirectionalLight(self);
+        let tDLight = RedDirectionalLight(self);
         tDLight.x = 1;
         tDLight.y = 0;
         tDLight.z = 1;

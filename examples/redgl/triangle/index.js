@@ -1,8 +1,8 @@
-var canvas;
+let canvas;
 canvas = document.getElementById('canvas');
 document.body.appendChild(canvas);
 RedGL(canvas, function (v) {
-    var tWorld, tView, tScene, tController, tRenderer;
+    let tWorld, tView, tScene, tController, tRenderer;
     this['world'] = tWorld = RedWorld();
     tScene = RedScene(this);
     tScene.useBackgroundColor = true;
@@ -14,9 +14,9 @@ RedGL(canvas, function (v) {
     tView = RedView('HelloRedGL', this, tScene, tController);
     tWorld.addView(tView);
     
-    var interleaveData;
-    var indexData;
-    var tInterleaveBuffer, tIndexBuffer;
+    let interleaveData;
+    let indexData;
+    let tInterleaveBuffer, tIndexBuffer;
     interleaveData = new Float32Array(
         [
              0.0,  0.5, 0.0,

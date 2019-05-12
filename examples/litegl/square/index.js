@@ -1,4 +1,4 @@
-var gl = GL.create({width: 465, height:465});
+let gl = GL.create({width: 465, height:465});
 resizeCanvas();
 window.addEventListener("resize", function(){
     resizeCanvas();
@@ -28,28 +28,28 @@ document.body.appendChild(gl.canvas);
 //         |        |
 //        [2]------[3]
 //
-var vertices = [
+let vertices = [
     -0.5, 0.5, 0.0, // v0
      0.5, 0.5, 0.0, // v1 
     -0.5,-0.5, 0.0, // v2
      0.5,-0.5, 0.0  // v3
 ];
 
-var colors = [
+let colors = [
     1.0, 0.0, 0.0, 1.0, // v0
     0.0, 1.0, 0.0, 1.0, // v1
     0.0, 0.0, 1.0, 1.0, // v2
     1.0, 1.0, 0.0, 1.0  // v3
 ];
 
-var mesh = GL.Mesh.load({vertices: vertices, colors: colors});
+let mesh = GL.Mesh.load({vertices: vertices, colors: colors});
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );
 
-var mode = gl.TRIANGLE_STRIP;
+let mode = gl.TRIANGLE_STRIP;
 
 gl.ondraw = function() {
     gl.clearColor(1.0, 1.0, 1.0, 1.0);

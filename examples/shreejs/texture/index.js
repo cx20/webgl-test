@@ -1,8 +1,9 @@
-var container;
-var camera, scene, renderer;
-var mesh;
+let container;
+let camera, scene, renderer;
+let mesh;
+let rad = 0;
 
-var img = new Image();
+let img = new Image();
 img.onload = function(event) {
     init();
     animate();
@@ -34,7 +35,7 @@ function init() {
     //       |/       |/
     //      [0]------[1]
     //
-    var vertexPositions = [
+    let vertexPositions = [
             // Front face
             -0.5, -0.5,  0.5, // v0
              0.5, -0.5,  0.5, // v1
@@ -67,7 +68,7 @@ function init() {
             -0.5, -0.5, -0.5  // v4
     ];
     
-    var texcoord = new Float32Array([
+    let texcoord = new Float32Array([
         // Front face
         1, 0,
         0, 0,
@@ -100,7 +101,7 @@ function init() {
         1, 1
     ]);
 
-    var geometry = new SHREE.Geometry();
+    let geometry = new SHREE.Geometry();
     geometry.addAttribute('position', 3, vertexPositions);
     geometry.addAttribute('textureCoord', 2, texcoord);
     geometry.index = [
@@ -111,7 +112,7 @@ function init() {
         16, 17, 18,   16, 18, 19,  // Right face
         20, 21, 22,   20, 22, 23   // Left face
     ];
-    var material = new SHREE.Material({
+    let material = new SHREE.Material({
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent,
         uniforms: { texture: { type: 't', value: img } },
@@ -132,7 +133,6 @@ function animate() {
     render();
 }
 
-var rad = 0;
 function render() {
     rad += Math.PI * 1.0 / 180.0
     mesh.rotation.x = rad;

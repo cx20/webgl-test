@@ -1,5 +1,5 @@
-var gl = GL.create();
-var mesh = new GL.Mesh();
+let gl = GL.create();
+let mesh = new GL.Mesh();
 mesh.vertices = [
     [ 0.0, 0.5, 0.0], 
     [-0.5,-0.5, 0.0], 
@@ -9,7 +9,7 @@ mesh.vertices = [
 mesh.triangles = [[0, 1, 2]];
 mesh.compile();
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );

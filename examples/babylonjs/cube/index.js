@@ -1,7 +1,7 @@
-var cube;
-var createScene = function(engine) {
-    var scene = new BABYLON.Scene(engine);
-    var camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -3), scene);
+let cube;
+let createScene = function(engine) {
+    let scene = new BABYLON.Scene(engine);
+    let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -3), scene);
     cube = new BABYLON.Mesh('cube', scene);
     scene.clearColor = new BABYLON.Color3(1, 1, 1);
 
@@ -23,7 +23,7 @@ var createScene = function(engine) {
     //       |/       |/
     //      [0]------[1]
     //
-    var positions = [
+    let positions = [
             // Front face
             -0.5, -0.5,  0.5, // v0
              0.5, -0.5,  0.5, // v1
@@ -55,7 +55,7 @@ var createScene = function(engine) {
             -0.5,  0.5, -0.5, // v7
             -0.5, -0.5, -0.5  // v4
     ];
-    var colors = [
+    let colors = [
             1.0, 0.0, 0.0, 1.0, // Front face
             1.0, 0.0, 0.0, 1.0, // Front face
             1.0, 0.0, 0.0, 1.0, // Front face
@@ -81,7 +81,7 @@ var createScene = function(engine) {
             0.0, 0.0, 1.0, 1.0, // Left face
             0.0, 0.0, 1.0, 1.0  // Left face
     ];
-    var indices = [
+    let indices = [
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -94,7 +94,7 @@ var createScene = function(engine) {
     cube.setVerticesData(BABYLON.VertexBuffer.ColorKind, colors, true);
     cube.setIndices(indices);
 
-    var material = new BABYLON.ShaderMaterial("material", scene, {
+    let material = new BABYLON.ShaderMaterial("material", scene, {
         vertexElement: "vs",
         fragmentElement: "fs",
     }, {
@@ -108,9 +108,9 @@ var createScene = function(engine) {
     return scene;
 }
 
-var canvas = document.querySelector("#c");
-var engine = new BABYLON.Engine(canvas, true);
-var scene = createScene(engine);
+let canvas = document.querySelector("#c");
+let engine = new BABYLON.Engine(canvas, true);
+let scene = createScene(engine);
 
 engine.runRenderLoop(function () {
     cube.rotate(BABYLON.Axis.X, Math.PI * 1.0 / 180.0, BABYLON.Space.LOCAL);

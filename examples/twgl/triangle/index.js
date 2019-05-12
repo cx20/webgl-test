@@ -1,5 +1,5 @@
-var c = document.getElementById("c");
-var gl = twgl.getWebGLContext(c);
+let c = document.getElementById("c");
+let gl = twgl.getWebGLContext(c);
 resizeCanvas();
 window.addEventListener("resize", function(){
     resizeCanvas();
@@ -10,9 +10,9 @@ function resizeCanvas() {
     gl.canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 }
-var programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+let programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 
-var arrays = {
+let arrays = {
     position: [ 
          0.0, 0.5, 0.0, // v0
         -0.5,-0.5, 0.0, // v1
@@ -20,7 +20,7 @@ var arrays = {
     ]
 };
 
-var bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+let bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 
 function render() {
     gl.useProgram(programInfo.program);

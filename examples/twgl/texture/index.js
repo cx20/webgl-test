@@ -1,6 +1,6 @@
 "use strict";
-var m4 = twgl.m4;
-var gl = twgl.getWebGLContext(document.getElementById("c"));
+let m4 = twgl.m4;
+let gl = twgl.getWebGLContext(document.getElementById("c"));
 resizeCanvas();
 window.addEventListener("resize", function(){
     resizeCanvas();
@@ -11,7 +11,7 @@ function resizeCanvas() {
     gl.canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 }
-var programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+let programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 
 // Cube data
 //             1.0 y 
@@ -31,7 +31,7 @@ var programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 //       |/       |/
 //      [0]------[1]
 //
-var arrays = {
+let arrays = {
     position: [ 
         // Front face
         -0.5, -0.5,  0.5, // v0
@@ -106,33 +106,33 @@ var arrays = {
     ]
 };
 
-var bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+let bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 
-var tex = twgl.createTexture(gl, {
+let tex = twgl.createTexture(gl, {
     src: "../../../assets/textures/frog.jpg"  // 256x256
 });
 
-var uniforms = {
+let uniforms = {
     u_texture: tex
 };
 
-var projection = m4.perspective(30 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, 0.5, 10);
-var eye = [0, 0, -4];
-var target = [0, 0, 0];
-var up = [0, 1, 0];
+let projection = m4.perspective(30 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, 0.5, 10);
+let eye = [0, 0, -4];
+let target = [0, 0, 0];
+let up = [0, 1, 0];
 
-var camera = m4.lookAt(eye, target, up);
-var view = m4.inverse(camera);
-var viewProjection = m4.multiply(view, projection);
+let camera = m4.lookAt(eye, target, up);
+let view = m4.inverse(camera);
+let viewProjection = m4.multiply(view, projection);
 
-var rad = 0;
+let rad = 0;
 function render() {
     rad += Math.PI * 1.0 / 180.0;
     
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    var world = m4.create();
+    let world = m4.create();
     world = m4.rotateX(world, rad);
     world = m4.rotateY(world, rad);
     world = m4.rotateZ(world, rad);

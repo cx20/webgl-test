@@ -1,4 +1,4 @@
-var render = {
+let render = {
     env: {
         clear_color: [1.0, 1.0, 1.0, 1.0]
     },
@@ -82,8 +82,8 @@ var render = {
     }]
 };
 
-var wwg = new WWG();
-var can = document.getElementById('screen1');
+let wwg = new WWG();
+let can = document.getElementById('screen1');
 wwg.init(can);
 resizeCanvas();
 window.addEventListener("resize", function(){
@@ -96,8 +96,8 @@ function resizeCanvas() {
     wwg.gl.viewport(0, 0, wwg.can.width, wwg.can.height);
 }
 
-var r = wwg.createRender();
-var p = {
+let r = wwg.createRender();
+let p = {
     camRX: 30,
     camRY: -30,
     rotX: 0,
@@ -105,25 +105,25 @@ var p = {
     ofsY: 0
 };
 r.setRender(render).then(function() {
-    var st = new Date().getTime();
-    var lt = st;
-    var eyex = 0;
-    var eyey = 0;
-    var eyez = 3;
-    var centerx = 0;
-    var centery = 0;
-    var centerz = 0;
-    var upx = 0;
-    var upy = 1;
-    var upz = 0;
-    var fovy = 40;
-    var aspect = window.innerWidth / window.innerHeight;
-    var zNear = 0.1;
-    var zFar = 1000;
+    let st = new Date().getTime();
+    let lt = st;
+    let eyex = 0;
+    let eyey = 0;
+    let eyez = 3;
+    let centerx = 0;
+    let centery = 0;
+    let centerz = 0;
+    let upx = 0;
+    let upy = 1;
+    let upz = 0;
+    let fovy = 40;
+    let aspect = window.innerWidth / window.innerHeight;
+    let zNear = 0.1;
+    let zFar = 1000;
     (function loop() {
         window.requestAnimationFrame(loop);
-        var ct = new Date().getTime();
-        var tint = (ct - st);
+        let ct = new Date().getTime();
+        let tint = (ct - st);
         r.draw({
             vs_uni: {
                 mvpMatrix: new CanvasMatrix4().

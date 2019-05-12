@@ -1,20 +1,20 @@
-var prg;
-var VBO;
-var IBO;
-var mat4 = gl3.Math.Mat4;
-var mMatrix;
-var vMatrix;
-var pMatrix;
-var vpMatrix;
-var mvpMatrix;
-var rad = 0;
+let prg;
+let VBO;
+let IBO;
+let mat4 = gl3.Math.Mat4;
+let mMatrix;
+let vMatrix;
+let pMatrix;
+let vpMatrix;
+let mvpMatrix;
+let rad = 0;
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {
-    var vertexPositions = data.vertexPositions;
-    var vertexTextureCoords = data.vertexTextureCoords;
-    var vertexNormals = data.vertexNormals;
-    var indices = data.indices;
+    let vertexPositions = data.vertexPositions;
+    let vertexTextureCoords = data.vertexTextureCoords;
+    let vertexNormals = data.vertexNormals;
+    let indices = data.indices;
 
     function init(){
         gl3.init('c');
@@ -70,18 +70,18 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
 
         prg.useProgram();
         prg.setAttribute(VBO, IBO);
-        var cameraPosition = [0.0, 0.0, 50.0];
-        var centerPoint    = [0.0, 0.0, 0.0];
-        var cameraUp       = [0.0, 1.0, 0.0];
+        let cameraPosition = [0.0, 0.0, 50.0];
+        let centerPoint    = [0.0, 0.0, 0.0];
+        let cameraUp       = [0.0, 1.0, 0.0];
         mat4.lookAt(cameraPosition, centerPoint, cameraUp, vMatrix);
 
-        var fovy = 45;
-        var aspect = gl3.canvas.width / gl3.canvas.height;
-        var near = 0.1;
-        var far = 1000.0;
+        let fovy = 45;
+        let aspect = gl3.canvas.width / gl3.canvas.height;
+        let near = 0.1;
+        let far = 1000.0;
         mat4.perspective(fovy, aspect, near, far, pMatrix);
 
-        var axis = [0.0, 1.0, 0.0];
+        let axis = [0.0, 1.0, 0.0];
         mat4.identity(mMatrix);
         mat4.rotate(mMatrix, rad, axis, mMatrix);
         mat4.multiply(pMatrix, vMatrix, vpMatrix);

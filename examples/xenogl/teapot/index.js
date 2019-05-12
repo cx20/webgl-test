@@ -1,15 +1,15 @@
-var xgl;
-var program;
-var uMVMatrix;
-var uPMatrix;
-var uTexture;
+let xgl;
+let program;
+let uMVMatrix;
+let uPMatrix;
+let uTexture;
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {
-    var vertexPositions = data.vertexPositions;
-    var vertexTextureCoords = data.vertexTextureCoords;
-    var vertexNormals = data.vertexNormals;
-    var indices = data.indices;
+    let vertexPositions = data.vertexPositions;
+    let vertexTextureCoords = data.vertexTextureCoords;
+    let vertexNormals = data.vertexNormals;
+    let indices = data.indices;
 
     function initWebGL() {
         const canvas = document.createElement('canvas');

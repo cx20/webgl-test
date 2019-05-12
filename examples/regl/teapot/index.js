@@ -1,11 +1,11 @@
-var regl = createREGL();
+let regl = createREGL();
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
-var img = new Image();
+let img = new Image();
 img.src = "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg";
 img.onload = function(){
 
@@ -15,25 +15,25 @@ img.onload = function(){
         vertexNormals = data.vertexNormals;
         indices = data.indices;
         
-        var positions = [];
-        var textureCoords = [];
-        var normals = [];
-        var indices_ = [];
+        let positions = [];
+        let textureCoords = [];
+        let normals = [];
+        let indices_ = [];
         
-        for (var i = 0; i < vertexPositions.length; i += 3 ) {
+        for (let i = 0; i < vertexPositions.length; i += 3 ) {
             positions.push( [vertexPositions[i+0], vertexPositions[i+1], vertexPositions[i+2] ]);
         }
-        for (var i = 0; i < vertexTextureCoords.length; i += 2 ) {
+        for (let i = 0; i < vertexTextureCoords.length; i += 2 ) {
             textureCoords.push( [vertexTextureCoords[i+0], vertexTextureCoords[i+1] ]);
         }
-        for (var i = 0; i < vertexNormals.length; i += 3 ) {
+        for (let i = 0; i < vertexNormals.length; i += 3 ) {
             normals.push( [vertexNormals[i+0], vertexNormals[i+1], vertexNormals[i+2] ]);
         }
-        for (var i = 0; i < indices.length; i += 3 ) {
+        for (let i = 0; i < indices.length; i += 3 ) {
             indices_.push( [indices[i+0], indices[i+1], indices[i+2] ]);
         }
         
-        var texture = regl.texture(img);
+        let texture = regl.texture(img);
         
         const drawTriangle = regl({
           vert: document.getElementById("vs").textContent,

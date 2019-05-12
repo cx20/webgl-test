@@ -1,5 +1,5 @@
-var xgl;
-var program;
+let xgl;
+let program;
 
 function initWebGL() {
     const canvas = document.createElement('canvas');

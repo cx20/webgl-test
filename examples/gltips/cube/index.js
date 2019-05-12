@@ -1,14 +1,14 @@
-var c, gl;
-var aLoc = [];
-var uLoc = [];
-var fps = 1000 / 30;
+let c, gl;
+let aLoc = [];
+let uLoc = [];
+let fps = 1000 / 30;
 
-var mvMatrix = mat4.create();
-var pMatrix = mat4.create();
+let mvMatrix = mat4.create();
+let pMatrix = mat4.create();
 
-var vertexPositionBuffer;
-var vertexColorBuffer;
-var vertexIndexBuffer;
+let vertexPositionBuffer;
+let vertexColorBuffer;
+let vertexIndexBuffer;
 
 function initWebGL() {
     c = document.getElementById("c");
@@ -27,9 +27,9 @@ function resizeCanvas() {
 }
 
 function initShaders() {
-    var vsText = document.getElementById("vs").textContent;
-    var fsText = document.getElementById("fs").textContent;
-    var p = setupShaderProgramFromSource(gl, vsText, fsText);
+    let vsText = document.getElementById("vs").textContent;
+    let fsText = document.getElementById("fs").textContent;
+    let p = setupShaderProgramFromSource(gl, vsText, fsText);
     gl.useProgram(p);
     aLoc[0] = gl.getAttribLocation(p, "position");
     aLoc[1] = gl.getAttribLocation(p, "color");
@@ -61,7 +61,7 @@ function initBuffers() {
     //       |/       |/
     //      [0]------[1]
     //
-    var positions = [ 
+    let positions = [ 
         // Front face
         -0.5, -0.5,  0.5, // v0
          0.5, -0.5,  0.5, // v1
@@ -97,7 +97,7 @@ function initBuffers() {
 
     vertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-    var colors = [
+    let colors = [
         [1.0, 0.0, 0.0, 1.0], // Front face
         [1.0, 1.0, 0.0, 1.0], // Back face
         [0.0, 1.0, 0.0, 1.0], // Top face
@@ -105,10 +105,10 @@ function initBuffers() {
         [1.0, 0.0, 1.0, 1.0], // Right face
         [0.0, 0.0, 1.0, 1.0]  // Left face
     ];
-    var unpackedColors = [];
-    for (var i in colors) {
-        var color = colors[i];
-        for (var j=0; j < 4; j++) {
+    let unpackedColors = [];
+    for (let i in colors) {
+        let color = colors[i];
+        for (let j=0; j < 4; j++) {
             unpackedColors = unpackedColors.concat(color);
         }
     }
@@ -116,7 +116,7 @@ function initBuffers() {
 
     vertexIndexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
-    var indices = [
+    let indices = [
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -132,12 +132,12 @@ function render() {
     requestAnimationFrame(render);
 }
 
-var rad = 0;
+let rad = 0;
 function draw() {
     rad += Math.PI * 1.0 / 180.0;
     mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 100.0);
     mat4.identity(mvMatrix);
-    var translation = vec3.create();
+    let translation = vec3.create();
     vec3.set(translation, 0.0, 0.0, -3.0);
     mat4.translate(mvMatrix, mvMatrix, translation);
     mat4.rotate(mvMatrix, mvMatrix, rad, [1, 1, 1]);

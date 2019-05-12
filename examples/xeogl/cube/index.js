@@ -1,4 +1,4 @@
-var geometry = new xeogl.Geometry({
+let geometry = new xeogl.Geometry({
     primitive: "triangles",
     // Cube data
     //             1.0 y 
@@ -154,16 +154,16 @@ var geometry = new xeogl.Geometry({
     ]
 });
 
-var material = new xeogl.PhongMaterial({
+let material = new xeogl.PhongMaterial({
     ambient: [1.0, 1.0, 1.0],
     diffuse: [1, 1, 1]
 });
 
-var ambientLight = new xeogl.AmbientLight({
+let ambientLight = new xeogl.AmbientLight({
     color: [1.0, 1.0, 1.0]
 });
 
-var mesh = new xeogl.Mesh({
+let mesh = new xeogl.Mesh({
     geometry: geometry,
     material: material
 });

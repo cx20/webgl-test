@@ -1,5 +1,5 @@
-var container;
-var camera, scene, renderer;
+let container;
+let camera, scene, renderer;
 
 init();
 animate();
@@ -10,32 +10,32 @@ function init() {
     camera.position.z = 2;
     scene = new SHREE.Scene();
 
-    var vertexPositions = [
+    let vertexPositions = [
          0.0, 0.5, 0.0, // v0
         -0.5,-0.5, 0.0, // v1
          0.5,-0.5, 0.0  // v2
     ];
     
-    var vertexColors = [
+    let vertexColors = [
         0.0, 0.0, 1.0, 1.0, // v0
         0.0, 0.0, 1.0, 1.0, // v1
         0.0, 0.0, 1.0, 1.0  // v2
     ];
 
-    var geometry = new SHREE.Geometry();
+    let geometry = new SHREE.Geometry();
     geometry.addAttribute('position', 3, vertexPositions);
     geometry.addAttribute('color', 4, vertexColors);
     geometry.index = [
         0, 1, 2 // v0-v1-v2
     ];
     
-    var material = new SHREE.Material({
+    let material = new SHREE.Material({
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent,
         side: 'SIDE_DOUBLE'
    });
 
-    var mesh = new SHREE.Mesh(geometry, material);
+    let mesh = new SHREE.Mesh(geometry, material);
     scene.add(mesh);
 
     renderer = new SHREE.Renderer();

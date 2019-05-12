@@ -1,6 +1,6 @@
-var gl = GL.create();
-var mesh = new GL.Mesh({coords: true});
-var texture = GL.Texture.fromURL('../../../assets/textures/frog.jpg');    // 256x256
+let gl = GL.create();
+let mesh = new GL.Mesh({coords: true});
+let texture = GL.Texture.fromURL('../../../assets/textures/frog.jpg');    // 256x256
 
 // Cube data
 //             1.0 y 
@@ -101,12 +101,12 @@ mesh.triangles = [
 ];
 mesh.compile();
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );
 
-var angle = 0;
+let angle = 0;
 gl.onupdate = function(seconds) {
     angle += 1.0;
 };

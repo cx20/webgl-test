@@ -1,5 +1,5 @@
-var gl = GL.create();
-var mesh = new GL.Mesh({colors:true});
+let gl = GL.create();
+let mesh = new GL.Mesh({colors:true});
 
 // Cube data
 //             1.0 y 
@@ -89,12 +89,12 @@ mesh.triangles = [
 ];
 mesh.compile();
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );
 
-var angle = 0;
+let angle = 0;
 gl.onupdate = function(seconds) {
     angle += 1.0;
 };

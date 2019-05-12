@@ -1,4 +1,4 @@
-var render = {
+let render = {
     env: {
         clear_color: [1.0, 1.0, 1.0, 1.0]
     },
@@ -31,7 +31,7 @@ var render = {
         }
     }]
 };
-var wwg = new WWG();
+let wwg = new WWG();
 wwg.init(document.getElementById('screen1'));
 resizeCanvas();
 window.addEventListener("resize", function(){
@@ -44,7 +44,7 @@ function resizeCanvas() {
     wwg.gl.viewport(0, 0, wwg.can.width, wwg.can.height);
 }
 
-var r = wwg.createRender();
+let r = wwg.createRender();
 r.setRender(render).then(function() {
     console.log(r);
     r.draw();

@@ -1,5 +1,5 @@
-var canvas = document.getElementById('c');
-var app = new pc.Application(canvas, {
+let canvas = document.getElementById('c');
+let app = new pc.Application(canvas, {
     mouse: new pc.Mouse(document.body),
     touch: new pc.TouchDevice(document.body)
 });
@@ -12,7 +12,7 @@ app.on("update", function (dt) {
 
 app.scene.ambientLight = new pc.Color(1, 1, 1);
 
-var camera = new pc.Entity();
+let camera = new pc.Entity();
 camera.addComponent('camera', {
     clearColor: new pc.Color(1, 1, 1),
     farClip: 1000,
@@ -23,9 +23,9 @@ camera.translate(0,0,2.5);
 camera.lookAt(0,0,0);
 app.root.addChild(camera);
 
-var Cube = pc.createScript('cube');
+let Cube = pc.createScript('cube');
 Cube.prototype.initialize = function () {
-    var node = new pc.scene.GraphNode();
+    let node = new pc.scene.GraphNode();
     // Cube data
     //             1.0 y 
     //              ^  -1.0 
@@ -44,7 +44,7 @@ Cube.prototype.initialize = function () {
     //       |/       |/
     //      [0]------[1]
     //
-    var positions = [ 
+    let positions = [ 
         // Front face
         -0.5, -0.5,  0.5, // v0
          0.5, -0.5,  0.5, // v1
@@ -76,7 +76,7 @@ Cube.prototype.initialize = function () {
         -0.5,  0.5, -0.5, // v7
         -0.5, -0.5, -0.5  // v4
     ];
-    var textureCoords = [
+    let textureCoords = [
         // Front face
         0.0, 0.0,
         1.0, 0.0,
@@ -113,7 +113,7 @@ Cube.prototype.initialize = function () {
         1.0, 1.0,
         0.0, 1.0,
     ];
-    var indices = [
+    let indices = [
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -121,20 +121,20 @@ Cube.prototype.initialize = function () {
         16, 17, 18,   16, 18, 19,  // Right face
         20, 21, 22,   20, 22, 23   // Left face
     ];
-    var options = {
+    let options = {
         indices: indices,
         uvs: textureCoords
     };
-    var mesh = pc.createMesh(app.graphicsDevice, positions, options);
+    let mesh = pc.createMesh(app.graphicsDevice, positions, options);
 
-    var material = new pc.StandardMaterial();
+    let material = new pc.StandardMaterial();
     material.diffuseMap = getTexture();
     material.cull = pc.CULLFACE_NONE;
 
     function getTexture () {
-        var texture = new pc.gfx.Texture(app.graphicsDevice);
+        let texture = new pc.gfx.Texture(app.graphicsDevice);
         
-        var img = new Image();
+        let img = new Image();
         img.onload = function () {
             texture.minFilter = pc.gfx.FILTER_LINEAR;
             texture.magFilter = pc.gfx.FILTER_LINEAR;
@@ -146,9 +146,9 @@ Cube.prototype.initialize = function () {
         return texture;
     }
 
-    var instance = new pc.scene.MeshInstance(node, mesh, material);
+    let instance = new pc.scene.MeshInstance(node, mesh, material);
 
-    var model = new pc.scene.Model();
+    let model = new pc.scene.Model();
     model.graph = node;
     model.meshInstances = [ instance ];
 
@@ -160,7 +160,7 @@ Cube.prototype.update = function (deltaTime) {
     this.entity.rotate(deltaTime * 50, deltaTime * 50, deltaTime * 50);
 };
 
-var cube = new pc.Entity();
+let cube = new pc.Entity();
 app.root.addChild(cube);
 cube.addComponent('script');
 cube.script.create('cube');

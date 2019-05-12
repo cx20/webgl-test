@@ -1,11 +1,12 @@
-var container;
-var camera, scene, renderer;
-var mesh;
+let container;
+let camera, scene, renderer;
+let mesh;
+let angle = 0;
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 function init() {
     container = document.getElementById('container');
@@ -13,22 +14,22 @@ function init() {
     camera.position.z = 35;
     scene = new THREE.Scene();
 
-    var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
+    let directionalLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
     directionalLight.position.set( 1, 0, 1 );
     scene.add( directionalLight );
 
-    var geometry = new THREE.BufferGeometry();
+    let geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(vertexPositions), 3));
     geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(vertexNormals), 3));
     geometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(vertexTextureCoords), 2));
     geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices),1));
     
-    var loader = new THREE.TextureLoader();
+    let loader = new THREE.TextureLoader();
     // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
-    var texture = loader.load('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
+    let texture = loader.load('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    var material = new THREE.MeshLambertMaterial({
+    let material = new THREE.MeshLambertMaterial({
         map: texture
     });
 
@@ -46,12 +47,10 @@ function animate() {
     render();
 }
 
-var angle = 0;
-
 function render() {
-    var axis = new THREE.Vector3(0, 1, 0).normalize();
+    let axis = new THREE.Vector3(0, 1, 0).normalize();
     angle += Math.PI / 180;
-    var q = new THREE.Quaternion();
+    let q = new THREE.Quaternion();
     q.setFromAxisAngle(axis,angle);
     mesh.quaternion.copy(q);
     

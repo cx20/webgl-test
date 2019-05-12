@@ -1,10 +1,10 @@
 "use strict";
-var m4 = twgl.m4;
-var gl = twgl.getWebGLContext(document.getElementById("c"));
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let m4 = twgl.m4;
+let gl = twgl.getWebGLContext(document.getElementById("c"));
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 resizeCanvas();
 window.addEventListener("resize", function(){
@@ -16,27 +16,27 @@ function resizeCanvas() {
     gl.canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 }
-var programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
-var uniforms = {};
-var bufferInfo;
+let programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+let uniforms = {};
+let bufferInfo;
 
-var projection = m4.perspective(45 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, 0.1, 1000);
-var eye = [0, 0, -50];
-var target = [0, 0, 0];
-var up = [0, 1, 0];
+let projection = m4.perspective(45 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, 0.1, 1000);
+let eye = [0, 0, -50];
+let target = [0, 0, 0];
+let up = [0, 1, 0];
 
-var camera = m4.lookAt(eye, target, up);
-var view = m4.inverse(camera);
-var viewProjection = m4.multiply(view, projection);
+let camera = m4.lookAt(eye, target, up);
+let view = m4.inverse(camera);
+let viewProjection = m4.multiply(view, projection);
 
-var rad = 0;
+let rad = 0;
 function render() {
     rad += Math.PI * 1.0 / 180.0;
     
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    var world = m4.create();
+    let world = m4.create();
     //world = m4.rotateX(world, rad);
     world = m4.rotateY(world, rad);
     //world = m4.rotateZ(world, rad);
@@ -58,7 +58,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexNormals = data.vertexNormals;
     indices = data.indices;
 
-    var arrays = {
+    let arrays = {
         position: vertexPositions,
         normal: vertexNormals,
         texcoord: vertexTextureCoords,
@@ -67,7 +67,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
 
     bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 
-    var tex = twgl.createTexture(gl, {
+    let tex = twgl.createTexture(gl, {
         // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
         src: "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg"
     });

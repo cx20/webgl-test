@@ -1,7 +1,7 @@
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {
@@ -10,23 +10,23 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexNormals = data.vertexNormals;
     indices = data.indices;
 
-    var app = clay.application.create('#viewport', {
+    let app = clay.application.create('#viewport', {
         init: function (app) {
             app.renderer.clearColor = [0, 0, 0, 1];
-            var camera = app.createCamera(null, null, 'perspective');
+            let camera = app.createCamera(null, null, 'perspective');
             camera.position.set(0, 0, 50);
-            var geometry = new clay.StaticGeometry();
+            let geometry = new clay.StaticGeometry();
             geometry.attributes.position.fromArray(vertexPositions);
             geometry.attributes.normal.fromArray(vertexNormals);
             geometry.attributes.texcoord0.fromArray(vertexTextureCoords);
             geometry.initIndicesFromArray(indices);
 
-            var vs = document.getElementById('vs').textContent;
-            var fs = document.getElementById('fs').textContent;
-            var material= new clay.Material({
+            let vs = document.getElementById('vs').textContent;
+            let fs = document.getElementById('fs').textContent;
+            let material= new clay.Material({
                 shader: new clay.Shader(vs, fs)
             });
-            var diffuse = new clay.Texture2D;
+            let diffuse = new clay.Texture2D;
             // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
             diffuse.load("../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg");
             material.set('texture', diffuse);

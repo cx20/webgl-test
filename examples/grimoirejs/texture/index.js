@@ -1,8 +1,8 @@
-var GeometryFactory = gr.lib.fundamental.Geometry.GeometryFactory;
-var Geometry = gr.lib.fundamental.Geometry.Geometry;
+let GeometryFactory = gr.lib.fundamental.Geometry.GeometryFactory;
+let Geometry = gr.lib.fundamental.Geometry.Geometry;
 GeometryFactory.addType("custom", {}, function(gl,attrs){
-  var geometry = new Geometry(gl);
-  var positions = new Float32Array([
+  let geometry = new Geometry(gl);
+  let positions = new Float32Array([
     // Front face
     -0.5, -0.5,  0.5, // v0
      0.5, -0.5,  0.5, // v1
@@ -34,7 +34,7 @@ GeometryFactory.addType("custom", {}, function(gl,attrs){
     -0.5,  0.5, -0.5, // v7
     -0.5, -0.5, -0.5  // v4
   ]);
-  var texcoords = new Float32Array([
+  let texcoords = new Float32Array([
     // Front face
     0.0, 0.0,
     1.0, 0.0,
@@ -81,7 +81,7 @@ GeometryFactory.addType("custom", {}, function(gl,attrs){
       size: 2
     }
   });
-  var indices = [
+  let indices = [
      0,  1,  2,    0,  2 , 3,  // Front face
      4,  5,  6,    4,  6 , 7,  // Back face
      8,  9, 10,    8, 10, 11,  // Top face
@@ -109,12 +109,12 @@ gr.registerComponent('Rotate', {
   },
 });
 
-var Base64 = {
+let Base64 = {
   encode: function(str) {
     return btoa(unescape(encodeURIComponent(str)));
   }
 };
 
 gr(function() {
-  var $$ = gr('#canvas');
+  let $$ = gr('#canvas');
 });

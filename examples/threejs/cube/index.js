@@ -1,6 +1,7 @@
-var container;
-var camera, scene, renderer;
-var mesh;
+let container;
+let camera, scene, renderer;
+let mesh;
+let angle = 0;
 
 init();
 animate();
@@ -29,7 +30,7 @@ function init() {
     //       |/       |/
     //      [0]------[1]
     //
-    var vertexPositions = [
+    let vertexPositions = [
             // Front face
             [-0.5, -0.5,  0.5], // v0
             [ 0.5, -0.5,  0.5], // v1
@@ -61,14 +62,14 @@ function init() {
             [-0.5,  0.5, -0.5], // v7
             [-0.5, -0.5, -0.5]  // v4
     ];
-    var vertices = new Float32Array(vertexPositions.length * 3);
-    for (var i = 0; i < vertexPositions.length; i++) {
+    let vertices = new Float32Array(vertexPositions.length * 3);
+    for (let i = 0; i < vertexPositions.length; i++) {
         vertices[i * 3 + 0] = vertexPositions[i][0];
         vertices[i * 3 + 1] = vertexPositions[i][1];
         vertices[i * 3 + 2] = vertexPositions[i][2];
     }
 
-    var vertexColors = [
+    let vertexColors = [
             [1.0, 0.0, 0.0, 1.0], // Front face
             [1.0, 0.0, 0.0, 1.0], // Front face
             [1.0, 0.0, 0.0, 1.0], // Front face
@@ -94,15 +95,15 @@ function init() {
             [0.0, 0.0, 1.0, 1.0], // Left face
             [0.0, 0.0, 1.0, 1.0]  // Left face
     ];
-    var colors = new Float32Array(vertexColors.length * 4);
-    for (var i = 0; i < vertexColors.length; i++) {
+    let colors = new Float32Array(vertexColors.length * 4);
+    for (let i = 0; i < vertexColors.length; i++) {
         colors[i * 4 + 0] = vertexColors[i][0];
         colors[i * 4 + 1] = vertexColors[i][1];
         colors[i * 4 + 2] = vertexColors[i][2];
         colors[i * 4 + 3] = vertexColors[i][3];
     }
     
-    var indices = new Uint16Array([
+    let indices = new Uint16Array([
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -111,12 +112,12 @@ function init() {
         20, 21, 22,   20, 22, 23   // Left face
     ]);
     
-    var geometry = new THREE.BufferGeometry();
+    let geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
     geometry.addAttribute('color', new THREE.BufferAttribute(colors, 4));
     geometry.addAttribute('index', new THREE.BufferAttribute(indices, 1));
 
-    var material = new THREE.RawShaderMaterial({
+    let material = new THREE.RawShaderMaterial({
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent,
         side: THREE.DoubleSide,
@@ -137,12 +138,10 @@ function animate() {
     render();
 }
 
-var angle = 0;
-
 function render() {
-    var axis = new THREE.Vector3(1,1,1).normalize();
+    let axis = new THREE.Vector3(1,1,1).normalize();
     angle += Math.PI / 180;
-    var q = new THREE.Quaternion();
+    let q = new THREE.Quaternion();
     q.setFromAxisAngle(axis,angle);
     mesh.quaternion.copy(q);
     

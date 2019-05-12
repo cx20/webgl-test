@@ -1,4 +1,4 @@
-var regl = createREGL();
+let regl = createREGL();
 
 const drawTriangle = regl({
   frag: document.getElementById("fs").textContent,

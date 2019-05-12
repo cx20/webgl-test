@@ -1,6 +1,6 @@
-var c, gl;
-var aLoc = [];
-var uLoc = [];
+let c, gl;
+let aLoc = [];
+let uLoc = [];
 
 function initWebGL() {
     c = document.getElementById("c");
@@ -19,11 +19,11 @@ function resizeCanvas() {
 }
 
 function initShaders() {
-    var p = gl.createProgram();
-    var vs = gl.createShader(gl.VERTEX_SHADER);
-    var fs = gl.createShader(gl.FRAGMENT_SHADER);
-    var v = document.getElementById("vs").textContent;
-    var f = document.getElementById("fs").textContent;
+    let p = gl.createProgram();
+    let vs = gl.createShader(gl.VERTEX_SHADER);
+    let fs = gl.createShader(gl.FRAGMENT_SHADER);
+    let v = document.getElementById("vs").textContent;
+    let f = document.getElementById("fs").textContent;
     gl.shaderSource(vs, v);
     gl.shaderSource(fs, f);
     gl.compileShader(vs);
@@ -41,12 +41,12 @@ function initShaders() {
     gl.enableVertexAttribArray(aLoc[1]);
 }
 
-var mvMatrix = mat4.create();
-var pMatrix = mat4.create();
+let mvMatrix = mat4.create();
+let pMatrix = mat4.create();
 
-var vertexPositionBuffer;
-var coordBuffer
-var vertexIndexBuffer;
+let vertexPositionBuffer;
+let coordBuffer
+let vertexIndexBuffer;
 
 function initBuffers() {
     vertexPositionBuffer = gl.createBuffer();
@@ -69,7 +69,7 @@ function initBuffers() {
     //       |/       |/
     //      [0]------[1]
     //
-    var positions = [ 
+    let positions = [ 
         // Front face
         -0.5, -0.5,  0.5, // v0
          0.5, -0.5,  0.5, // v1
@@ -106,7 +106,7 @@ function initBuffers() {
 
     coordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, coordBuffer);
-    var textureCoords = [
+    let textureCoords = [
         // Front face
         0.0, 0.0,
         1.0, 0.0,
@@ -148,7 +148,7 @@ function initBuffers() {
     
     vertexIndexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
-    var indices = [
+    let indices = [
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face
@@ -158,8 +158,8 @@ function initBuffers() {
     ];
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-    var img = new Image();
-    var texture;
+    let img = new Image();
+    let texture;
     img.onload = function(){
         texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -169,13 +169,13 @@ function initBuffers() {
     img.src = "../../../assets/textures/frog.jpg";  // 256x256
 }
 
-var rad = 0;
+let rad = 0;
 function draw() {
 
     rad += Math.PI * 1.0 / 180.0;
     mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 100.0);
     mat4.identity(mvMatrix);
-    var translation = vec3.create();
+    let translation = vec3.create();
     vec3.set(translation, 0.0, 0.0, -2.0);
     mat4.translate(mvMatrix, mvMatrix, translation);
     mat4.rotate(mvMatrix, mvMatrix, rad, [1, 1, 1]);

@@ -96,9 +96,9 @@ const attribArrays = {
 };
 attribArrays['a_position'] = { data: positions, numComponents: 3 };
 attribArrays['a_color'] = { data: colors, numComponents: 4 };
-var mesh = new CZPG.Mesh('quad', attribArrays, {cullFace: false}); // Default drawMode is gl.TRIANGLES, and default cull face is true
-var model = new CZPG.Model(mesh);
-var shader = new CZPG.Shader(context, 'vs', 'fs').setCamera(camera);
+let mesh = new CZPG.Mesh('quad', attribArrays, {cullFace: false}); // Default drawMode is gl.TRIANGLES, and default cull face is true
+let model = new CZPG.Model(mesh);
+let shader = new CZPG.Shader(context, 'vs', 'fs').setCamera(camera);
 
 scene.add({shader: shader, model: model});
 

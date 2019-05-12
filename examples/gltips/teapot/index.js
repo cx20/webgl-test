@@ -1,20 +1,20 @@
-var c, gl;
-var aLoc = [];
-var uLoc = [];
-var fps = 1000 / 30;
+let c, gl;
+let aLoc = [];
+let uLoc = [];
+let fps = 1000 / 30;
 
-var mvMatrix = mat4.create();
-var pMatrix = mat4.create();
+let mvMatrix = mat4.create();
+let pMatrix = mat4.create();
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
-var vertexPositionBuffer;
-var vertexNormalBuffer;
-var vertexCoordBuffer;
-var vertexIndexBuffer;
+let vertexPositionBuffer;
+let vertexNormalBuffer;
+let vertexCoordBuffer;
+let vertexIndexBuffer;
 
 function initWebGL() {
     c = document.getElementById("c");
@@ -33,9 +33,9 @@ function resizeCanvas() {
 }
 
 function initShaders() {
-    var vsText = document.getElementById("vs").textContent;
-    var fsText = document.getElementById("fs").textContent;
-    var p = setupShaderProgramFromSource(gl, vsText, fsText);
+    let vsText = document.getElementById("vs").textContent;
+    let fsText = document.getElementById("fs").textContent;
+    let p = setupShaderProgramFromSource(gl, vsText, fsText);
     gl.useProgram(p);
     aLoc[0] = gl.getAttribLocation(p, "position");
     aLoc[1] = gl.getAttribLocation(p, "normal");
@@ -66,8 +66,8 @@ function initBuffers() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-    var img = new Image();
-    var texture;
+    let img = new Image();
+    let texture;
     img.onload = function(){
         texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -84,12 +84,12 @@ function render() {
     requestAnimationFrame(render);
 }
 
-var rad = 0;
+let rad = 0;
 function draw() {
     rad += Math.PI * 1.0 / 180.0;
     mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 1000.0);
     mat4.identity(mvMatrix);
-    var translation = vec3.create();
+    let translation = vec3.create();
     vec3.set(translation, 0.0, 0.0, -30.0);
     mat4.translate(mvMatrix, mvMatrix, translation);
     mat4.rotate(mvMatrix, mvMatrix, rad, [0, 1, 0]);
@@ -109,7 +109,7 @@ function draw() {
     
     gl.uniform1i(uLoc[2], 0);
     
-    var pointLightingLocation = [100.0, 0.0, 100.0];
+    let pointLightingLocation = [100.0, 0.0, 100.0];
     gl.uniform3fv(uLoc[3], pointLightingLocation);
 
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);

@@ -1,5 +1,5 @@
-var canvas = document.getElementById('c');
-var app = new pc.Application(canvas, {
+let canvas = document.getElementById('c');
+let app = new pc.Application(canvas, {
     mouse: new pc.Mouse(document.body),
     touch: new pc.TouchDevice(document.body)
 });
@@ -10,7 +10,7 @@ app.start();
 
 app.scene.ambientLight = new pc.Color(1, 1, 1);
 
-var camera = new pc.Entity();
+let camera = new pc.Entity();
 camera.addComponent('camera', {
     clearColor: new pc.Color(1, 1, 1),
     farClip: 1000,
@@ -23,9 +23,9 @@ app.root.addChild(camera);
 app.on("update", function (dt) {
 });
 
-var Square = pc.createScript('square');
+let Square = pc.createScript('square');
 Square.prototype.initialize = function () {
-    var node = new pc.scene.GraphNode();
+    let node = new pc.scene.GraphNode();
     // Square data
     //             1.0 y 
     //              ^  -1.0 
@@ -42,35 +42,35 @@ Square.prototype.initialize = function () {
     //         |        |
     //        [2]------[3]
     //
-    var positions = [ 
+    let positions = [ 
         -0.5, 0.5, 0.0, // v0
          0.5, 0.5, 0.0, // v1 
         -0.5,-0.5, 0.0, // v2
          0.5,-0.5, 0.0  // v3
     ];
-    var indices = [
+    let indices = [
          2, 0, 1, // v2-v0-v1
          2, 1, 3  // v2-v1-v3
     ];
-    var colors = [ 
+    let colors = [ 
          1.0, 0.0, 0.0, 1.0, // v0
          0.0, 1.0, 0.0, 1.0, // v1
          0.0, 0.0, 1.0, 1.0, // v2
          1.0, 1.0, 0.0, 1.0  // v3
     ];
-    var options = {
+    let options = {
         indices: indices,
         colors: colors.map(function(value){ return value * 255; })
     };
-    var mesh = pc.createMesh(app.graphicsDevice, positions, options);
+    let mesh = pc.createMesh(app.graphicsDevice, positions, options);
 
-    var material = new pc.StandardMaterial();
+    let material = new pc.StandardMaterial();
     material.diffuseVertexColor = true;
     material.cull = pc.CULLFACE_NONE;
 
-    var instance = new pc.scene.MeshInstance(node, mesh, material);
+    let instance = new pc.scene.MeshInstance(node, mesh, material);
 
-    var model = new pc.scene.Model();
+    let model = new pc.scene.Model();
     model.graph = node;
     model.meshInstances = [ instance ];
 
@@ -80,7 +80,7 @@ Square.prototype.initialize = function () {
 Square.prototype.update = function () {
 };
 
-var square = new pc.Entity();
+let square = new pc.Entity();
 app.root.addChild(square);
 square.addComponent('script');
 square.script.create('square');

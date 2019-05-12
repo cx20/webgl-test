@@ -1,12 +1,12 @@
-var gl = GL.create();
+let gl = GL.create();
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
-var mesh = new GL.Mesh({coords: true});
-var options = {
+let mesh = new GL.Mesh({coords: true});
+let options = {
     magFilter: gl.LINEAR,
     minFilter: gl.NEAREST_MIPMAP_LINEAR,
     wrapS: gl.REPEAT,
@@ -14,12 +14,12 @@ var options = {
 };
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
-var texture = GL.Texture.fromURL('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg', options);
-var vs = document.getElementById("vs").textContent;
-var fs = document.getElementById("fs").textContent;
-var shader = new GL.Shader(vs, fs);
+let texture = GL.Texture.fromURL('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg', options);
+let vs = document.getElementById("vs").textContent;
+let fs = document.getElementById("fs").textContent;
+let shader = new GL.Shader(vs, fs);
 
-var angle = 0;
+let angle = 0;
 gl.onupdate = function(seconds) {
     angle += 1.0;
 };
@@ -49,16 +49,16 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     mesh.normals = [];
     mesh.triangles = [];
 
-    for (var i = 0; i < vertexPositions.length; i += 3 ) {
+    for (let i = 0; i < vertexPositions.length; i += 3 ) {
         mesh.vertices.push( [vertexPositions[i+0], vertexPositions[i+1], vertexPositions[i+2] ]);
     }
-    for (var i = 0; i < vertexTextureCoords.length; i += 2 ) {
+    for (let i = 0; i < vertexTextureCoords.length; i += 2 ) {
         mesh.coords.push( [vertexTextureCoords[i+0], vertexTextureCoords[i+1] ]);
     }
-    for (var i = 0; i < vertexNormals.length; i += 3 ) {
+    for (let i = 0; i < vertexNormals.length; i += 3 ) {
         mesh.normals.push( [vertexNormals[i+0], vertexNormals[i+1], vertexNormals[i+2] ]);
     }
-    for (var i = 0; i < indices.length; i += 3 ) {
+    for (let i = 0; i < indices.length; i += 3 ) {
         mesh.triangles.push( [indices[i+0], indices[i+1], indices[i+2] ]);
     }
     mesh.compile();

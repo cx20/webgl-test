@@ -1,7 +1,7 @@
-var prg;
-var VBO;
+let prg;
+let VBO;
 
-var position = [ 
+let position = [ 
      0.0, 0.5, 0.0, // v0
     -0.5,-0.5, 0.0, // v1
      0.5,-0.5, 0.0  // v2

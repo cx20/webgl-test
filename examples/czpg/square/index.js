@@ -38,8 +38,8 @@ const attribArrays = {
 };
 attribArrays['position'] = { data: positions, numComponents: 3 };
 attribArrays['color'] = { data: colors, numComponents: 4 };
-var mesh = new CZPG.Mesh('quad', attribArrays);
-var model = new CZPG.Model(mesh);
-var shader = new CZPG.Shader(context, 'vs', 'fs');
+let mesh = new CZPG.Mesh('quad', attribArrays);
+let model = new CZPG.Model(mesh);
+let shader = new CZPG.Shader(context, 'vs', 'fs');
 
 shader.renderModel(model);

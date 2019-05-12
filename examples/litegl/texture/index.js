@@ -1,7 +1,7 @@
 //create the rendering context
-var container = document.body;
+let container = document.body;
 
-var gl = GL.create({width: 465, height: 465});
+let gl = GL.create({width: 465, height: 465});
 resizeCanvas();
 window.addEventListener("resize", function(){
     resizeCanvas();
@@ -33,7 +33,7 @@ container.appendChild(gl.canvas);
 //       |/       |/
 //       0]------[1]
 //
-var vertices = [
+let vertices = [
     // Front face
      -0.5, -0.5,  0.5, // v0
       0.5, -0.5,  0.5, // v1
@@ -66,7 +66,7 @@ var vertices = [
      -0.5, -0.5, -0.5  // v4
 ];
 
-var coords = [
+let coords = [
     // Front face
      0.0, 0.0,
      1.0, 0.0,
@@ -104,7 +104,7 @@ var coords = [
      0.0, 1.0,
 ];
 
-var triangles = [
+let triangles = [
       0,  1,  2,   0,  2 , 3,  // Front face
       4,  5,  6,   4,  6 , 7,  // Back face
       8,  9, 10,   8, 10, 11,  // Top face
@@ -113,29 +113,29 @@ var triangles = [
      20, 21, 22,  20, 22, 23   // Left face
 ];
 
-var mesh = GL.Mesh.load({vertices: vertices, coords: coords, triangles: triangles});
-var texture = GL.Texture.fromURL("../../../assets/textures/frog.jpg", { minFilter: gl.LINEAR_MIPMAP_LINEAR });
+let mesh = GL.Mesh.load({vertices: vertices, coords: coords, triangles: triangles});
+let texture = GL.Texture.fromURL("../../../assets/textures/frog.jpg", { minFilter: gl.LINEAR_MIPMAP_LINEAR });
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );
 
-var mode = gl.TRIANGLES;
+let mode = gl.TRIANGLES;
 
 //create basic matrices for cameras and transformation
-var persp = mat4.create();
-var view = mat4.create();
-var model = mat4.create();
-var mvp = mat4.create();
-var temp = mat4.create();
-var identity = mat4.create();
+let persp = mat4.create();
+let view = mat4.create();
+let model = mat4.create();
+let mvp = mat4.create();
+let temp = mat4.create();
+let identity = mat4.create();
 
 //set the camera position
 mat4.perspective(persp, 45 * DEG2RAD, gl.canvas.width / gl.canvas.height, 0.1, 1000);
 mat4.lookAt(view, [0,1,3], [0,0,0], [0,1,0]);
 
-var rad = 0;
+let rad = 0;
 gl.ondraw = function() {
     
     //create modelview and projection matrices

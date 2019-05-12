@@ -1,14 +1,14 @@
-var GeometryFactory = gr.lib.fundamental.Geometry.GeometryFactory;
-var Geometry = gr.lib.fundamental.Geometry.Geometry;
+let GeometryFactory = gr.lib.fundamental.Geometry.GeometryFactory;
+let Geometry = gr.lib.fundamental.Geometry.Geometry;
 GeometryFactory.addType("custom", {}, function(gl,attrs){
-  var geometry = new Geometry(gl);
-  var positions = new Float32Array([
+  let geometry = new Geometry(gl);
+  let positions = new Float32Array([
    -0.5,  0.5, 0.0, // v0
     0.5,  0.5, 0.0, // v1
    -0.5, -0.5, 0.0, // v2
     0.5, -0.5, 0.0  // v3
   ]);
-  var colors = new Float32Array([
+  let colors = new Float32Array([
     1.0, 0.0, 0.0,  // v0
     0.0, 1.0, 0.0,  // v1
     0.0, 0.0, 1.0,  // v2
@@ -24,7 +24,7 @@ GeometryFactory.addType("custom", {}, function(gl,attrs){
       size: 3
     }
   });
-  var indices = [
+  let indices = [
     0, 2, 1,
     2, 3, 1
   ];
@@ -33,5 +33,5 @@ GeometryFactory.addType("custom", {}, function(gl,attrs){
 });
 
 gr(function() {
-  var $$ = gr('#canvas');
+  let $$ = gr('#canvas');
 });

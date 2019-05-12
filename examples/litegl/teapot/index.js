@@ -1,6 +1,6 @@
 //create the rendering context
-var container = document.body;
-var gl = GL.create({width: 465, height: 465});
+let container = document.body;
+let gl = GL.create({width: 465, height: 465});
 resizeCanvas();
 window.addEventListener("resize", function(){
     resizeCanvas();
@@ -14,33 +14,33 @@ function resizeCanvas() {
 
 container.appendChild(gl.canvas);
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );
 
-var mode = gl.TRIANGLES;
-var mesh;
-var texture;
+let mode = gl.TRIANGLES;
+let mesh;
+let texture;
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 //create basic matrices for cameras and transformation
-var persp = mat4.create();
-var view = mat4.create();
-var model = mat4.create();
-var mvp = mat4.create();
-var temp = mat4.create();
-var identity = mat4.create();
+let persp = mat4.create();
+let view = mat4.create();
+let model = mat4.create();
+let mvp = mat4.create();
+let temp = mat4.create();
+let identity = mat4.create();
 
 //set the camera position
 mat4.perspective(persp, 45 * DEG2RAD, gl.canvas.width / gl.canvas.height, 0.1, 1000);
 mat4.lookAt(view, [0,1,50], [0,0,0], [0,1,0]);
 
-var rad = 0;
+let rad = 0;
 gl.ondraw = function() {
     
     //create modelview and projection matrices
@@ -74,7 +74,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     indices = data.indices;
 
     mesh = GL.Mesh.load({vertices: vertexPositions, coords: vertexTextureCoords, normals: vertexNormals, triangles: indices});
-    var options = {
+    let options = {
         magFilter: gl.LINEAR,
         minFilter: gl.NEAREST_MIPMAP_LINEAR,
         wrapS: gl.REPEAT,

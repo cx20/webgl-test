@@ -1,6 +1,6 @@
-var c, gl;
-var aLoc = [];
-var fps = 1000 / 30;
+let c, gl;
+let aLoc = [];
+let fps = 1000 / 30;
 
 function initWebGL() {
     c = document.getElementById("c");
@@ -18,9 +18,9 @@ function resizeCanvas() {
 }
 
 function initShaders() {
-    var vsText = document.getElementById("vs").textContent;
-    var fsText = document.getElementById("fs").textContent;
-    var p = setupShaderProgramFromSource(gl, vsText, fsText);
+    let vsText = document.getElementById("vs").textContent;
+    let fsText = document.getElementById("fs").textContent;
+    let p = setupShaderProgramFromSource(gl, vsText, fsText);
 
     gl.useProgram(p);
     aLoc[0] = gl.getAttribLocation(p, "position");
@@ -46,14 +46,14 @@ function initBuffers() {
     //         |        |
     //        [2]------[3]
     //
-    var positions = [ 
+    let positions = [ 
         -0.5, 0.5, 0.0, // v0
          0.5, 0.5, 0.0, // v1 
         -0.5,-0.5, 0.0, // v2
          0.5,-0.5, 0.0  // v3
     ];
     
-    var colors = [ 
+    let colors = [ 
          1.0, 0.0, 0.0, 1.0, // v0
          0.0, 1.0, 0.0, 1.0, // v1
          0.0, 0.0, 1.0, 1.0, // v2

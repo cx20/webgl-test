@@ -1,7 +1,7 @@
-var xgl;
-var program;
-var uMVMatrix;
-var uPMatrix;
+let xgl;
+let program;
+let uMVMatrix;
+let uPMatrix;
 
 function initWebGL() {
     const canvas = document.createElement('canvas');

@@ -16,7 +16,7 @@
 //       |/       |/
 //      [0]------[1]
 //
-var positions = [
+let positions = [
     // Front face
     [-0.5, -0.5,  0.5], // v0
     [ 0.5, -0.5,  0.5], // v1
@@ -48,7 +48,7 @@ var positions = [
     [-0.5,  0.5, -0.5], // v7
     [-0.5, -0.5, -0.5]  // v4
 ];
-var texcoords = [
+let texcoords = [
     // Front face
     [1, 0],
     [0, 0],
@@ -80,7 +80,7 @@ var texcoords = [
     [0, 1],
     [1, 1]
 ];
-var indices = [
+let indices = [
      0,  1,  2,    0,  2 , 3,  // Front face
      4,  5,  6,    4,  6 , 7,  // Back face
      8,  9, 10,    8, 10, 11,  // Top face
@@ -89,21 +89,21 @@ var indices = [
     20, 21, 22,   20, 22, 23   // Left face
 ];
 
-var app = clay.application.create('#viewport', {
+let app = clay.application.create('#viewport', {
     init: function (app) {
-        var camera = app.createCamera(null, null, 'perspective');
+        let camera = app.createCamera(null, null, 'perspective');
         camera.position.set(0, 0, 2.5);
-        var geometry = new clay.StaticGeometry();
+        let geometry = new clay.StaticGeometry();
         geometry.attributes.position.fromArray(positions);
         geometry.attributes.texcoord0.fromArray(texcoords);
         geometry.initIndicesFromArray(indices);
 
-        var vs = document.getElementById('vs').textContent;
-        var fs = document.getElementById('fs').textContent;
-        var material= new clay.Material({
+        let vs = document.getElementById('vs').textContent;
+        let fs = document.getElementById('fs').textContent;
+        let material= new clay.Material({
             shader: new clay.Shader(vs, fs)
         });
-        var diffuse = new clay.Texture2D;
+        let diffuse = new clay.Texture2D;
         diffuse.load("../../../assets/textures/frog.jpg"); // 256x256
         material.set('texture', diffuse);
         this._mesh = app.createMesh(geometry, material);

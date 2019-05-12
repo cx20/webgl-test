@@ -1,20 +1,20 @@
-var createScene = function(engine) {
-    var scene = new BABYLON.Scene(engine);
-    var camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -5), scene);
-    var triangle = new BABYLON.Mesh('triangle', scene);
+let createScene = function(engine) {
+    let scene = new BABYLON.Scene(engine);
+    let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -5), scene);
+    let triangle = new BABYLON.Mesh('triangle', scene);
     scene.clearColor = new BABYLON.Color3(1, 1, 1);
 
-    var positions = [
+    let positions = [
          0.0,  0.5, 0.0, // v0
         -0.5, -0.5, 0.0, // v1
          0.5, -0.5, 0.0  // v2
     ];
-    var indices = [0, 1, 2];
+    let indices = [0, 1, 2];
 
     triangle.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, true);
     triangle.setIndices(indices);
 
-    var material = new BABYLON.ShaderMaterial("material", scene, {
+    let material = new BABYLON.ShaderMaterial("material", scene, {
         vertexElement: "vs",
         fragmentElement: "fs",
     }, {
@@ -26,9 +26,9 @@ var createScene = function(engine) {
     return scene;
 }
 
-var canvas = document.querySelector("#c");
-var engine = new BABYLON.Engine(canvas, true);
-var scene = createScene(engine);
+let canvas = document.querySelector("#c");
+let engine = new BABYLON.Engine(canvas, true);
+let scene = createScene(engine);
 
 engine.runRenderLoop(function () {
     scene.render();

@@ -1,10 +1,10 @@
-var camera = new Hilo3d.PerspectiveCamera({
+let camera = new Hilo3d.PerspectiveCamera({
     aspect: innerWidth / innerHeight,
     far: 1000,
     near: 0.1,
     z: 50
 });
-var stage = new Hilo3d.Stage({
+let stage = new Hilo3d.Stage({
     container: document.getElementById('container'),
     camera: camera,
     clearColor: new Hilo3d.Color(0.0, 0.0, 0.0),
@@ -12,10 +12,10 @@ var stage = new Hilo3d.Stage({
     height: innerHeight
 });
 
-var vertexPositions;
-var vertexNormals;
-var vertexTextureCoords;
-var indices;
+let vertexPositions;
+let vertexNormals;
+let vertexTextureCoords;
+let indices;
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {
@@ -24,14 +24,14 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexNormals = data.vertexNormals;
     indices = data.indices;
 
-    var geometry = new Hilo3d.Geometry({
+    let geometry = new Hilo3d.Geometry({
         vertices: new Hilo3d.GeometryData(new Float32Array(vertexPositions), 3),
         uvs: new Hilo3d.GeometryData(new Float32Array(vertexTextureCoords), 2),
         normals: new Hilo3d.GeometryData(new Float32Array(vertexNormals), 3),
         indices: new Hilo3d.GeometryData(new Uint16Array(indices), 1)
     });
 
-    var mesh = new Hilo3d.Mesh({
+    let mesh = new Hilo3d.Mesh({
         rotationX: 0,
         rotationY: 0,
         rotationZ: 0,
@@ -67,7 +67,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
 
     stage.addChild(mesh);
 
-    var ticker = new Hilo3d.Ticker(60);
+    let ticker = new Hilo3d.Ticker(60);
     ticker.addTick(stage);
     ticker.start(true);
 

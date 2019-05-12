@@ -1,5 +1,5 @@
-var c, gl;
-var aLoc = [];
+let c, gl;
+let aLoc = [];
 
 function initWebGL() {
     c = document.getElementById("c");
@@ -17,11 +17,11 @@ function resizeCanvas() {
 }
 
 function initShaders() {
-    var p = gl.createProgram();
-    var v = document.getElementById("vs").textContent;
-    var f = document.getElementById("fs").textContent;
-    var vs = gl.createShader(gl.VERTEX_SHADER);
-    var fs = gl.createShader(gl.FRAGMENT_SHADER);
+    let p = gl.createProgram();
+    let v = document.getElementById("vs").textContent;
+    let f = document.getElementById("fs").textContent;
+    let vs = gl.createShader(gl.VERTEX_SHADER);
+    let fs = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(vs, v);
     gl.shaderSource(fs, f);
     gl.compileShader(vs);
@@ -53,14 +53,14 @@ function draw() {
     //         |        |
     //        [2]------[3]
     //
-    var positions = [ 
+    let positions = [ 
         -0.5, 0.5, 0.0, // v0
          0.5, 0.5, 0.0, // v1 
         -0.5,-0.5, 0.0, // v2
          0.5,-0.5, 0.0  // v3
     ];
     
-    var colors = [ 
+    let colors = [ 
          1.0, 0.0, 0.0, 1.0, // v0
          0.0, 1.0, 0.0, 1.0, // v1
          0.0, 0.0, 1.0, 1.0, // v2

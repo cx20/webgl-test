@@ -1,5 +1,5 @@
-var gl = GL.create();
-var mesh = new GL.Mesh({colors:true});
+let gl = GL.create();
+let mesh = new GL.Mesh({colors:true});
 
 // Square data
 //             1.0 y 
@@ -34,7 +34,7 @@ mesh.colors = [
 mesh.triangles = [[2, 0, 1], [2, 3, 1]];
 mesh.compile();
 
-var shader = new GL.Shader(
+let shader = new GL.Shader(
     document.getElementById("vs").textContent,
     document.getElementById("fs").textContent
 );

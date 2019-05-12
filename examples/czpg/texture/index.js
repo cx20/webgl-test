@@ -112,9 +112,9 @@ const textures = CZPG.createTextures(context, {pic: {
 
 attribArrays['a_position'] = { data: positions, numComponents: 3 };
 attribArrays['a_textureCoord'] = { data: textureCoords, numComponents: 2 };
-var mesh = new CZPG.Mesh('quad', attribArrays, {cullFace: false});
-var model = new CZPG.Model(mesh);
-var shader = new CZPG.Shader(context, 'vs', 'fs').setCamera(camera).setUniformObj({u_texture: textures.pic});
+let mesh = new CZPG.Mesh('quad', attribArrays, {cullFace: false});
+let model = new CZPG.Model(mesh);
+let shader = new CZPG.Shader(context, 'vs', 'fs').setCamera(camera).setUniformObj({u_texture: textures.pic});
 
 scene.add({shader: shader, model: model});
 

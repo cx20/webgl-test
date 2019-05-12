@@ -5,7 +5,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     vertexNormals = data.vertexNormals;
     indices = data.indices;
 
-    var geometry = new xeogl.Geometry({
+    let geometry = new xeogl.Geometry({
         primitive: "triangles",
         positions: vertexPositions,
         normals: vertexNormals,
@@ -13,7 +13,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
         indices: indices
     });
 
-    var material = new xeogl.PhongMaterial({
+    let material = new xeogl.PhongMaterial({
         ambient: [1.0, 1.0, 1.0],
         diffuse: [1, 1, 1],
         diffuseMap: new xeogl.Texture({
@@ -22,7 +22,7 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
         })
     });
 
-    var mesh = new xeogl.Mesh({
+    let mesh = new xeogl.Mesh({
         geometry: geometry,
         material: material
     });

@@ -1,10 +1,10 @@
-var camera = new Hilo3d.PerspectiveCamera({
+let camera = new Hilo3d.PerspectiveCamera({
     aspect: innerWidth / innerHeight,
     far: 100,
     near: 0.1,
     z: 3
 });
-var stage = new Hilo3d.Stage({
+let stage = new Hilo3d.Stage({
     container: document.getElementById('container'),
     camera: camera,
     clearColor: new Hilo3d.Color(1.0, 1.0, 1.0),
@@ -30,7 +30,7 @@ var stage = new Hilo3d.Stage({
 //       |/       |/
 //      [0]------[1]
 //
-var positions = [
+let positions = [
     // Front face
     -0.5, -0.5,  0.5, // v0
      0.5, -0.5,  0.5, // v1
@@ -62,7 +62,7 @@ var positions = [
     -0.5,  0.5, -0.5, // v7
     -0.5, -0.5, -0.5  // v4
 ];
-var texcoords = [
+let texcoords = [
     // Front face
     1, 0,
     0, 0,
@@ -94,7 +94,7 @@ var texcoords = [
     0, 1,
     1, 1
 ];
-var indices = [
+let indices = [
      0,  1,  2,    0,  2 , 3,  // Front face
      4,  5,  6,    4,  6 , 7,  // Back face
      8,  9, 10,    8, 10, 11,  // Top face
@@ -103,13 +103,13 @@ var indices = [
     20, 21, 22,   20, 22, 23   // Left face
 ];
 
-var geometry = new Hilo3d.Geometry({
+let geometry = new Hilo3d.Geometry({
     vertices: new Hilo3d.GeometryData(new Float32Array(positions), 3),
     uvs: new Hilo3d.GeometryData(new Float32Array(texcoords), 2),
     indices: new Hilo3d.GeometryData(new Uint16Array(indices), 1)
 });
 
-var mesh = new Hilo3d.Mesh({
+let mesh = new Hilo3d.Mesh({
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
@@ -139,6 +139,6 @@ var mesh = new Hilo3d.Mesh({
 
 stage.addChild(mesh);
 
-var ticker = new Hilo3d.Ticker(60);
+let ticker = new Hilo3d.Ticker(60);
 ticker.addTick(stage);
 ticker.start(true);
