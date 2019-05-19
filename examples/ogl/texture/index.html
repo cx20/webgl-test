@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using OGL</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec2 textureCoord;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+varying vec2 vTextureCoord;
+
+void main()
+{
+    vTextureCoord = textureCoord;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D texture;
+varying vec2 vTextureCoord;
+
+void main()
+{
+    gl_FragColor  = texture2D(texture, vTextureCoord);
+}
+</script>
+
+<script type="module" src="index.js"></script>
+</body>
+</html>
