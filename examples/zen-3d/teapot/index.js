@@ -12,7 +12,7 @@ renderer.glCore.gl.disable(renderer.glCore.gl.CULL_FACE);
 
 let scene = new zen3d.Scene();
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
-var texture = zen3d.Texture2D.fromSrc("../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg");
+let texture = zen3d.Texture2D.fromSrc("../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg");
 texture.wrapS = renderer.glCore.gl.REPEAT;
 texture.wrapT = renderer.glCore.gl.REPEAT;
 let shader = {
@@ -31,18 +31,18 @@ let vertexNormals;
 let vertexTextureCoords;
 let indices;
 
-var camera = new zen3d.Camera();
+let camera = new zen3d.Camera();
 camera.position.set(0, 2, 50);
 camera.lookAt(new zen3d.Vector3(0, 0, 0), new zen3d.Vector3(0, 1, 0));
 camera.setPerspective(45 / 180 * Math.PI, width / height, 1, 1000);
 scene.add(camera);
 
-var lastCount = 0;
+let lastCount = 0;
 function loop(count) {
 
     requestAnimationFrame(loop);
 
-    var delta = count - lastCount;
+    let delta = count - lastCount;
     lastCount = count;
 
     // rotate camera

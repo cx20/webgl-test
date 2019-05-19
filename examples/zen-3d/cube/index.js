@@ -101,18 +101,18 @@ geometry.addAttribute('a_Color', new zen3d.BufferAttribute(new Float32Array(unpa
 let cube = new zen3d.Mesh(geometry, material);
 scene.add(cube);
 
-var camera = new zen3d.Camera();
+let camera = new zen3d.Camera();
 camera.position.set(0, 2, 3);
 camera.lookAt(new zen3d.Vector3(0, 0, 0), new zen3d.Vector3(0, 1, 0));
 camera.setPerspective(45 / 180 * Math.PI, width / height, 1, 1000);
 scene.add(camera);
 
-var lastCount = 0;
+let lastCount = 0;
 function loop(count) {
 
     requestAnimationFrame(loop);
 
-    var delta = count - lastCount;
+    let delta = count - lastCount;
     lastCount = count;
 
     // rotate camera
