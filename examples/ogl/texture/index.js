@@ -1,4 +1,4 @@
-import {Renderer, Geometry, Transform, Camera, Program, Color, Mesh} from 'https://rawcdn.githack.com/oframe/ogl/1148a0941ce823dc6c342b3f54cce14cb6a14812/src/Core.js';
+import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh} from 'https://rawcdn.githack.com/oframe/ogl/1148a0941ce823dc6c342b3f54cce14cb6a14812/src/Core.js';
 
 {
     const renderer = new Renderer();
@@ -20,6 +20,13 @@ import {Renderer, Geometry, Transform, Camera, Program, Color, Mesh} from 'https
     
     const scene = new Transform();
 
+    const texture = new Texture(gl);
+    texture.wrapS = gl.REPEART;
+    texture.wrapT = gl.REPEART;
+    const img = new Image();
+
+    img.onload = () => texture.image = img;
+    img.src = "../../../assets/textures/frog.jpg"; // 256x256
 
     // Cube data
     //             1.0 y 
@@ -126,7 +133,9 @@ import {Renderer, Geometry, Transform, Camera, Program, Color, Mesh} from 'https
     const program = new Program(gl, {
         vertex: document.getElementById("vs").textContent,
         fragment: document.getElementById("fs").textContent,
-        uniforms: {},
+        uniforms: {
+            texture: {value: texture},
+        },
         cullFace: null
     });
 
