@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Primitive Types Using Grimoire.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://unpkg.com/grimoirejs-preset-basic/register/grimoire-preset-basic.js"></script>
+</head>
+<body>
+
+<script type="text/goml" id="canvas">
+  <goml width="fit" height="fit">
+    <goml.components>
+    </goml.components>
+    <image-texture src="../../../assets/textures/earth.jpg"/>
+    <scene>
+      <camera class="camera" position="0,0,6">
+        <camera.components>
+          <MouseCameraControl/>
+        </camera.components>
+      </camera>
+      <geometry name="circle"   type="circle" /> 
+      <geometry name="cylinder" type="cylinder" /> 
+      <geometry name="cone"     type="cone" /> 
+      <geometry name="plane"    type="plane" /> 
+      <geometry name="triangle" type="triangle" /> 
+      <geometry name="capsule"  type="capsule" /> 
+      <mesh id="quad"     position="-1.5, +1.5, 0.0"  geometry="quad"     scale="0.5" texture="query(image-texture)"/>
+      <mesh id="cube"     position="+0.0, +1.5, 0.0"  geometry="cube"     scale="0.5" texture="query(image-texture)"/>
+      <mesh id="sphere"   position="+1.5, +1.5, 0.0"  geometry="sphere"   scale="0.5" texture="query(image-texture)"/>
+      <mesh id="circle"   position="-1.5, +0.0, 0.0"  geometry="circle"   scale="0.5" texture="query(image-texture)"/>
+      <mesh id="cylinder" position="+0.0, +0.0, 0.0"  geometry="cylinder" scale="0.5" texture="query(image-texture)"/>
+      <mesh id="cone"     position="+1.5, +0.0, 0.0"  geometry="cone"     scale="0.5" texture="query(image-texture)"/>
+      <mesh id="plane"    position="-1.5, -1.5, 0.0"  geometry="plane"    scale="0.5" texture="query(image-texture)"/>
+      <mesh id="triangle" position="+0.0, -1.5, 0.0"  geometry="triangle" scale="0.5" texture="query(image-texture)"/>
+      <mesh id="capsule"  position="+1.5, -1.5, 0.0"  geometry="capsule"  scale="0.5" texture="query(image-texture)"/>
+    </scene>
+  </goml>
+</script>
+<script src="index.js"></script>
+</body>
+</html>
