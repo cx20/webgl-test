@@ -85,7 +85,7 @@ function init() {
     scene.add(meshTorus);
 
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0x000000);
+    renderer.setClearColor(0xffffff);
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
