@@ -63,12 +63,7 @@ function init() {
     let geometryOcta = new THREE.OctahedronGeometry(0.5, 0);
     meshOcta = new THREE.Mesh(geometryOcta, material);
     meshOcta.position.set(0, -1.5, 0);
-/*
-    // OctahedronGeometry(radius, detail)
-    let geometryOcta = new THREE.OctahedronGeometry(0.5, 0);
-    meshOcta = new THREE.Mesh(geometryOcta, material);
-    meshOcta.position.set(0, -1.5, 0);
-*/
+
     // TorusGeometry(radius, tube, radialSegments, tubularSegments, arc)
     let geometryTorus = new THREE.TorusGeometry(0.4, 0.2, 16, 100);
     meshTorus = new THREE.Mesh(geometryTorus, material);
