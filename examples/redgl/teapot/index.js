@@ -11,8 +11,8 @@ RedGL(canvas, function (v) {
     tController = RedObitController(this);
     tController.distance = 50;
     tRenderer = RedRenderer();
-    tView = RedView('HelloRedGL', this, tScene, tController);
-    tWorld.addView(tView);
+    tView = RedView(this, tScene, tController);
+    tWorld.addView(tView, 'HelloRedGL');
     
     let interleaveData;
     let indexData;
