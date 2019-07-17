@@ -19,19 +19,19 @@ let shader = {
 let material = new zen3d.ShaderMaterial(shader);
 let geometry = new zen3d.Geometry();
 
-var positions = [
+const positions = [
     -0.5, 0.5, 0.0, // v0
      0.5, 0.5, 0.0, // v1 
     -0.5,-0.5, 0.0, // v2
      0.5,-0.5, 0.0  // v3
 ];
-var colors = [
+const colors = [
      1.0, 0.0, 0.0, 1.0, // v0
      0.0, 1.0, 0.0, 1.0, // v1
      0.0, 0.0, 1.0, 1.0, // v2
      1.0, 1.0, 0.0, 1.0  // v3
 ];
-var indices = [
+const indices = [
     2, 0, 1, // v2-v0-v1
     2, 1, 3  // v2-v1-v3
 ];
