@@ -15,6 +15,6 @@ gr.registerComponent('Rotate', {
 });
 
 gr(function () {
-  var $$ = gr('#canvas');
+  let $$ = gr('#canvas');
   $$('mesh').addComponent('Rotate');
 });
