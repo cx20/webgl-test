@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Primitive Types Using lightgl.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/evanw/lightgl.js/f868b2e6d3d04981197d74cb0de4e99626d87091/lightgl.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+varying vec2 coord;
+void main()
+{
+    coord = gl_TexCoord.xy;
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+uniform sampler2D texture;
+varying vec2 coord;
+void main()
+{
+    gl_FragColor = texture2D(texture, coord);
+}
+</script>
+
+<script src="index.js"></script>
+</body>
+</html>
