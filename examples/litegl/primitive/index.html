@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Primitive Types Using litegl.js</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="../../../libs/gl-matrix.js"></script>
+  <script src="https://rawcdn.githack.com/jagenjo/litegl.js/3d2c29cbbb8131eff07cd1c36456f69cb1b2cbf0/build/litegl.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+precision highp float;
+attribute vec3 a_vertex;
+attribute vec3 a_normal;
+attribute vec2 a_coord;
+varying vec3 v_normal;
+varying vec2 v_coord;
+uniform mat4 u_mvp;
+uniform mat4 u_model;
+
+void main() {
+	v_coord = a_coord;
+	v_normal = (u_model * vec4(a_normal, 0.0)).xyz;
+	gl_Position = u_mvp * vec4(a_vertex, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision highp float;
+varying vec3 v_normal;
+varying vec2 v_coord;
+uniform vec3 u_lightvector;
+uniform sampler2D u_texture;
+uniform vec4 u_color;
+
+void main() {
+	vec3 N = normalize(v_normal);
+	vec4 color = u_color * texture2D(u_texture, v_coord);
+	gl_FragColor = color * max(0.0, dot(u_lightvector, N));
+}
+</script>
+
+<script src="index.js"></script>
+</body>
+</html>
