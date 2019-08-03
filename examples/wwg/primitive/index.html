@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Textured Cube Using WWG</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/WWG.js"></script>
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/WWModel.js"></script>
+  <script src="https://rawcdn.githack.com/wakufactory/wwg/482a0e928781fd27bbd2e1173476f54df9bf1dda/js/CanvasMatrix.js"></script>
+</head>
+<body>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec3 norm;
+attribute vec2 uv ;
+uniform mat4 mvpMatrix;
+uniform mat4 invMatrix;
+uniform vec3 lightVec ;
+varying vec2 tuv ;
+varying float light ;
+
+void main() {
+	tuv = vec2(uv.x,1.0-uv.y) ;
+	light = clamp(dot(norm, normalize(invMatrix * vec4(lightVec,0.0)).xyz),0.0,1.0)*0.8+0.2;
+	gl_Position = mvpMatrix * vec4(position, 1.0) ;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision highp float;
+uniform vec4 color ;
+uniform sampler2D tex ;
+
+varying vec2 tuv ;
+varying float light ;
+
+void main() {
+	vec3 col = color.xyz ;
+	col = texture2D(tex, tuv).xyz ;
+	gl_FragColor = vec4(light*col.x, light*col.y, light*col.z, 1.0);
+}
+</script>
+
+<canvas id="screen1" width="465px" height="465px"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
