@@ -29,6 +29,8 @@ let render = {
         }
     }],
     model: [{
+        geo: new WWModel().primitive("plane", {wz: 1.0}).objModel()
+    }, {
         geo: new WWModel().primitive("box", {wz: 1.0}).objModel()
     }, {
         geo: new WWModel().primitive("sphere", {wz: 1.0}).objModel()
@@ -81,8 +83,8 @@ r.setRender(render).then(function() {
             model: [{
                 vs_uni: {
                     mvpMatrix: new CanvasMatrix4().
-                    rotate(tint / 20 - 90, 0, 1, 0). // rotate(angle,x,y,z)
-                    translate(-1.5, 0, 0).
+                    rotate(tint / 20 - 90, 1, 0, 0). // rotate(angle,x,y,z)
+                    translate(-3, 0, 0).
                     lookat(eyex, eyey, eyez, centerx, centery, centerz, upx, upy, upz).
                     perspective(fovy, aspect, zNear, zFar).
                     getAsWebGLFloatArray(),
@@ -92,7 +94,17 @@ r.setRender(render).then(function() {
                 vs_uni: {
                     mvpMatrix: new CanvasMatrix4().
                     rotate(tint / 20 - 90, 0, 1, 0). // rotate(angle,x,y,z)
-                    translate(1.5, 0, 0).
+                    translate(0, 0, 0).
+                    lookat(eyex, eyey, eyez, centerx, centery, centerz, upx, upy, upz).
+                    perspective(fovy, aspect, zNear, zFar).
+                    getAsWebGLFloatArray(),
+                    invMatrix: new CanvasMatrix4().invert().getAsWebGLFloatArray()
+                }
+            }, {
+                vs_uni: {
+                    mvpMatrix: new CanvasMatrix4().
+                    rotate(tint / 20 - 90, 0, 1, 0). // rotate(angle,x,y,z)
+                    translate(3, 0, 0).
                     lookat(eyex, eyey, eyez, centerx, centery, centerz, upx, upy, upz).
                     perspective(fovy, aspect, zNear, zFar).
                     getAsWebGLFloatArray(),
