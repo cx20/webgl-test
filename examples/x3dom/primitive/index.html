@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Primitive Types Using X3DOM</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="//www.x3dom.org/download/x3dom.js"></script>
+</head>
+<body>
+<x3d id="x3d" width="100%" height="100%"> 
+  <scene>
+    <viewpoint description='Primitive view' position='0 0 10'></viewpoint>
+    <background skyColor='0 0 0'></background>
+    <transform translation='-3 0 0'> 
+      <shape>
+        <appearance><ImageTexture url="../../../assets/textures/earth.jpg"></ImageTexture></appearance>
+        <cone></cone>
+      </shape>
+    </transform>
+    <transform translation='0 0 0'> 
+      <shape>
+        <appearance><ImageTexture url="../../../assets/textures/earth.jpg"></ImageTexture></appearance>
+        <box></box>
+      </shape>
+    </transform>
+    <transform translation='3 0 0'> 
+      <shape>
+        <appearance><ImageTexture url="../../../assets/textures/earth.jpg"></ImageTexture></appearance>
+        <sphere></sphere>
+      </shape>
+    </transform>
+  </scene>
+</x3d>
+</body>
+</html>
