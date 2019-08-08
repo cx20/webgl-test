@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Testing quaternion rotation using Grimoire.js</title>
+<meta name="Description" content="" />
+<meta name="Keywords"  content="" />
+
+<link rel="stylesheet" type="text/css" media="screen,print" href="style.css" />
+</head>
+<body>
+<script src="https://unpkg.com/grimoirejs-preset-basic@1.11.8/register/grimoire-preset-basic.js"></script>
+
+<script type="text/goml" id="canvas">
+<goml width="fit" height="fit">
+  <scene>
+    <camera class="camera" position="0,0,10">
+      <camera.components>
+        <MouseCameraControl/>
+      </camera.components>
+    </camera>
+    <rotate-mesh geometry="cube" position="-2,0,0" speed="1" texture="../../../assets/textures/frog.jpg"/>
+    <quaternion-mesh geometry="cube" position="+2,0,0" speed="1" texture="../../../assets/textures/frog.jpg"/>
+  </scene>
+</goml>
+</script>
+
+<script type="text/javascript" src="index.js"></script>
+</body>
+</html>
