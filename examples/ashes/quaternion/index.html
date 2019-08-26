@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing quaternion rotation using  Ashes</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/ashes3d@0.2.4/build/ashes.main.js"></script>
+</head>
+<body>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 POSITION;
+attribute vec2 TEXCOORD_0;
+uniform mat4 M;
+uniform mat4 VP;
+varying vec2 vTexCoord;
+
+void main() {
+    vec4 position = vec4(POSITION, 1);
+    position = M * position;
+    vTexCoord = TEXCOORD_0;
+    gl_Position = VP * position;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+varying vec2 vTexCoord;
+uniform sampler2D texture;
+
+void main() {
+    vec4 color = texture2D(texture, vTexCoord);
+    gl_FragColor = vec4(color);
+}
+</script>
+
+<canvas id="screen" width="465" height="465"></canvas>
+<script src="index.js"></script>
+</body>
+</html>
