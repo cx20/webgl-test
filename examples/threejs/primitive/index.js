@@ -19,9 +19,11 @@ function init() {
     camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.z = 9;
     scene = new THREE.Scene();
+    let loader = new THREE.TextureLoader();
+    let texture = loader.load('../../../assets/textures/earth.jpg');
     
     let material = new THREE.MeshBasicMaterial({
-        map:THREE.ImageUtils.loadTexture('../../../assets/textures/earth.jpg') // earth.jpg
+        map: texture
     });
 
     // PlaneGeometry(width, height, segmentsWidth, segmentsHeight)

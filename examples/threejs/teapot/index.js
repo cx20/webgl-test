@@ -19,9 +19,9 @@ function init() {
     scene.add( directionalLight );
 
     let geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(vertexPositions), 3));
-    geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(vertexNormals), 3));
-    geometry.addAttribute('uv', new THREE.BufferAttribute(new Float32Array(vertexTextureCoords), 2));
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertexPositions), 3));
+    geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(vertexNormals), 3));
+    geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(vertexTextureCoords), 2));
     geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices),1));
     
     let loader = new THREE.TextureLoader();

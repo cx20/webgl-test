@@ -111,11 +111,13 @@ function init() {
     ]);
     
     let geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.addAttribute('uv', new THREE.BufferAttribute(texcoord, 2));
-    geometry.addAttribute('index', new THREE.BufferAttribute(indices, 1));
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new THREE.BufferAttribute(texcoord, 2));
+    geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+    let loader = new THREE.TextureLoader();
+    let texture = loader.load('../../../assets/textures/frog.jpg');
     let uniforms = {
-        texture : { type: "t", value: THREE.ImageUtils.loadTexture( '../../../assets/textures/frog.jpg' ) }  // 256x256
+        texture : { type: "t", value: texture }
     };
 
     let material = new THREE.RawShaderMaterial({

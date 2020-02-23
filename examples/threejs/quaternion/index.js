@@ -34,8 +34,8 @@ function init() {
     scene.add( mesh1 );
     scene.add( mesh2 );
 
-    let axis1 =  new THREE.AxisHelper(160);
-    let axis2 =  new THREE.AxisHelper(160);
+    let axis1 =  new THREE.AxesHelper(160);
+    let axis2 =  new THREE.AxesHelper(160);
     mesh1.add(axis1);
     mesh2.add(axis2);
 

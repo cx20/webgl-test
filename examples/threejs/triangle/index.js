@@ -24,7 +24,7 @@ function init() {
     }
     
     let geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     
     let material = new THREE.RawShaderMaterial({
         vertexShader: document.getElementById('vs').textContent,
