@@ -17,8 +17,7 @@ varying   vec4 vPosition;
 varying   vec3 vNormal;
 varying   vec2 vTextureCoord;
 
-void main()
-{
+void main() {
     vPosition = mvMatrix * vec4(position, 1.0);
     vNormal = normal;
     vTextureCoord = textureCoord;
@@ -34,8 +33,7 @@ varying vec4 vPosition;
 varying vec3 vNormal;
 varying vec2 vTextureCoord;
 
-void main()
-{
+void main() {
     vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
     vec3 normal = normalize(vNormal);
     float lightWeighting = max(dot(normal, lightDirection), 0.0);

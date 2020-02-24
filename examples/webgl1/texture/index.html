@@ -13,8 +13,7 @@ uniform mat4 mvMatrix;
 attribute vec2 textureCoord;
 varying   vec2 vTextureCoord;
 
-void main()
-{
+void main() {
     vTextureCoord = textureCoord;
     gl_Position = pjMatrix * mvMatrix * vec4(position, 1.0);
 }
@@ -25,8 +24,7 @@ precision mediump float;
 uniform sampler2D texture;
 varying vec2      vTextureCoord;
 
-void main()
-{
+void main() {
     gl_FragColor  = texture2D(texture, vTextureCoord);
 }
 </script>
