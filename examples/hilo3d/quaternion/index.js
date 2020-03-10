@@ -1,10 +1,10 @@
-var camera = new Hilo3d.PerspectiveCamera({
+let camera = new Hilo3d.PerspectiveCamera({
     aspect: innerWidth / innerHeight,
     far: 100,
     near: 0.1,
     z: 3
 });
-var stage = new Hilo3d.Stage({
+let stage = new Hilo3d.Stage({
     container: document.getElementById('container'),
     camera: camera,
     clearColor: new Hilo3d.Color(1.0, 1.0, 1.0),
@@ -12,10 +12,15 @@ var stage = new Hilo3d.Stage({
     height: innerHeight
 });
 
-var geometry = new Hilo3d.BoxGeometry();
+let ambientLight = new Hilo3d.AmbientLight({
+    color: new Hilo3d.Color(1, 1, 1),
+    amount: 1.0
+}).addTo(stage);
+
+let geometry = new Hilo3d.BoxGeometry();
 geometry.setAllRectUV([[0, 1], [1, 1], [1, 0], [0, 0]]);
 
-var mesh1 = new Hilo3d.Mesh({
+let mesh1 = new Hilo3d.Mesh({
     x: -0.7,
     scaleX: 0.8,
     scaleY: 0.8,
@@ -35,8 +40,8 @@ var mesh1 = new Hilo3d.Mesh({
 mesh1.addChild(new Hilo3d.AxisHelper());
 stage.addChild(mesh1);
 
-var angle = 0;
-var mesh2 = new Hilo3d.Mesh({
+let angle = 0;
+let mesh2 = new Hilo3d.Mesh({
     x: 0.7,
     scaleX: 0.8,
     scaleY: 0.8,
@@ -48,18 +53,16 @@ var mesh2 = new Hilo3d.Mesh({
         })
     }),
     onUpdate: function() {
-        //var axis = new Hilo3d.Vector3(1,1,1);
-        //axis.normalize();
-        var axis = new Hilo3d.Vector3(1,1,1).normalize();
+        let axis = new Hilo3d.Vector3(1,1,1).normalize();
         angle += Math.PI / 180;
-        var q = new Hilo3d.Quaternion();
-        q.setAxisAngle(axis.elements, angle);
+        let q = new Hilo3d.Quaternion();
+        q.setAxisAngle(axis, angle);
         this.quaternion.copy(q);
     }
 });
 mesh2.addChild(new Hilo3d.AxisHelper());
 stage.addChild(mesh2);
 
-var ticker = new Hilo3d.Ticker(60);
+let ticker = new Hilo3d.Ticker(60);
 ticker.addTick(stage);
 ticker.start(true);

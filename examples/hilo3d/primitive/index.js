@@ -18,6 +18,11 @@ let material = new Hilo3d.BasicMaterial({
     })
 });
 
+let ambientLight = new Hilo3d.AmbientLight({
+    color: new Hilo3d.Color(1, 1, 1),
+    amount: 1.0
+}).addTo(stage);
+
 let angle = 0;
 let axis = new Hilo3d.Vector3(0, 1, 0).normalize();
 
