@@ -12,7 +12,7 @@ material {
     requires : [
         uv0
     ],
-    shadingModel : unlit,
+    shadingModel : lit,
     culling : none
 }
 
@@ -34,6 +34,18 @@ class App {
     this.canvas = document.getElementsByTagName('canvas')[0];
     const engine = this.engine = Filament.Engine.create(this.canvas);
     this.scene = engine.createScene();
+
+    const sunlight = Filament.EntityManager.get().create();
+    Filament.LightManager.Builder(Filament.LightManager$Type.SUN)
+        .color([0.98, 0.92, 0.89])
+        .intensity(30000.0)
+        .direction([0.6, -1.0, -0.8])
+        .sunAngularRadius(10.0)
+        .sunHaloSize(10.0)
+        .sunHaloFalloff(80.0)
+        .build(engine, sunlight);
+    this.scene.addEntity(sunlight);
+
     this.triangle = Filament.EntityManager.get()
       .create();
     this.scene.addEntity(this.triangle);
