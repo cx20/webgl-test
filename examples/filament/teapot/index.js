@@ -43,7 +43,7 @@ class App {
     const AttributeType = Filament.VertexBuffer$AttributeType;
     this.vb = Filament.VertexBuffer.Builder()
       .vertexCount(vertexPositions.length)
-      .bufferCount(3)
+      .bufferCount(2)
       .attribute(VertexAttribute.POSITION, 0, AttributeType.FLOAT3, 0, 0)
       .attribute(VertexAttribute.UV0, 1, AttributeType.FLOAT2, 0, 0)
       //.normalized(VertexAttribute.COLOR)
