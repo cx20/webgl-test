@@ -10,7 +10,8 @@ material {
         }
     ],
     requires : [
-        uv0
+        uv0,
+        tangents
     ],
     shadingModel : lit,
     culling : none
@@ -20,6 +21,7 @@ fragment {
     void material(inout MaterialInputs material) {
         prepareMaterial(material);
         material.baseColor = texture(materialParams_texture, getUV0());
+        material.normal = getWorldNormalVector();
     }
 }
 */
@@ -51,17 +53,20 @@ class App {
     this.scene.addEntity(this.triangle);
     const TRIANGLE_POSITIONS = new Float32Array(vertexPositions);
     const TRIANGLE_UVS = new Float32Array(vertexTextureCoords);
+    const TRIANGLE_TANGENTS = new Float32Array(vertexNormals);
     const VertexAttribute = Filament.VertexAttribute;
     const AttributeType = Filament.VertexBuffer$AttributeType;
     this.vb = Filament.VertexBuffer.Builder()
       .vertexCount(vertexPositions.length)
-      .bufferCount(2)
+      .bufferCount(3)
       .attribute(VertexAttribute.POSITION, 0, AttributeType.FLOAT3, 0, 0)
       .attribute(VertexAttribute.UV0, 1, AttributeType.FLOAT2, 0, 0)
+      .attribute(VertexAttribute.TANGENTS, 2, AttributeType.FLOAT3, 0, 0)
       //.normalized(VertexAttribute.COLOR)
       .build(engine);
     this.vb.setBufferAt(engine, 0, TRIANGLE_POSITIONS);
     this.vb.setBufferAt(engine, 1, TRIANGLE_UVS);
+    this.vb.setBufferAt(engine, 2, TRIANGLE_TANGENTS);
     this.ib = Filament.IndexBuffer.Builder()
       .indexCount(indices.length)
       .bufferType(Filament.IndexBuffer$IndexType.USHORT)
