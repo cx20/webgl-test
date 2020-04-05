@@ -27,7 +27,7 @@ let material = createMaterial();
 let meshPlane = new pc.Entity();
 meshPlane.addComponent("model", {type: 'plane'});
 meshPlane.model.material = material;
-meshPlane.setLocalPosition(-1.5, 0.0, 0.0);
+meshPlane.setLocalPosition(-1.5, 1.0, 0.0);
 meshPlane.rotate(90, 0, 0);
 app.root.addChild(meshPlane);
 
@@ -35,20 +35,44 @@ app.root.addChild(meshPlane);
 let meshCube = new pc.Entity();
 meshCube.addComponent("model", {type: 'box'});
 meshCube.model.material = material;
-meshCube.setLocalPosition(0.0, 0.0, 0.0);
+meshCube.setLocalPosition(0.0, 1.0, 0.0);
 app.root.addChild(meshCube);
 
 // sphere
 let meshSphere = new pc.Entity();
 meshSphere.addComponent("model", {type: 'sphere'});
 meshSphere.model.material = material;
-meshSphere.setLocalPosition(1.5, 0.0, 0.0);
+meshSphere.setLocalPosition(1.5, 1.0, 0.0);
 app.root.addChild(meshSphere);
+
+// capsule
+let meshCapsule = new pc.Entity();
+meshCapsule.addComponent("model", {type: 'capsule'});
+meshCapsule.model.material = material;
+meshCapsule.setLocalPosition(-1.5, -1.0, 0.0);
+app.root.addChild(meshCapsule);
+
+// cone
+let meshCone = new pc.Entity();
+meshCone.addComponent("model", {type: 'cone'});
+meshCone.model.material = material;
+meshCone.setLocalPosition(0.0, -1.0, 0.0);
+app.root.addChild(meshCone);
+
+// cylinder
+let meshCylinder = new pc.Entity();
+meshCylinder.addComponent("model", {type: 'cylinder'});
+meshCylinder.model.material = material;
+meshCylinder.setLocalPosition(1.5, -1.0, 0.0);
+app.root.addChild(meshCylinder);
 
 app.on("update", function (dt) {
     meshPlane.rotate(0, dt * 50, 0);
     meshCube.rotate(0, dt * 50, 0);
     meshSphere.rotate(0, dt * 50, 0);
+    meshCapsule.rotate(0, dt * 50, 0);
+    meshCone.rotate(0, dt * 50, 0);
+    meshCylinder.rotate(0, dt * 50, 0);
 });
 
 function createMaterial() {
