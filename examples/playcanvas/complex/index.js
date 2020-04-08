@@ -122,7 +122,10 @@ var Viewer = function (canvas) {
     light.setLocalEulerAngles(45, 30, 0);
     app.root.addChild(light);
 
-    app.start();
+    // disable autorender
+    app.autoRender = false;
+    self.prevCameraMat = new pc.Mat4();
+    app.on('update', self.update.bind(self));
 
     // store things
     this.app = app;
@@ -134,8 +137,10 @@ var Viewer = function (canvas) {
         let m = modelInfoSet[i];
         let url = m.url;
         var filename = url.split('/').pop();
-        self.load(filename, url);
+        self.load(url, filename);
     }
+    // start the application
+    app.start();
 };
 
 Object.assign(Viewer.prototype, {
@@ -178,29 +183,47 @@ Object.assign(Viewer.prototype, {
         }
     },
 
-    // load model from the url
-    load: function (filename, url) {
-        this.app.assets.loadFromUrl(url, "container", this._onLoaded.bind(this), filename);
+    // load model at the url
+    load: function(url, filename) {
+        this.app.assets.loadFromUrlAndFilename(url, filename, "container", this._onLoaded.bind(this));
     },
 
     // play the animation
     play: function (animationName) {
-        if (animationName) {
-            this.entity.animation.play(this.animationMap[animationName], 1);
-        } else {
-            this.entity.animation.playing = true;
+        if (this.entity && this.entity.animation) {
+            if (animationName) {
+                this.entity.animation.play(this.animationMap[animationName], 1);
+            } else {
+                this.entity.animation.playing = true;
+            }
         }
     },
 
     // stop playing animations
     stop: function () {
-        this.entity.animation.playing = false;
+        if (this.entity && this.entity.animation) {
+            this.entity.animation.playing = false;
+        }
     },
 
     setSpeed: function (speed) {
-        var entity = this.entity;
-        if (entity) {
-            entity.animation.speed = speed;
+        if (this.entity && this.entity.animation) {
+            var entity = this.entity;
+            if (entity) {
+                entity.animation.speed = speed;
+            }
+        }
+    },
+    update: function () {
+        // if the camera has moved since the last render
+        var cameraWorldTransform = this.camera.getWorldTransform();
+        if (!this.prevCameraMat.equals(cameraWorldTransform)) {
+            this.prevCameraMat.copy(cameraWorldTransform);
+            this.app.renderNextFrame = true;
+        }
+        // or an animation is loaded and we're animating
+        if (this.entity && this.entity.animation && this.entity.animation.playing) {
+            this.app.renderNextFrame = true;
         }
     },
 
@@ -272,6 +295,10 @@ Object.assign(Viewer.prototype, {
             this.asset = asset;
 
             this.focusCamera();
+
+            if (resource.model.name == "Fox.gltf/model/0") {
+                this.play("Run");
+            }
         }
     }
 });
