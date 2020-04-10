@@ -105,6 +105,16 @@ var Viewer = function (canvas) {
             camera.script.create("orbitCameraInputMouse");
             camera.script.create("orbitCameraInputTouch");
             app.root.addChild(camera);
+
+            for (let i = 0; i < modelInfoSet.length; i++) {
+                let m = modelInfoSet[i];
+                let url = m.url;
+                var filename = url.split('/').pop();
+                self.load(url, filename);
+            }
+
+            // start the application
+            app.start();
         });
 
     // create the light
@@ -133,14 +143,6 @@ var Viewer = function (canvas) {
     this.light = light;
     this.entity = null;
 
-    for (let i = 0; i < modelInfoSet.length; i++) {
-        let m = modelInfoSet[i];
-        let url = m.url;
-        var filename = url.split('/').pop();
-        self.load(url, filename);
-    }
-    // start the application
-    app.start();
 };
 
 Object.assign(Viewer.prototype, {
