@@ -122,7 +122,7 @@ class App {
             let s = vec3.create();
             let t = vec3.create();
             
-            vec3.set(t, model.position[0], model.position[1] - 1, model.position[2]);
+            vec3.set(t, model.position[0], model.position[1] - 2, model.position[2]);
             mat4.translate(m, m, t);
             
             vec3.set(s, scale, scale, scale);
