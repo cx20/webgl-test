@@ -296,9 +296,8 @@ Object.assign(Viewer.prototype, {
             this.entity = entity;
             this.asset = asset;
 
-            this.focusCamera();
-
             if (resource.model.name == "Fox.gltf/model/0") {
+                this.focusCamera();
                 this.play("Run");
             }
         }
