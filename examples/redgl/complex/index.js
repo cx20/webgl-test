@@ -94,6 +94,11 @@ RedGL(canvas, function (v) {
                 base, // assetRootPath
                 file, // fileName
                 function (v) { // callBack
+                    if (file == "Fox.gltf") {
+                    	v.stopAnimation();
+                    	v.playAnimation(v.parsingResult.animations[2])
+                    }
+
                     var mesh = v['resultMesh'];
                     mesh.scaleX = scale;
                     mesh.scaleY = scale;
