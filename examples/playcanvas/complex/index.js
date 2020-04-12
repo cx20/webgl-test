@@ -132,6 +132,32 @@ var Viewer = function (canvas) {
     light.setLocalEulerAngles(45, 30, 0);
     app.root.addChild(light);
 
+    let material = createMaterial();
+
+    let ground1 = new pc.Entity();
+    ground1.addComponent("model", {type: 'plane'});
+    ground1.model.material = material;
+    ground1.setLocalPosition(-49.5, 0.0, -1.6);
+    ground1.rotate(0, 0, 0);
+    var scale = ground1.getLocalScale();
+    scale.x = 100.0;
+    scale.y = 0.1;
+    scale.z = 0.1;
+    ground1.setLocalScale(scale);
+    app.root.addChild(ground1);
+
+    let ground2 = new pc.Entity();
+    ground2.addComponent("model", {type: 'plane'});
+    ground2.model.material = material;
+    ground2.setLocalPosition(-49.5, 0.0, -2.35);
+    ground2.rotate(0, 0, 0);
+    var scale = ground2.getLocalScale();
+    scale.x = 100.0;
+    scale.y = 0.1;
+    scale.z = 0.1;
+    ground2.setLocalScale(scale);
+    app.root.addChild(ground2);
+
     // disable autorender
     app.autoRender = false;
     self.prevCameraMat = new pc.Mat4();
@@ -303,6 +329,13 @@ Object.assign(Viewer.prototype, {
         }
     }
 });
+
+function createMaterial() {
+    let material = new pc.scene.PhongMaterial();
+    material.diffuseMapTint = true;
+    material.update()
+    return material;
+}
 
 var viewer;
 
