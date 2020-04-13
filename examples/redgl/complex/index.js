@@ -34,15 +34,24 @@ RedGL(canvas, function (v) {
         tRenderer = RedRenderer();
         tView = RedView(this, tScene, tController);
         tWorld.addView(tView, 'HelloRedGL');
-        tScene['grid'] = RedGrid(this);
+        //tScene['grid'] = RedGrid(this);
         //tScene['axis'] = RedAxis(this);
         tScene.skyBox = RedSkyBox(this, [
+/*
             'https://cx20.github.io/gltf-test/textures/cube/skybox/px.jpg',
             'https://cx20.github.io/gltf-test/textures/cube/skybox/nx.jpg',
             'https://cx20.github.io/gltf-test/textures/cube/skybox/py.jpg',
             'https://cx20.github.io/gltf-test/textures/cube/skybox/ny.jpg',
             'https://cx20.github.io/gltf-test/textures/cube/skybox/pz.jpg',
             'https://cx20.github.io/gltf-test/textures/cube/skybox/nz.jpg'
+*/
+            'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/px.jpg',
+            'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nx.jpg',
+            'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/py.jpg',
+            'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/ny.jpg',
+            'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/pz.jpg',
+            'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nz.jpg'
+
 /*
             'https://cx20.github.io/gltf-test/textures/papermill/specular/specular_right_0.jpg',
             'https://cx20.github.io/gltf-test/textures/papermill/specular/specular_left_0.jpg',
@@ -65,12 +74,21 @@ RedGL(canvas, function (v) {
         
         var cubeTexture = RedBitmapCubeTexture(this, // environmentTexture
                 [
+/*
                     'https://cx20.github.io/gltf-test/textures/cube/skybox/px.jpg',
                     'https://cx20.github.io/gltf-test/textures/cube/skybox/nx.jpg',
                     'https://cx20.github.io/gltf-test/textures/cube/skybox/py.jpg',
                     'https://cx20.github.io/gltf-test/textures/cube/skybox/ny.jpg',
                     'https://cx20.github.io/gltf-test/textures/cube/skybox/pz.jpg',
                     'https://cx20.github.io/gltf-test/textures/cube/skybox/nz.jpg'
+*/
+                    'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/px.jpg',
+                    'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nx.jpg',
+                    'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/py.jpg',
+                    'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/ny.jpg',
+                    'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/pz.jpg',
+                    'https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nz.jpg'
+
 /*
                     'https://cx20.github.io/gltf-test/textures/papermill/specular/specular_right_0.jpg',
                     'https://cx20.github.io/gltf-test/textures/papermill/specular/specular_left_0.jpg',
@@ -117,5 +135,18 @@ RedGL(canvas, function (v) {
                 cubeTexture
             );
         }
+
+        let tMaterial = RedColorMaterial(this, '#ffffff');
+	    let ground1 = RedMesh(this, RedPlane(this, 100, 0.1, 1, 1), tMaterial);
+		ground1.rotationX = (Math.PI / 2) / (2 * Math.PI) * 360;
+	    ground1.x = -49.5;
+	    ground1.z = -1.6;
+	    tScene.addChild(ground1);
+
+	    let ground2 = RedMesh(this, RedPlane(this, 100, 0.1, 1, 1), tMaterial);
+		ground2.rotationX = (Math.PI / 2) / (2 * Math.PI) * 360;
+	    ground2.x = -49.5;
+	    ground2.z = -2.35;
+	    tScene.addChild(ground2);
     }
 });
