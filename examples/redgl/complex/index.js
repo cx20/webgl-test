@@ -61,8 +61,8 @@ RedGL(canvas, function (v) {
             'https://cx20.github.io/gltf-test/textures/papermill/specular/specular_back_0.jpg'
 */
         ]);
-        let tDLight = RedDirectionalLight(this)
-        tScene.addLight(tDLight)
+        let tDLight = RedDirectionalLight(this);
+        tScene.addLight(tDLight);
         tDLight.x = 1;
         tDLight.y = 1;
         tDLight.z = -1;
@@ -137,16 +137,16 @@ RedGL(canvas, function (v) {
         }
 
         let tMaterial = RedColorMaterial(this, '#ffffff');
-	    let ground1 = RedMesh(this, RedPlane(this, 100, 0.1, 1, 1), tMaterial);
-		ground1.rotationX = (Math.PI / 2) / (2 * Math.PI) * 360;
-	    ground1.x = -49.5;
-	    ground1.z = -1.6;
-	    tScene.addChild(ground1);
+        let ground1 = RedMesh(this, RedPlane(this, 100, 0.1, 1, 1), tMaterial);
+        ground1.rotationX = (Math.PI / 2) / (2 * Math.PI) * 360;
+        ground1.x = -49.5;
+        ground1.z = -1.6;
+        tScene.addChild(ground1);
 
-	    let ground2 = RedMesh(this, RedPlane(this, 100, 0.1, 1, 1), tMaterial);
-		ground2.rotationX = (Math.PI / 2) / (2 * Math.PI) * 360;
-	    ground2.x = -49.5;
-	    ground2.z = -2.35;
-	    tScene.addChild(ground2);
+        let ground2 = RedMesh(this, RedPlane(this, 100, 0.1, 1, 1), tMaterial);
+        ground2.rotationX = (Math.PI / 2) / (2 * Math.PI) * 360;
+        ground2.x = -49.5;
+        ground2.z = -2.35;
+        tScene.addChild(ground2);
     }
 });
