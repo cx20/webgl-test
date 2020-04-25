@@ -339,36 +339,7 @@ function createMaterial() {
 
 var viewer;
 
-function main(){
-    if (true) {//typeof WebAssembly !== 'object') {
-        loadScript('https://cx20.github.io/gltf-test/libs/playcanvas/v1.27.0-dev/draco_decoder.js').then(function () {
-            decoderModule = DracoDecoderModule();
-            onLoad();
-        });
-    } else {
-        loadScript('https://cx20.github.io/gltf-test/libs/playcanvas/v1.27.0-dev/draco_wasm_wrapper.js').then(function () {
-            fetch('https://cx20.github.io/gltf-test/libs/playcanvas/v1.27.0-dev/draco_decoder.wasm').then(function (response) {
-                response.arrayBuffer().then(function (arrayBuffer) {
-                    decoderModule = DracoDecoderModule({ wasmBinary: arrayBuffer });
-                    onLoad();
-                });
-            });
-        });
-    }
-}
-
-function loadScript(src) {
-    let head = document.getElementsByTagName('head')[0];
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = src;
-    return new Promise(function (resolve) {
-        script.onload = resolve;
-        head.appendChild(script);
-    });
-}
-
-function onLoad() {
+function main() {
     viewer = new Viewer(document.getElementById("application"));
 }
 
