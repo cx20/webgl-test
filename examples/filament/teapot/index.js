@@ -96,7 +96,7 @@ class App {
     this.view = engine.createView();
     this.view.setCamera(this.camera);
     this.view.setScene(this.scene);
-    this.view.setClearColor([0.0, 0.0, 0.0, 1.0]);
+    this.renderer.setClearOptions({clearColor: [0.0, 0.0, 0.0, 1.0], clear: true});
     this.resize(); // adjust the initial viewport
     this.render = this.render.bind(this);
     this.resize = this.resize.bind(this);
