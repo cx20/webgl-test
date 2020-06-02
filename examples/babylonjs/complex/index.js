@@ -11,7 +11,7 @@ var createScene = function(engine) {
             var mesh = result.meshes[0];
             var modelScaling = mesh.scaling;
             mesh.scaling = new BABYLON.Vector3(modelScaling.x * scale, modelScaling.y * scale, modelScaling.z * scale);
-            mesh.rotate(BABYLON.Axis.Y, Math.PI, BABYLON.Space.LOCAL);
+            mesh.rotate(BABYLON.Axis.Y, Math.PI / 2, BABYLON.Space.LOCAL);
             mesh.position = new BABYLON.Vector3(0, 0, 2);
             meshes.push(mesh);
         }),

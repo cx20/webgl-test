@@ -2,7 +2,7 @@ let modelInfoSet = [
 {
     name: "CesiumMilkTruck",
     scale: 0.4,
-    rotation: [0, 0, 0],
+    rotation: [0, - Math.PI / 2, 0],
     position: [0, 0, -2],
     url: "https://cx20.github.io/gltf-test/sampleModels/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf"
 }, {
