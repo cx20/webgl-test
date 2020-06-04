@@ -1,3 +1,5 @@
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r117/build/three.module.js';
+
 let container;
 let camera, scene, renderer;
 
