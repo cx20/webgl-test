@@ -1,5 +1,9 @@
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r117/build/three.module.js';
+import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r117/examples/jsm/controls/OrbitControls.js';
+
 let container;
 let camera, scene, renderer;
+let controls;
 let meshPlane;
 let meshCube;
 let meshSphere;
@@ -86,7 +90,7 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls = new OrbitControls( camera, renderer.domElement );
     controls.userPan = false;
     controls.userPanSpeed = 0.0;
     controls.maxDistance = 5000.0;

@@ -1,4 +1,6 @@
-let renderer, scene, camera, mesh1, mesh2;
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r117/build/three.module.js';
+
+let renderer, scene, camera, mesh1, mesh2, material;
 let angle = 0;
 
 init();
