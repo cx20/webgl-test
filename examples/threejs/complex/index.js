@@ -1,6 +1,6 @@
-import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r117/build/three.module.js';
-import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r117/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r117/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r118/build/three.module.js';
+import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/loaders/GLTFLoader.js';
 
 let modelInfoSet = [
 {
@@ -29,8 +29,8 @@ let scene;
 let camera;
 let renderer;
 let controls;
-let emitter, particleGroup;
-let emitters = [];
+//let emitter, particleGroup;
+//let emitters = [];
 let loader = new THREE.TextureLoader();
 let width;
 let height;
@@ -38,6 +38,8 @@ let height;
 init();
 animate();
 
+// TODO: ES6 module version of SPE.js is required.
+/*
 function initParticles() {
     var texture = loader.load('../../../assets/textures/smokeparticle.png');
 
@@ -98,6 +100,7 @@ function initParticles() {
     emitters.push( emitterRightBack );
     emitters.push( emitterLeftBack );
 }
+*/
 
 function init() {
     width = window.innerWidth;
@@ -176,13 +179,14 @@ function init() {
         });
     }
 
+/*
     initParticles();
 
     for ( var i = 0; i < emitters.length; i++ ) {
         particleGroup.addEmitter( emitters[i] );
     }
     scene.add( particleGroup.mesh );
-
+*/
     renderer = new THREE.WebGLRenderer();
     controls = new OrbitControls(camera, renderer.domElement);
     controls.userPan = false;
@@ -213,14 +217,14 @@ function getEnvMap() {
 }
 
 function animate() {
-  	let delta = clock.getDelta();
+    let delta = clock.getDelta();
     if (mixers.length > 0) {
         for (let i = 0; i < mixers.length; i++) {
             let mixer = mixers[i];
             mixer.update(delta);
         }
     }
-    particleGroup.tick( delta );
+    //particleGroup.tick( delta );
     controls.update();
     render();
     requestAnimationFrame(animate);

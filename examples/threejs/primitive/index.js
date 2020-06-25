@@ -1,5 +1,5 @@
-import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r117/build/three.module.js';
-import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r117/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r118/build/three.module.js';
+import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/controls/OrbitControls.js';
 
 let container;
 let camera, scene, renderer;
