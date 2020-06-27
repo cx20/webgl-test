@@ -1,6 +1,6 @@
-import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r118/build/three.module.js';
-import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/loaders/GLTFLoader.js';
+//import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r118/build/three.module.js';
+//import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/controls/OrbitControls.js';
+//import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r118/examples/jsm/loaders/GLTFLoader.js';
 
 let modelInfoSet = [
 {
@@ -29,8 +29,8 @@ let scene;
 let camera;
 let renderer;
 let controls;
-//let emitter, particleGroup;
-//let emitters = [];
+let emitter, particleGroup;
+let emitters = [];
 let loader = new THREE.TextureLoader();
 let width;
 let height;
@@ -38,8 +38,6 @@ let height;
 init();
 animate();
 
-// TODO: ES6 module version of SPE.js is required.
-/*
 function initParticles() {
     var texture = loader.load('../../../assets/textures/smokeparticle.png');
 
@@ -100,7 +98,6 @@ function initParticles() {
     emitters.push( emitterRightBack );
     emitters.push( emitterLeftBack );
 }
-*/
 
 function init() {
     width = window.innerWidth;
@@ -137,7 +134,7 @@ function init() {
     light.castShadow = true;
     scene.add(light);
 
-    let loader = new GLTFLoader();
+    let loader = new THREE.GLTFLoader();
     loader.setCrossOrigin('anonymous');
     var envMap = getEnvMap();
     scene.background = envMap;
@@ -179,16 +176,15 @@ function init() {
         });
     }
 
-/*
     initParticles();
 
     for ( var i = 0; i < emitters.length; i++ ) {
         particleGroup.addEmitter( emitters[i] );
     }
     scene.add( particleGroup.mesh );
-*/
+
     renderer = new THREE.WebGLRenderer();
-    controls = new OrbitControls(camera, renderer.domElement);
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.userPan = false;
     controls.userPanSpeed = 0.0;
     controls.maxDistance = 5000.0;
@@ -224,7 +220,7 @@ function animate() {
             mixer.update(delta);
         }
     }
-    //particleGroup.tick( delta );
+    particleGroup.tick( delta );
     controls.update();
     render();
     requestAnimationFrame(animate);
