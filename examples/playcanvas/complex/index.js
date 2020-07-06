@@ -36,8 +36,6 @@ var Viewer = function (canvas) {
         mouse: new pc.Mouse(canvas),
         touch: new pc.TouchDevice(canvas)
     });
-    app.loader.getHandler("texture").crossOrigin = "anonymous";
-    app.loader.getHandler("texture").imgParser.crossOrigin = "anonymous";
     
     var getCanvasSize = function () {
         return {
