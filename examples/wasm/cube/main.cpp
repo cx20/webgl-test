@@ -1,3 +1,6 @@
+// File : main.cpp
+// Compile : emcc main.cpp -std=c++11 -s WASM=1 -s USE_SDL=2 -O3 -o index.js
+
 #include <functional>
 #include <math.h>
 #include <emscripten.h>
@@ -174,14 +177,14 @@ int main()
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0,
+        0.0f, 0.0f, 0.0f, 1.0f
     };
 
     GLfloat matAxisY[] = {
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0,
+        0.0f, 0.0f, 0.0f, 1.0f
     };
     
     GLfloat rad = 0.0;
