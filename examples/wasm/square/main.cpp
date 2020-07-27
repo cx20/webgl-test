@@ -1,5 +1,7 @@
-#include <functional>
+// File : main.cpp
+// Compile : emcc main.cpp -std=c++11 -s WASM=1 -s USE_SDL=2 -O3 -o index.js
 
+#include <functional>
 #include <emscripten.h>
 #include <SDL.h>
 
