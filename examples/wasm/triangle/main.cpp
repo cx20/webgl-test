@@ -4,6 +4,7 @@
 #include <functional>
 
 #include <emscripten.h>
+#include <emscripten/html5.h>
 #include <SDL.h>
 
 #define GL_GLEXT_PROTOTYPES 1
@@ -28,8 +29,12 @@ void main_loop() { loop(); }
 
 int main()
 {
+    int w, h;
+    emscripten_get_canvas_element_size("#canvas", &w, &h);
+
     SDL_Window *window;
-    SDL_CreateWindowAndRenderer(640, 480, 0, &window, nullptr);
+    //SDL_CreateWindowAndRenderer(640, 480, 0, &window, nullptr);
+    SDL_CreateWindowAndRenderer(w, h, 0, &window, nullptr);
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
