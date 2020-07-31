@@ -10,17 +10,19 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL_opengles2.h>
 
+#include "linmath.h"
+
 // Shader sources
 const GLchar* vertexSource =
     "attribute vec3 position;                     \n"
     "attribute vec4 color;                        \n"
-    "uniform mat4 matAxisX;                       \n"
-    "uniform mat4 matAxisY;                       \n"
+    "uniform mat4 uPMatrix;                       \n"
+    "uniform mat4 uMVMatrix;                      \n"
     "varying   vec4 vColor;                       \n"
     "void main()                                  \n"
     "{                                            \n"
     "  vColor = color;                            \n"
-    "  gl_Position = matAxisX * matAxisY * vec4(position, 1.0);         \n"
+    "  gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);         \n"
     "}                                            \n";
 const GLchar* fragmentSource =
     "precision mediump float;\n"
@@ -29,6 +31,9 @@ const GLchar* fragmentSource =
     "{                                            \n"
     "  gl_FragColor = vColor;                     \n"
     "}                                            \n";
+
+static mat4x4 projection_matrix;
+static mat4x4 model_view_matrix;
 
 std::function<void()> loop;
 void main_loop() { loop(); }
@@ -175,44 +180,23 @@ int main()
     GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
     glEnableVertexAttribArray(colAttrib);
 
-    GLint uLocAxisX = glGetUniformLocation(shaderProgram, "matAxisX");
-    GLint uLocAxisY = glGetUniformLocation(shaderProgram, "matAxisY");
+    GLint uPMatrix  = glGetUniformLocation(shaderProgram, "uPMatrix");
+    GLint uMVMatrix = glGetUniformLocation(shaderProgram, "uMVMatrix");
 
-    GLfloat matAxisX[] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
-    GLfloat matAxisY[] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-    
     GLfloat rad = 0.0;
 
     loop = [&]
     {
         rad += M_PI * 1.0 / 180.0;
+        
+        mat4x4_perspective(projection_matrix, 45, (float)w / (float)h, 1, 100);
+        mat4x4_identity(model_view_matrix);
+        mat4x4_translate_in_place(model_view_matrix, 0.0, 0.0, -2.0);
+        mat4x4_rotate_X(model_view_matrix, model_view_matrix, (float)rad);
+        mat4x4_rotate_Z(model_view_matrix, model_view_matrix, (float)rad);
 
-        GLfloat c = cos(rad);
-        GLfloat s = sin(rad);
-
-        matAxisX[5] = c;
-        matAxisX[6] = -s;
-        matAxisX[9] = s;
-        matAxisX[10] = c;
-
-        matAxisY[0] = c;
-        matAxisY[2] = s;
-        matAxisY[8] = -s;
-        matAxisY[10] = c;
-
-        glUniformMatrix4fv(uLocAxisX, 1, GL_FALSE, matAxisX);
-        glUniformMatrix4fv(uLocAxisY, 1, GL_FALSE, matAxisY);
+        glUniformMatrix4fv(uPMatrix,  1, GL_FALSE, (const GLfloat*)projection_matrix);
+        glUniformMatrix4fv(uMVMatrix, 1, GL_FALSE, (const GLfloat*)model_view_matrix);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
         glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
