@@ -192,8 +192,7 @@ int main()
         mat4x4_perspective(projection_matrix, 45, (float)w / (float)h, 1, 100);
         mat4x4_identity(model_view_matrix);
         mat4x4_translate_in_place(model_view_matrix, 0.0, 0.0, -2.0);
-        mat4x4_rotate_X(model_view_matrix, model_view_matrix, (float)rad);
-        mat4x4_rotate_Z(model_view_matrix, model_view_matrix, (float)rad);
+        mat4x4_rotate(model_view_matrix, model_view_matrix, 1.0, 1.0, 1.0, rad);
 
         glUniformMatrix4fv(uPMatrix,  1, GL_FALSE, (const GLfloat*)projection_matrix);
         glUniformMatrix4fv(uMVMatrix, 1, GL_FALSE, (const GLfloat*)model_view_matrix);
