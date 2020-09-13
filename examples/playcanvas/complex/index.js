@@ -56,31 +56,58 @@ var Viewer = function (canvas) {
     });
 
     // set a prefiltered cubemap as the skybox
+    // Please refer to the following when setting a 6-sided texture different from the prefiltered texture
+    // 
+    // How to dynamically configure Skybox with JavaScript?
+    // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980
+    // 
+    // 1. rgbm specification of cubemap is changed to default
+    // 2. After constructing the cubemap asset, do cubemapAsset.loadFaces = true; then kick off asset load.
+    // 3. Leave resource[0] as `default` and set the rest (resource[1]...resource[6]) to `rgbm`.
+    // 
     let cubemapAsset = new pc.Asset('papermill', 'cubemap', {
         url: "https://cx20.github.io/gltf-test/textures/dds/papermill.dds"
     }, {
         "textures": [
+/*
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_right_0.jpg",
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_left_0.jpg",
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_top_0.jpg",
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_bottom_0.jpg",
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_front_0.jpg",
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_back_0.jpg",
+*/
+            "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/px.jpg",
+            "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nx.jpg",
+            "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/py.jpg",
+            "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/ny.jpg",
+            "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/pz.jpg",
+            "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nz.jpg",
         ],
         "magFilter": 1,
         "minFilter": 5,
         "anisotropy": 1,
         "name": "Papermill",
-        "rgbm": true,
+        // 1. rgbm specification of cubemap is changed to default
+        // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/8
+        //"rgbm": true,
         "prefiltered": "papermill.dds"
     });
     cubemapAsset.ready(function () {
         app.scene.gammaCorrection = pc.GAMMA_SRGB;
         app.scene.toneMapping = pc.TONEMAP_ACES;
-        app.scene.skyboxMip = 1;                        // Set the skybox to the 128x128 cubemap mipmap level
+        app.scene.skyboxMip = 0;
+        // 3. Leave resource[0] as `default` and set the rest (resource[1]...resource[6]) to `rgbm`.
+        // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/10
+        for (let i = 1; i < cubemapAsset.resources.length; i++ ) {
+            cubemapAsset.resources[i].type = "rgbm";
+        }
         app.scene.setSkybox(cubemapAsset.resources);
     });
     app.assets.add(cubemapAsset);
+    // 2. After constructing the cubemap asset, do cubemapAsset.loadFaces = true; then kick off asset load.
+    // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/6
+    cubemapAsset.loadFaces = true;
     app.assets.load(cubemapAsset);
 
     // create the orbit camera
