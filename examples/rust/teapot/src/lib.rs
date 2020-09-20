@@ -300,7 +300,6 @@ fn draw_scene(
 
     let delta = (current_time - start_time) as f32;
     let model_view_matrix = glm::translate(&glm::Mat4::identity(), &glm::TVec3::new(-0.0, 0.0, -35.0));
-    //let model_view_matrix = glm::rotate(&model_view_matrix, delta, &glm::TVec3::new(0.0, 0.0, 1.0));
     let model_view_matrix = glm::rotate(&model_view_matrix, delta*0.7, &glm::TVec3::new(0.0, 1.0, 0.0));
     let vec_model_view_matrix = model_view_matrix.iter().map(|v| *v).collect::<Vec<_>>();
 
