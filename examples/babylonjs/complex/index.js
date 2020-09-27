@@ -83,11 +83,14 @@ var createScene = function(engine) {
         particle1.particleTexture = texture;
         particle1.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
         particle1.minSize = 0.1;
-        particle1.maxSize = 0.2;
-        particle1.minEmitBox = new BABYLON.Vector3(-0.2, -0.2, -0.2);
-        particle1.maxEmitBox = new BABYLON.Vector3(0.2, 0.2, 0.2);
+        particle1.maxSize = 0.3;
+        particle1.minEmitBox = new BABYLON.Vector3(-0.1, -0.1, -0.1);
+        particle1.maxEmitBox = new BABYLON.Vector3(0.1, 0.1, 0.1);
         particle1.emitRate = 100;
         particle1.colorDead = new BABYLON.Color4(1, 1, 1, 1);
+        particle1.minEmitPower = 0.1;
+        particle1.maxEmitPower = 0.5;
+        particle1.updateSpeed = 0.05;
         
         var emitterRightBack = BABYLON.Mesh.CreateBox("emitterRightBack", 0.1, scene);
         emitterRightBack.rotate(BABYLON.Axis.Z, Math.PI*60/180, BABYLON.Space.LOCAL);
@@ -101,12 +104,12 @@ var createScene = function(engine) {
         
         var emitterRightFront = BABYLON.Mesh.CreateBox("emitterRightFront", 0.1, scene);
         emitterRightFront.rotate(BABYLON.Axis.Z, Math.PI*60/180, BABYLON.Space.LOCAL);
-        emitterRightFront.position = new BABYLON.Vector3(0.2, 0.1, 1.6);
+        emitterRightFront.position = new BABYLON.Vector3(0.3, 0.1, 1.6);
         emitterRightFront.visibility = false;
 
         var emitterLeftFront = BABYLON.Mesh.CreateBox("emitterLeftFront", 0.1, scene);
         emitterLeftFront.rotate(BABYLON.Axis.Z, Math.PI*60/180, BABYLON.Space.LOCAL);
-        emitterLeftFront.position = new BABYLON.Vector3(0.2, 0.1, 2.35);
+        emitterLeftFront.position = new BABYLON.Vector3(0.3, 0.1, 2.35);
         emitterLeftFront.visibility = false;
 
         particle1.emitter = emitterRightBack;
