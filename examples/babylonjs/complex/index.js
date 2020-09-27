@@ -112,15 +112,18 @@ var createScene = function(engine) {
         emitterLeftFront.position = new BABYLON.Vector3(0.3, 0.1, 2.35);
         emitterLeftFront.visibility = false;
 
-        particle1.emitter = emitterRightBack;
-        var particle2 = particle1.clone("particle2", emitterLeftBack);
-        var particle3 = particle1.clone("particle3", emitterRightFront);
-        var particle4 = particle1.clone("particle4", emitterLeftFront);
+        var particleRightBack  = particle1.clone("particleRightBack",  emitterRightBack);
+        var particleLeftBack   = particle1.clone("particleLeftBack",   emitterLeftBack);
+        var particleRightFront = particle1.clone("particleRightFront", emitterRightFront);
+        var particleLeftFront  = particle1.clone("particleLeftFront",  emitterLeftFront);
+        
+        particleRightFront.maxEmitPower = 0.2;
+        particleLeftFront .maxEmitPower = 0.2;
 
-        particle1.start();
-        particle2.start();
-        particle3.start();
-        particle4.start();
+        particleRightBack .start();
+        particleLeftBack  .start();
+        particleRightFront.start();
+        particleLeftFront .start();
 
         engine.runRenderLoop(function() {
             scene.activeCamera.alpha -= 0.01;
