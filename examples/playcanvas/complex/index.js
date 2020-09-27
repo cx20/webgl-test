@@ -77,12 +77,20 @@ var Viewer = function (canvas) {
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_front_0.jpg",
             "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_back_0.jpg",
 */
+/*
             "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/px.jpg",
             "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nx.jpg",
             "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/py.jpg",
             "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/ny.jpg",
             "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/pz.jpg",
             "https://rawcdn.githack.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nz.jpg",
+*/
+            "https://cx20.github.io/gltf-test/textures/cube/skybox/px.jpg",
+            "https://cx20.github.io/gltf-test/textures/cube/skybox/nx.jpg",
+            "https://cx20.github.io/gltf-test/textures/cube/skybox/py.jpg",
+            "https://cx20.github.io/gltf-test/textures/cube/skybox/ny.jpg",
+            "https://cx20.github.io/gltf-test/textures/cube/skybox/pz.jpg",
+            "https://cx20.github.io/gltf-test/textures/cube/skybox/nz.jpg",
         ],
         "magFilter": 1,
         "minFilter": 5,
@@ -119,7 +127,7 @@ var Viewer = function (canvas) {
 
     // load orbit script
     app.assets.loadFromUrl(
-        "https://cx20.github.io/gltf-test/libs/playcanvas/v1.30.0/orbit-camera.js",
+        "https://cx20.github.io/gltf-test/libs/playcanvas/v1.35.0/orbit-camera.js",
         "script",
         function (err, asset) {
             // setup orbit script component
