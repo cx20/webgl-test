@@ -57,31 +57,42 @@ function readyBasicVerticesData() {
         -0.5, -0.5, -0.5  // v4
     ]);
     
-    const colors = new Float32Array([ 
-        1.0, 0.0, 0.0, // Front face
-        1.0, 0.0, 0.0, // Front face
-        1.0, 0.0, 0.0, // Front face
-        1.0, 0.0, 0.0, // Front face
-        1.0, 1.0, 0.0, // Back face
-        1.0, 1.0, 0.0, // Back face
-        1.0, 1.0, 0.0, // Back face
-        1.0, 1.0, 0.0, // Back face
-        0.0, 1.0, 0.0, // Top face
-        0.0, 1.0, 0.0, // Top face
-        0.0, 1.0, 0.0, // Top face
-        0.0, 1.0, 0.0, // Top face
-        1.0, 0.5, 0.5, // Bottom face
-        1.0, 0.5, 0.5, // Bottom face
-        1.0, 0.5, 0.5, // Bottom face
-        1.0, 0.5, 0.5, // Bottom face
-        1.0, 0.0, 1.0, // Right face
-        1.0, 0.0, 1.0, // Right face
-        1.0, 0.0, 1.0, // Right face
-        1.0, 0.0, 1.0, // Right face
-        0.0, 0.0, 1.0, // Left face
-        0.0, 0.0, 1.0, // Left face
-        0.0, 0.0, 1.0, // Left face
-        0.0, 0.0, 1.0  // Left face
+    const texcoords = new Float32Array([ 
+        // Front face
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+        
+        // Back face
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        
+        // Top face
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        
+        // Bottom face
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0,
+        
+        // Right face
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        
+        // Left face
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0
     ]);
 
     const indices = new Uint32Array([
@@ -95,11 +106,15 @@ function readyBasicVerticesData() {
         
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
-        attributeCompositionTypes: [Rn.CompositionType.Vec3, Rn.CompositionType.Vec3],
-        attributeSemantics: [Rn.VertexAttribute.Position, Rn.VertexAttribute.Color0],
-        attributes: [positions, colors],
+        attributeCompositionTypes: [Rn.CompositionType.Vec3, Rn.CompositionType.Vec2],
+        attributeSemantics: [Rn.VertexAttribute.Position, Rn.VertexAttribute.Texcoord0],
+        attributes: [positions, texcoords],
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
+
+    const texture = new Rn.Texture();
+    texture.generateTextureFromUri('../../../assets/textures/frog.jpg');
+    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
 
     return primitive;
 }
