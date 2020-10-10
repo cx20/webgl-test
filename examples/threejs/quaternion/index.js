@@ -1,4 +1,4 @@
-import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r120/build/three.module.js';
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r121/build/three.module.js';
 
 let renderer, scene, camera, mesh1, mesh2, material;
 let angle = 0;
