@@ -24,6 +24,14 @@ function readyTeapotVerticesData(data) {
     texture.generateTextureFromUri('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
     primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
 
+    // https://github.com/actnwit/RhodoniteTS/blob/master/src/foundation/definitions/ShadingModel.ts
+    // ShadingModel enum has the following values.
+    // 0: Constant(No Lights)
+    // 1: Lambert
+    // 2: BlinnPhong
+    // 3: Phong
+    primitive.material.setParameter(Rn.ShaderSemantics.ShadingModel, 1);
+
     return primitive;
 }
 
@@ -38,7 +46,8 @@ promise.then(function() {
     $.getJSON("../../../assets/json/teapot.json", function (data) {
         const system = Rn.System.getInstance();
         const c = document.getElementById('world');
-        const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
+        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
+        const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
         gl.enable(gl.DEPTH_TEST);
 
         resizeCanvas();
@@ -85,9 +94,10 @@ promise.then(function() {
         const entityRepository = Rn.EntityRepository.getInstance();
         const lightEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
         const lightComponent = lightEntity.getComponent(Rn.LightComponent);
-        lightComponent.type = Rn.LightType.Directional;
+        //lightComponent.type = Rn.LightType.Directional;
+        lightComponent.type = Rn.LightType.Point;
         lightComponent.intensity = new Rn.Vector3(1.0, 1.0, 1.0);
-        lightEntity.getTransform().translate = new Rn.Vector3(0.0, 0.0, 100.0);
+        lightEntity.getTransform().translate = new Rn.Vector3(100.0, 0.0, 100.0);
 
         // renderPass
         const renderPass = new Rn.RenderPass();
