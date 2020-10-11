@@ -4,10 +4,22 @@ function generateEntity() {
     return entity;
 }
 
-function readyBasicVerticesData() {
+function readyPlaneVerticesData() {
     let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
     const primitive = new Rn.Plane();
     primitive.generate({ width: 2, height: 2, uSpan: 1, vSpan: 1, isUVRepeat: false, flipTextureCoordinateY: false, material: modelMaterial });
+
+    const texture = new Rn.Texture();
+    texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
+    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+
+    return primitive;
+}
+
+function readySphereVerticesData() {
+    let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
+    const primitive = new Rn.Sphere();
+    primitive.generate({ radius: 1, widthSegments: 40, heightSegments: 40, material: modelMaterial });
 
     const texture = new Rn.Texture();
     texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
@@ -38,15 +50,16 @@ promise.then(function() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const primitive = readyBasicVerticesData();
+    const primitivePlane  = readyPlaneVerticesData();
+    const primitiveSphere = readySphereVerticesData();
 
     Rn.MeshRendererComponent.manualTransparentSids = [];
 
     const entities = [];
     const mesh1 = new Rn.Mesh();
     const mesh2 = new Rn.Mesh();
-    mesh1.addPrimitive(primitive);
-    mesh2.addPrimitive(primitive);
+    mesh1.addPrimitive(primitivePlane);
+    mesh2.addPrimitive(primitiveSphere);
     const entity1 = generateEntity();
     const entity2 = generateEntity();
 
@@ -57,15 +70,16 @@ promise.then(function() {
 
     meshComponent1.setMesh(mesh1);
     entity1.getTransform().toUpdateAllTransform = false;
-    entity1.getTransform().translate = new Rn.Vector3(0.0, 0, 0);
+    entity1.getTransform().translate = new Rn.Vector3(-1.5, 0, 0);
 
     meshComponent2.setMesh(mesh2);
     entity2.getTransform().toUpdateAllTransform = false;
-    entity2.getTransform().translate = new Rn.Vector3(1.0, 0, 0);
+    entity2.getTransform().translate = new Rn.Vector3(1.5, 0, 0);
 
     const startTime = Date.now();
     let p = null;
-    const rotationVec3 = Rn.MutableVector3.zero();
+    const rotation1 = Rn.MutableVector3.zero();
+    const rotation2 = Rn.MutableVector3.zero();
     let count = 0
 
     // camera
@@ -103,14 +117,17 @@ promise.then(function() {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
-        rotationVec3.v[0] = Math.PI / 2;
-        rotationVec3.v[1] = rotation;
-        //rotationVec3.v[2] = rotation;
+        rotation1.v[0] = -Math.PI / 2;
+        rotation1.v[1] = rotation;
+        rotation1.v[2] = 0;
+
+        rotation2.v[0] = 0;
+        rotation2.v[1] = rotation;
+        rotation2.v[2] = 0;
         
-        entity1.getTransform().rotate = rotationVec3;
+        entity1.getTransform().rotate = rotation1;
         
-        // TODO: need to investigate the use of quaternions
-        //entity2.getTransform().quaternion = Rn.MutableQuaternion.axisAngle(axis, rotation);
+        entity2.getTransform().rotate = rotation2;
 
 
         gl.disable(gl.CULL_FACE); // TODO:
