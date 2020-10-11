@@ -1,5 +1,7 @@
 // setup GLBoost renderer
 let canvas = document.getElementById("world");
+let width = window.innerWidth;
+let height = window.innerHeight;
 let glBoostContext = new GLBoost.GLBoostMiddleContext(canvas);
 
 let renderer = glBoostContext.createRenderer({
@@ -10,6 +12,7 @@ let renderer = glBoostContext.createRenderer({
     alpha: 1
   }
 });
+renderer.resize(width, height);
 
 // make a scene
 let scene = glBoostContext.createScene();
