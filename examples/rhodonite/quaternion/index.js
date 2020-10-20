@@ -138,7 +138,7 @@ promise.then(function() {
         gl.viewport(0, 0, c.width, c.height);
     }
     
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     const primitive = readyBasicVerticesData();
@@ -178,12 +178,13 @@ promise.then(function() {
     cameraComponent.setFovyAndChangeFocalLength(45);
     cameraComponent.aspect = window.innerWidth / window.innerHeight;
     const cameraEntity = cameraComponent.entity;
-    cameraEntity.getTransform().translate = new Rn.Vector3(0, 0, 3);
+    cameraEntity.getTransform().translate = new Rn.Vector3(0, 0, 5);
 
     // renderPass
     const renderPass = new Rn.RenderPass();
     renderPass.cameraComponent = cameraComponent;
     renderPass.toClearColorBuffer = true;
+    renderPass.clearColor = new Rn.Vector4(0, 0, 0, 1);
     renderPass.addEntities(entities);
 
     // expression
@@ -205,14 +206,15 @@ promise.then(function() {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
+        rotationVec3.v[0] = rotation;
         rotationVec3.v[1] = rotation;
         rotationVec3.v[2] = rotation;
         
+        // Rotation by Euler angles
         entity1.getTransform().rotate = rotationVec3;
         
-        // TODO: need to investigate the use of quaternions
-        //entity2.getTransform().quaternion = Rn.MutableQuaternion.axisAngle(axis, rotation);
-
+        // Rotation by Qaternions
+        entity2.getTransform().quaternion = Rn.MutableQuaternion.axisAngle(axis, rotation);
 
         gl.disable(gl.CULL_FACE); // TODO:
         system.process([expression]);
