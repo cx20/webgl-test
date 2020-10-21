@@ -46,8 +46,8 @@ promise.then(function() {
     $.getJSON("../../../assets/json/teapot.json", function (data) {
         const system = Rn.System.getInstance();
         const c = document.getElementById('world');
-        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
-        const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
+        const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
+        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
         gl.enable(gl.DEPTH_TEST);
 
         resizeCanvas();
