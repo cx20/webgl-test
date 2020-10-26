@@ -1,9 +1,27 @@
-let url1 = "https://cx20.github.io/gltf-test/sampleModels/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf";
-let url2 = "https://cx20.github.io/gltf-test/sampleModels/Fox/glTF/Fox.gltf";
-let url3 = "https://rawcdn.githack.com/BabylonJS/Exporters/9bc140006be149687be045f60b4a25cdb45ce4fc/Maya/Samples/glTF 2.0/T-Rex/trex_running.gltf";
+
+let modelInfoSet = [
+{
+    name: "CesiumMilkTruck",
+    scale: 0.4,
+    rotation: [0, Math.PI / 2, 0],
+    position: [0, 0, -2],
+    url: "https://cx20.github.io/gltf-test/sampleModels/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf"
+}, {
+    name: "Fox",
+    scale: 0.05,
+    rotation: [0, Math.PI / 2, 0],
+    position: [0, 0, 0],
+    url: "https://cx20.github.io/gltf-test/sampleModels/Fox/glTF/Fox.gltf"
+}, {
+    name: "Rex",
+    scale: 0.01,
+    rotation: [0, Math.PI / 2, 0],
+    position: [0, 0, 3],
+    url: "https://rawcdn.githack.com/BabylonJS/Exporters/9bc140006be149687be045f60b4a25cdb45ce4fc/Maya/Samples/glTF 2.0/T-Rex/trex_running.gltf"
+}];
+
 let p = null;
 let scale = 1;
-//let scale = 0.01;
 
 const c = document.getElementById('world');
 c.width = window.innerWidth;
@@ -17,188 +35,87 @@ const load = async function () {
   const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
   //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
   
-  // expressions
-  const expressions = [];
-
   // camera
   const entityRepository = Rn.EntityRepository.getInstance();
   const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent, Rn.CameraControllerComponent]);
   const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
   cameraComponent.zNear = 0.1;
   cameraComponent.zFar = 1000.0;
-  cameraComponent.setFovyAndChangeFocalLength(75.0);
+  cameraComponent.setFovyAndChangeFocalLength(60.0);
   cameraComponent.aspect = c.width / c.height;
+  const cameraControllerComponent = cameraEntity.getComponent(Rn.CameraControllerComponent);
 
-  // gltf
-  const gltfImporter = Rn.GltfImporter.getInstance();
-  const mainExpression1 = await gltfImporter.import(url1, {
-    cameraComponent: cameraComponent
-  });
-  expressions.push(mainExpression1);
+  // Lights
+  const lightEntity1 = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
+  lightEntity1.getTransform().translate = new Rn.Vector3(1.0, 1.0, 100000.0);
+  lightEntity1.getComponent(Rn.LightComponent).intensity = new Rn.Vector3(1, 1, 1);
+  lightEntity1.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
+  lightEntity1.getTransform().rotate = new Rn.Vector3(-Math.PI / 2, -Math.PI / 4, Math.PI / 4);
 
-  // env
-  const envExpression = createEnvCubeExpression('https://cx20.github.io/gltf-test/textures/papermill');
-  expressions.push(envExpression);
+  const lightEntity2 = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
+  lightEntity2.getTransform().translate = new Rn.Vector3(1.0, 1.0, 100000.0);
+  lightEntity2.getComponent(Rn.LightComponent).intensity = new Rn.Vector3(1, 1, 1);
+  lightEntity2.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
+  lightEntity2.getTransform().rotate = new Rn.Vector3(Math.PI / 2, Math.PI / 4, -Math.PI / 4);
 
-  // post effects
-  const expressionPostEffect = new Rn.Expression();
-  expressions.push(expressionPostEffect);
+  // expressions
+  const expressions = [];
 
-  // gamma correction
-  const gammaTargetFramebuffer = Rn.RenderableHelper.createTexturesForRenderTarget(1024, 1024, 1, {});
-  for (let renderPass of mainExpression1.renderPasses) {
-    renderPass.setFramebuffer(gammaTargetFramebuffer);
-    renderPass.toClearColorBuffer = false;
-    renderPass.toClearDepthBuffer = false;
+  const importer = Rn.Gltf2Importer.getInstance();
+  let promises = [];
+  for (let i = 0; i < modelInfoSet.length; i++ ) {
+    const promise = importer.import(modelInfoSet[i].url);
+    promises.push(promise);
   }
-  mainExpression1.renderPasses[0].toClearColorBuffer = true;
-  mainExpression1.renderPasses[0].toClearDepthBuffer = true;
-  mainExpression1.renderPasses[0].clearColor = new Rn.Vector4(0, 0, 0, 0);
+  
+  Promise.all(promises).then(function (gltfModels) {
+    const modelConverter = Rn.ModelConverter.getInstance();
+    const rootGroups = [];
 
-  const gammaRenderPass = createPostEffectRenderPass('createGammaCorrectionMaterial');
-  setTextureParameterForMeshComponents(gammaRenderPass.meshComponents, Rn.ShaderSemantics.BaseColorTexture, gammaTargetFramebuffer.colorAttachments[0]);
+    for (let i = 0; i < modelInfoSet.length; i++) {
+      let modelInfo = modelInfoSet[i];
+      const rootGroup = modelConverter.convertToRhodoniteObject(gltfModels[i]);
+      rootGroup.getTransform().scale = new Rn.Vector3(modelInfo.scale, modelInfo.scale, modelInfo.scale);
+      rootGroup.getTransform().rotate = new Rn.Vector3(modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]);
+      rootGroup.getTransform().translate = new Rn.Vector3(modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]);
 
-  expressionPostEffect.addRenderPasses([gammaRenderPass]);
+      if (modelInfo.name == "Fox") {
+        cameraControllerComponent.controller.setTarget(rootGroup);
+      }
+      
+      rootGroups.push(rootGroup);
+    }
+    
+    const renderPass = new Rn.RenderPass();
+    renderPass.addEntities(rootGroups);
+    renderPass.toClearColorBuffer = true;
+    renderPass.toClearDepthBuffer = true;
+    renderPass.clearColor = new Rn.Vector4(0.2, 0.2, 0.2, 1);
 
-  // cameraController
-  const mainRenderPass = mainExpression1.renderPasses[0];
-  const mainCameraControllerComponent = cameraEntity.getComponent(Rn.CameraControllerComponent);
-  const controller = mainCameraControllerComponent.controller;
-  controller.dolly = 0.82;
-  controller.setTarget(mainRenderPass.sceneTopLevelGraphComponents[0].entity);
+    const expression = new Rn.Expression();
+    expression.addRenderPasses([renderPass]);
+    expressions.push(expression);
 
-  // lighting
-  setIBL('https://cx20.github.io/gltf-test/textures/papermill');
+    draw();
+  });
+
 
   let startTime = Date.now();
-  let count = 0;
-
   const draw = function () {
     const date = new Date();
     const rotation = 0.001 * (date.getTime() - startTime);
+    const angle = 0.02 * date.getTime();
     const time = (date.getTime() - startTime) / 1000;
     Rn.AnimationComponent.globalTime = time;
     if (time > Rn.AnimationComponent.endInputValue) {
       startTime = date.getTime();
     }
-
+    
+    cameraControllerComponent.controller.rotX = -angle;
+    
     system.process(expressions);
-    count++;
     requestAnimationFrame(draw);
   };
-
-  draw();
-  function createEnvCubeExpression(baseuri) {
-    const environmentCubeTexture = new Rn.CubeTexture();
-    environmentCubeTexture.baseUriToLoad = baseuri + '/environment/environment';
-    environmentCubeTexture.isNamePosNeg = false;
-    environmentCubeTexture.hdriFormat = Rn.HdriFormat.LDR_LINEAR;
-    environmentCubeTexture.mipmapLevelNumber = 1;
-    environmentCubeTexture.loadTextureImagesAsync();
-
-    const sphereMaterial = Rn.MaterialHelper.createEnvConstantMaterial();
-    sphereMaterial.setTextureParameter(Rn.ShaderSemantics.ColorEnvTexture, environmentCubeTexture);
-    sphereMaterial.setParameter(Rn.EnvConstantSingleMaterialNode.EnvHdriFormat, Rn.HdriFormat.LDR_LINEAR.index);
-
-    const spherePrimitive = new Rn.Sphere();
-    spherePrimitive.generate({ radius: 50, widthSegments: 40, heightSegments: 40, material: sphereMaterial });
-
-    const sphereMesh = new Rn.Mesh();
-    sphereMesh.addPrimitive(spherePrimitive);
-
-    const entityRepository = Rn.EntityRepository.getInstance();
-    const sphereEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    sphereEntity.getTransform().scale = new Rn.Vector3(-1/scale, 1/scale, 1/scale);
-
-    const sphereMeshComponent = sphereEntity.getComponent(Rn.MeshComponent);
-    sphereMeshComponent.setMesh(sphereMesh);
-
-    const sphereRenderPass = new Rn.RenderPass();
-    sphereRenderPass.addEntities([sphereEntity]);
-
-    const sphereExpression = new Rn.Expression();
-    sphereExpression.addRenderPasses([sphereRenderPass]);
-
-    return sphereExpression;
-  }
-
-  function setIBL(baseUri) {
-    const specularCubeTexture = new Rn.CubeTexture();
-    specularCubeTexture.baseUriToLoad = baseUri + '/specular/specular';
-    specularCubeTexture.isNamePosNeg = false;
-    specularCubeTexture.hdriFormat = Rn.HdriFormat.LDR_SRGB;
-    specularCubeTexture.mipmapLevelNumber = 10;
-
-    const diffuseCubeTexture = new Rn.CubeTexture();
-    diffuseCubeTexture.baseUriToLoad = baseUri + '/diffuse/diffuse';
-    diffuseCubeTexture.hdriFormat = Rn.HdriFormat.LDR_SRGB;
-    diffuseCubeTexture.mipmapLevelNumber = 1;
-    diffuseCubeTexture.isNamePosNeg = false;
-
-    const componentRepository = Rn.ComponentRepository.getInstance();
-    const meshRendererComponents = componentRepository.getComponentsWithType(Rn.MeshRendererComponent);
-    for (let i = 0; i < meshRendererComponents.length; i++) {
-      const meshRendererComponent = meshRendererComponents[i];
-      meshRendererComponent.specularCubeMap = specularCubeTexture;
-      meshRendererComponent.diffuseCubeMap = diffuseCubeTexture;
-    }
-  }
-
-  function createPostEffectRenderPass(materialHelperFunctionStr, arrayOfHelperFunctionArgument = []) {
-    const boardPrimitive = new Rn.Plane();
-    const material = Rn.MaterialHelper[materialHelperFunctionStr].apply(this, arrayOfHelperFunctionArgument);
-    material.alphaMode = Rn.AlphaMode.Translucent;
-    boardPrimitive.generate({
-      width: 1, height: 1, uSpan: 1, vSpan: 1, isUVRepeat: false,
-      material: material
-    });
-
-    const boardEntity = generateEntity();
-    boardEntity.getTransform().rotate = new Rn.Vector3(Math.PI / 2, 0.0, 0.0);
-    boardEntity.getTransform().translate = new Rn.Vector3(0.0, 0.0, -0.5);
-
-    const boardMesh = new Rn.Mesh();
-    boardMesh.addPrimitive(boardPrimitive);
-    const boardMeshComponent = boardEntity.getComponent(Rn.MeshComponent);
-    boardMeshComponent.setMesh(boardMesh);
-
-    const entityRepository = Rn.EntityRepository.getInstance();
-    const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent]);
-    const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
-    cameraComponent.zFarInner = 1.0;
-
-    const renderPass = new Rn.RenderPass();
-    renderPass.toClearColorBuffer = false;
-    renderPass.toClearDepthBuffer = false;
-    renderPass.cameraComponent = cameraComponent;
-    renderPass.addEntities([boardEntity]);
-
-    return renderPass;
-  }
-
-  function generateEntity() {
-    const repo = Rn.EntityRepository.getInstance();
-    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    return entity;
-  }
-
-  function setTextureParameterForMeshComponents(meshComponents, shaderSemantic, value) {
-    for (let i = 0; i < meshComponents.length; i++) {
-      const mesh = meshComponents[i].mesh;
-      if (!mesh) continue;
-
-      const primitiveNumber = mesh.getPrimitiveNumber();
-      for (let j = 0; j < primitiveNumber; j++) {
-        const primitive = mesh.getPrimitiveAt(j);
-        primitive.material.setTextureParameter(shaderSemantic, value);
-      }
-    }
-  }
-};
+}
 
 document.body.onload = load;
-
-function exportGltf2() {
-  const exporter = Rn.Gltf2Exporter.getInstance();
-  exporter.export('Rhodonite');
-}
