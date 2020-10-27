@@ -87,19 +87,78 @@ const load = async function () {
     }
     
     const renderPass = new Rn.RenderPass();
+
     renderPass.addEntities(rootGroups);
     renderPass.toClearColorBuffer = true;
     renderPass.toClearDepthBuffer = true;
     renderPass.clearColor = new Rn.Vector4(0.2, 0.2, 0.2, 1);
 
-    const expression = new Rn.Expression();
-    expression.addRenderPasses([renderPass]);
-    expressions.push(expression);
+    // gamma correction
+    const gammaTargetFramebuffer = Rn.RenderableHelper.createTexturesForRenderTarget(1024, 1024, 1, {});
+    renderPass.setFramebuffer(gammaTargetFramebuffer);
 
+    const gammaRenderPass = createPostEffectRenderPass('createGammaCorrectionMaterial');
+    setTextureParameterForMeshComponents(gammaRenderPass.meshComponents, Rn.ShaderSemantics.BaseColorTexture, gammaTargetFramebuffer.colorAttachments[0]);
+
+    const expression = new Rn.Expression();
+    expression.addRenderPasses([renderPass, gammaRenderPass]);
+    expressions.push(expression);
+  
     draw();
   });
 
+  function createPostEffectRenderPass(materialHelperFunctionStr, arrayOfHelperFunctionArgument = []) {
+    const boardPrimitive = new Rn.Plane();
+    boardPrimitive.generate({
+      width: 1, height: 1, uSpan: 1, vSpan: 1, isUVRepeat: false,
+      material: Rn.MaterialHelper[materialHelperFunctionStr].apply(this, arrayOfHelperFunctionArgument)
+    });
+  
+    const boardEntity = generateEntity();
+    boardEntity.getTransform().rotate = new Rn.Vector3(Math.PI / 2, 0.0, 0.0);
+    boardEntity.getTransform().translate = new Rn.Vector3(0.0, 0.0, -0.5);
+  
+    const boardMesh = new Rn.Mesh();
+    boardMesh.addPrimitive(boardPrimitive);
+    const boardMeshComponent = boardEntity.getComponent(Rn.MeshComponent);
+    boardMeshComponent.setMesh(boardMesh);
+  
+    if (createPostEffectRenderPass.cameraComponent == null) {
+      const entityRepository = Rn.EntityRepository.getInstance();
+      const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent]);
+      const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
+      cameraComponent.zFarInner = 1.0;
+      createPostEffectRenderPass.cameraComponent = cameraComponent;
+    }
+  
+    const renderPass = new Rn.RenderPass();
+    renderPass.toClearColorBuffer = true;
+    renderPass.clearColor = new Rn.Vector4(0.0, 0.0, 0.0, 1.0);
+    renderPass.cameraComponent = createPostEffectRenderPass.cameraComponent;
+    renderPass.addEntities([boardEntity]);
+  
+    return renderPass;
+  }
 
+  function generateEntity() {
+    const repo = Rn.EntityRepository.getInstance();
+    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
+    return entity;
+  }
+  
+  function setTextureParameterForMeshComponents(meshComponents, shaderSemantic, value) {
+    for (let i = 0; i < meshComponents.length; i++) {
+      const mesh = meshComponents[i].mesh;
+      if (!mesh) continue;
+  
+      const primitiveNumber = mesh.getPrimitiveNumber();
+      for (let j = 0; j < primitiveNumber; j++) {
+        const primitive = mesh.getPrimitiveAt(j);
+        primitive.material.setTextureParameter(shaderSemantic, value);
+      }
+    }
+  }
+  
   let startTime = Date.now();
   const draw = function () {
     const date = new Date();
