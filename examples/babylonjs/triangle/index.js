@@ -1,35 +1,40 @@
-let createScene = function(engine) {
-    let scene = new BABYLON.Scene(engine);
-    let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -5), scene);
-    let triangle = new BABYLON.Mesh('triangle', scene);
-    scene.clearColor = new BABYLON.Color3(1, 1, 1);
+function init() {
+    const canvas = document.querySelector("#c");
+    const engine = new BABYLON.Engine(canvas);
 
-    let positions = [
-         0.0,  0.5, 0.0, // v0
-        -0.5, -0.5, 0.0, // v1
-         0.5, -0.5, 0.0  // v2
-    ];
-    let indices = [0, 1, 2];
+    const createScene = function() {
+        const scene = new BABYLON.Scene(engine);
+        const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, -5), scene);
+        const triangle = new BABYLON.Mesh('triangle', scene);
+        scene.clearColor = new BABYLON.Color3(1, 1, 1);
 
-    triangle.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, true);
-    triangle.setIndices(indices);
+        const positions = [
+             0.0,  0.5, 0.0, // v0
+            -0.5, -0.5, 0.0, // v1
+             0.5, -0.5, 0.0  // v2
+        ];
+        const indices = [0, 1, 2];
 
-    let material = new BABYLON.ShaderMaterial("material", scene, {
-        vertexElement: "vs",
-        fragmentElement: "fs",
-    }, {
-        attributes: ["position"]
+        triangle.setVerticesData(BABYLON.VertexBuffer.PositionKind, positions, true);
+        triangle.setIndices(indices);
+
+        const material = new BABYLON.ShaderMaterial("material", scene, {
+            vertexElement: "vs",
+            fragmentElement: "fs",
+        }, {
+            attributes: ["position"]
+        });
+
+        triangle.material = material;
+
+        return scene;
+    }
+
+    engine.runRenderLoop(function () {
+        scene.render();
     });
 
-    triangle.material = material;
-
-    return scene;
+    const scene = createScene();
 }
 
-let canvas = document.querySelector("#c");
-let engine = new BABYLON.Engine(canvas, true);
-let scene = createScene(engine);
-
-engine.runRenderLoop(function () {
-    scene.render();
-});
+init();
