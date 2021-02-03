@@ -1,4 +1,4 @@
-import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r124/build/three.module.js';
+import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r125/build/three.module.js';
 
 let renderer, scene, camera, mesh1, mesh2, material;
 let angle = 0;
@@ -24,7 +24,7 @@ function init() {
     camera.position.z = 400;
 
     // particle system geometry
-    let geometry = new THREE.CubeGeometry(80, 80, 80);
+    let geometry = new THREE.BoxGeometry(80, 80, 80);
 
     material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     //material = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: true });
