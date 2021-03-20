@@ -109,6 +109,7 @@ class App {
         this.view = engine.createView();
         this.view.setCamera(this.camera);
         this.view.setScene(this.scene);
+        this.renderer.setClearOptions({clearColor: [0.6, 0.6, 0.6, 1.0], clear: true}); // Clearing process suppresses glitching issues on certain GPUs
         this.resize();
         this.render = this.render.bind(this);
         this.resize = this.resize.bind(this);
