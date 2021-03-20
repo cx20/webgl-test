@@ -95,10 +95,6 @@ class App {
                 //messages.remove();
                 this.animators.push( asset.getAnimator() );
                 this.animationStartTimes.push( Date.now() );
-                // Start render loop after model loading is complete
-                if (modelInfoSet.length == this.animators.length) {
-                    window.requestAnimationFrame(this.render);
-                }
             };
             asset.loadResources(onDone, onFetched, basePath);
         }
@@ -114,7 +110,7 @@ class App {
         this.render = this.render.bind(this);
         this.resize = this.resize.bind(this);
         window.addEventListener('resize', this.resize);
-        //window.requestAnimationFrame(this.render);
+        window.requestAnimationFrame(this.render);
     }
 
     render() {
