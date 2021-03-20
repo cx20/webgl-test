@@ -17,7 +17,8 @@ let modelInfoSet = [
     rotation: [0, Math.PI / 2, 0],
     position: [0, 0, 3],
     url: "https://rawcdn.githack.com/BabylonJS/Exporters/9bc140006be149687be045f60b4a25cdb45ce4fc/Maya/Samples/glTF 2.0/T-Rex/trex_running.gltf"
-}];
+}
+];
 
 //const env = 'syferfontein_18d_clear_2k';
 const env = 'papermill';
@@ -94,6 +95,10 @@ class App {
                 //messages.remove();
                 this.animators.push( asset.getAnimator() );
                 this.animationStartTimes.push( Date.now() );
+                // Start render loop after model loading is complete
+                if (modelInfoSet.length == this.animators.length) {
+                    window.requestAnimationFrame(this.render);
+                }
             };
             asset.loadResources(onDone, onFetched, basePath);
         }
@@ -108,7 +113,7 @@ class App {
         this.render = this.render.bind(this);
         this.resize = this.resize.bind(this);
         window.addEventListener('resize', this.resize);
-        window.requestAnimationFrame(this.render);
+        //window.requestAnimationFrame(this.render);
     }
 
     render() {
