@@ -206,9 +206,14 @@ promise.then(function() {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
+/*
         rotationVec3.v[0] = rotation;
         rotationVec3.v[1] = rotation;
         rotationVec3.v[2] = rotation;
+*/
+        rotationVec3.x = rotation;
+        rotationVec3.y = rotation;
+        rotationVec3.z = rotation;
         
         // Rotation by Euler angles
         entity1.getTransform().rotate = rotationVec3;
