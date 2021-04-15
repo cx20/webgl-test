@@ -193,9 +193,9 @@ promise.then(function() {
 
         const rotation = 0.001 * (date.getTime() - startTime);
         entities.forEach(function (entity) {
-            //rotationVec3.v[0] = rotation;
-            rotationVec3.v[1] = rotation;
-            rotationVec3.v[2] = rotation;
+            //rotationVec3.x = rotation;
+            rotationVec3.y = rotation;
+            rotationVec3.z = rotation;
             entity.getTransform().rotate = rotationVec3;
         });
 
