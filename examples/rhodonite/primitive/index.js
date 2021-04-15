@@ -117,13 +117,13 @@ promise.then(function() {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
-        rotation1.v[0] = -Math.PI / 2;
-        rotation1.v[1] = rotation;
-        rotation1.v[2] = 0;
+        rotation1.x = -Math.PI / 2;
+        rotation1.y = rotation;
+        rotation1.z = 0;
 
-        rotation2.v[0] = 0;
-        rotation2.v[1] = rotation;
-        rotation2.v[2] = 0;
+        rotation2.x = 0;
+        rotation2.y = rotation;
+        rotation2.z = 0;
         
         entity1.getTransform().rotate = rotation1;
         

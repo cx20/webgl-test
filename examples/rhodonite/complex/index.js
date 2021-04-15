@@ -64,7 +64,13 @@ const load = async function () {
   const importer = Rn.Gltf2Importer.getInstance();
   let promises = [];
   for (let i = 0; i < modelInfoSet.length; i++ ) {
-    const promise = importer.import(modelInfoSet[i].url);
+    const promise = importer.import(modelInfoSet[i].url, {
+      defaultMaterialHelperArgumentArray: [
+        {
+          makeOutputSrgb: false,
+        },
+      ]
+    });
     promises.push(promise);
   }
   
