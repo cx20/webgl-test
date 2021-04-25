@@ -86,7 +86,17 @@ const load = async function () {
       rootGroup.getTransform().translate = new Rn.Vector3(modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]);
 
       if (modelInfo.name == "Fox") {
+      //if (modelInfo.name == "Rex") {
         cameraControllerComponent.controller.setTarget(rootGroup);
+        //cameraControllerComponent.controller.autoCalculateZNearAndZFar = false;
+        //cameraControllerComponent.controller.zNearLimitFactor = 0.1;
+        //cameraControllerComponent.controller.zFarScalingFactor = 1000;
+         
+		  const entityRepository = Rn.EntityRepository.getInstance();
+		  const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent, Rn.CameraControllerComponent]);
+		  const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
+		  cameraComponent.zNear = 0.1;
+		  cameraComponent.zFar = 1000.0;
       }
       
       rootGroups.push(rootGroup);
