@@ -104,8 +104,10 @@ function readyBasicVerticesData() {
     return primitive;
 }
 
-const promise = Rn.ModuleManager.getInstance().loadModule('webgl');
-promise.then(function() {
+const load = async function () {
+    Rn.Config.maxCameraNumber = 20;
+    await Rn.ModuleManager.getInstance().loadModule('webgl');
+    await Rn.ModuleManager.getInstance().loadModule('pbr');
     const system = Rn.System.getInstance();
     const c = document.getElementById('world');
     const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
@@ -192,5 +194,6 @@ promise.then(function() {
     }
 
     draw();
+}
 
-});
+document.body.onload = load;
