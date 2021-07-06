@@ -1,6 +1,6 @@
-//import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r129/build/three.module.js';
-//import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r129/examples/jsm/controls/OrbitControls.js';
-//import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r129/examples/jsm/loaders/GLTFLoader.js';
+//import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r130/build/three.module.js';
+//import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r130/examples/jsm/controls/OrbitControls.js';
+//import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r130/examples/jsm/loaders/GLTFLoader.js';
 
 let modelInfoSet = [
 {
