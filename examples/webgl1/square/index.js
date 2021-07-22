@@ -18,10 +18,10 @@ function resizeCanvas() {
 
 function initShaders() {
     let p = gl.createProgram();
-    let v = document.getElementById("vs").textContent;
-    let f = document.getElementById("fs").textContent;
     let vs = gl.createShader(gl.VERTEX_SHADER);
     let fs = gl.createShader(gl.FRAGMENT_SHADER);
+    let v = document.getElementById("vs").textContent;
+    let f = document.getElementById("fs").textContent;
     gl.shaderSource(vs, v);
     gl.shaderSource(fs, f);
     gl.compileShader(vs);
@@ -59,18 +59,16 @@ function draw() {
         -0.5,-0.5, 0.0, // v2
          0.5,-0.5, 0.0  // v3
     ];
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
     
     const colors = [ 
          1.0, 0.0, 0.0, 1.0, // v0
          0.0, 1.0, 0.0, 1.0, // v1
          0.0, 0.0, 1.0, 1.0, // v2
          1.0, 1.0, 0.0, 1.0  // v3
-    ];
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
-    
+    ];    
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[1], 4, gl.FLOAT, false, 0, 0);

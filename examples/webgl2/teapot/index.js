@@ -1,6 +1,7 @@
 let c, gl;
 let aLoc = [];
 let uLoc = [];
+
 let vertexPositions;
 let vertexNormals;
 let vertexTextureCoords;
@@ -50,8 +51,8 @@ function initShaders() {
     gl.enableVertexAttribArray(aLoc[2]);
 }
 
-let mvMatrix = mat4.create();
 let pMatrix = mat4.create();
+let mvMatrix = mat4.create();
 
 let vertexPositionBuffer;
 let vertexNormalBuffer;
@@ -94,7 +95,7 @@ function initBuffers() {
 let rad = 0;
 function draw() {
     rad += Math.PI * 1.0 / 180.0;
-    mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 100.0);
+    mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 1000.0);
     mat4.identity(mvMatrix);
     let translation = vec3.create();
     vec3.set(translation, 0.0, 0.0, -35.0);
@@ -138,4 +139,3 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     initShaders();
     initBuffers();
 });
-

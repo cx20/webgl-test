@@ -8,24 +8,24 @@
 <body>
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
-uniform mat4 pjMatrix;
-uniform mat4 mvMatrix;
 attribute vec2 textureCoord;
+uniform mat4 uPMatrix;
+uniform mat4 uMVMatrix;
 varying   vec2 vTextureCoord;
 
 void main() {
     vTextureCoord = textureCoord;
-    gl_Position = pjMatrix * mvMatrix * vec4(position, 1.0);
+    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
 }
 </script>
 
 <script id="fs" type="x-shader/x-fragment">
 precision mediump float;
-uniform sampler2D texture;
+uniform sampler2D uTexture;
 varying vec2      vTextureCoord;
 
 void main() {
-    gl_FragColor  = texture2D(texture, vTextureCoord);
+    gl_FragColor  = texture2D(uTexture, vTextureCoord);
 }
 </script>
 
