@@ -53,7 +53,7 @@ function draw() {
     //         |        |
     //        [2]------[3]
     //
-    let positions = [ 
+    const positions = [ 
         -0.5, 0.5, 0.0, // v0
          0.5, 0.5, 0.0, // v1 
         -0.5,-0.5, 0.0, // v2
@@ -63,7 +63,7 @@ function draw() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
     gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
 
-    let colors = [ 
+    const colors = [ 
          1.0, 0.0, 0.0, 1.0, // v0
          0.0, 1.0, 0.0, 1.0, // v1
          0.0, 0.0, 1.0, 1.0, // v2

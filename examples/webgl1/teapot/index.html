@@ -10,24 +10,24 @@
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
 attribute vec3 normal;
-uniform mat4 pjMatrix;
-uniform mat4 mvMatrix;
 attribute vec2 textureCoord;
+uniform mat4 uPMatrix;
+uniform mat4 uMVMatrix;
 varying   vec4 vPosition;
 varying   vec3 vNormal;
 varying   vec2 vTextureCoord;
 
 void main() {
-    vPosition = mvMatrix * vec4(position, 1.0);
+    vPosition = uMVMatrix * vec4(position, 1.0);
     vNormal = normal;
     vTextureCoord = textureCoord;
-    gl_Position = pjMatrix * mvMatrix * vec4(position, 1.0);
+    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
 }
 </script>
 
 <script id="fs" type="x-shader/x-fragment">
 precision mediump float;
-uniform sampler2D texture;
+uniform sampler2D uTexture;
 uniform vec3 uPointLightingLocation;
 varying vec4 vPosition;
 varying vec3 vNormal;
@@ -37,10 +37,11 @@ void main() {
     vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
     vec3 normal = normalize(vNormal);
     float lightWeighting = max(dot(normal, lightDirection), 0.0);
-    vec4 fragmentColor  = texture2D(texture, vTextureCoord);
+    vec4 fragmentColor  = texture2D(uTexture, vTextureCoord);
     gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
 }
 </script>
+
 <canvas id="c" width="465" height="465"></canvas>
 <script src="index.js"></script>
 </body>

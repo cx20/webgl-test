@@ -34,9 +34,9 @@ function initShaders() {
     gl.useProgram(p);
     aLoc[0] = gl.getAttribLocation(p, "position");
     aLoc[1] = gl.getAttribLocation(p, "textureCoord");
-    uLoc[0] = gl.getUniformLocation(p, "pjMatrix");
-    uLoc[1] = gl.getUniformLocation(p, "mvMatrix");
-    uLoc[2]  = gl.getUniformLocation(p, "texture");
+    uLoc[0] = gl.getUniformLocation(p, "uPMatrix");
+    uLoc[1] = gl.getUniformLocation(p, "uMVMatrix");
+    uLoc[2]  = gl.getUniformLocation(p, "uTexture");
     gl.enableVertexAttribArray(aLoc[0]);
     gl.enableVertexAttribArray(aLoc[1]);
 }
@@ -102,7 +102,6 @@ function initBuffers() {
         -0.5, -0.5, -0.5  // v4
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
 
     coordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, coordBuffer);
@@ -144,7 +143,6 @@ function initBuffers() {
         0.0, 1.0,
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(aLoc[1], 2, gl.FLOAT, false, 0, 0);
     
     vertexIndexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);

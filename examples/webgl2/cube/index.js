@@ -48,10 +48,6 @@ let vertexColorBuffer;
 let vertexIndexBuffer;
 
 function initBuffers() {
-
-    vertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
-
     // Cube data
     //             1.0 y 
     //              ^  -1.0 
@@ -70,7 +66,7 @@ function initBuffers() {
     //       |/       |/
     //      [0]------[1]
     //
-    let positions = [ 
+    const positions = [ 
         // Front face
         -0.5, -0.5,  0.5, // v0
          0.5, -0.5,  0.5, // v1
@@ -102,11 +98,14 @@ function initBuffers() {
         -0.5,  0.5, -0.5, // v7
         -0.5, -0.5, -0.5  // v4
     ];
+
+    vertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
     vertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-    let colors = [
+    const colors = [
         [1.0, 0.0, 0.0, 1.0], // Front face
         [1.0, 1.0, 0.0, 1.0], // Back face
         [0.0, 1.0, 0.0, 1.0], // Top face
@@ -125,7 +124,7 @@ function initBuffers() {
 
     vertexIndexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
-    let indices = [
+    const indices = [
          0,  1,  2,    0,  2 , 3,  // Front face
          4,  5,  6,    4,  6 , 7,  // Back face
          8,  9, 10,    8, 10, 11,  // Top face

@@ -102,7 +102,6 @@ function initBuffers() {
     vertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
 
     vertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
@@ -122,7 +121,6 @@ function initBuffers() {
         }
     }
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(aLoc[1], 4, gl.FLOAT, false, 0, 0);
                 
     vertexIndexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexIndexBuffer);
@@ -135,7 +133,6 @@ function initBuffers() {
         20, 21, 22,   20, 22, 23   // Left face
     ];
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
 }
 
 let rad = 0;
@@ -165,7 +162,6 @@ function animate() {
     draw();
     requestAnimationFrame(animate);
 }
-
 
 initWebGL();
 initShaders();

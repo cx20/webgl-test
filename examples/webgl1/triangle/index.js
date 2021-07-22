@@ -1,4 +1,5 @@
 let c, gl;
+let aLoc = [];
 
 function initWebGL() {
     c = document.getElementById("c");
@@ -29,8 +30,8 @@ function initShaders() {
     gl.attachShader(p, fs);
     gl.linkProgram(p);
     gl.useProgram(p);
-    gl.bindAttribLocation(p, 0, "position");
-    gl.enableVertexAttribArray(0);
+    aLoc[0] = gl.getAttribLocation(p, "position");
+    gl.enableVertexAttribArray(aLoc[0]);
 }
 
 function draw() {
@@ -41,7 +42,8 @@ function draw() {
     ];
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(aLoc[0], 3, gl.FLOAT, false, 0, 0);
+    
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.flush();
 }

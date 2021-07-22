@@ -35,7 +35,7 @@ function initShaders() {
 }
 
 function draw() {
-    let positions = [ 
+    const positions = [ 
          0.0, 0.5, 0.0, // v0
         -0.5,-0.5, 0.0, // v1
          0.5,-0.5, 0.0  // v2

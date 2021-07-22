@@ -1,7 +1,6 @@
 let c, gl;
 let aLoc = [];
 let uLoc = [];
-let texture;
 
 let vertexPositions;
 let vertexNormals;
@@ -43,9 +42,9 @@ function initShaders() {
     aLoc[0] = gl.getAttribLocation(p, "position");
     aLoc[1] = gl.getAttribLocation(p, "normal");
     aLoc[2] = gl.getAttribLocation(p, "textureCoord");
-    uLoc[0] = gl.getUniformLocation(p, "pjMatrix");
-    uLoc[1] = gl.getUniformLocation(p, "mvMatrix");
-    uLoc[2]  = gl.getUniformLocation(p, "texture");
+    uLoc[0] = gl.getUniformLocation(p, "uPMatrix");
+    uLoc[1] = gl.getUniformLocation(p, "uMVMatrix");
+    uLoc[2]  = gl.getUniformLocation(p, "uTexture");
     uLoc[3]  = gl.getUniformLocation(p, "uPointLightingLocation");
     gl.enableVertexAttribArray(aLoc[0]);
     gl.enableVertexAttribArray(aLoc[1]);
@@ -81,6 +80,7 @@ function initBuffers() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
     let img = new Image();
+    let texture;
     img.onload = function(){
         texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
