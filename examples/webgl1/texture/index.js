@@ -168,9 +168,9 @@ function initBuffers() {
 }
 
 let rad = 0;
-function draw() {
-
-    rad += Math.PI * 1.0 / 180.0;
+function draw(timestamp) {
+    //rad += Math.PI * 1.0 / 180.0;
+    rad = timestamp / 1000; // Seconds since the first requestAnimationFrame (ms)
     mat4.perspective(pMatrix, 45, c.width / c.height, 0.1, 100.0);
     mat4.identity(mvMatrix);
     let translation = vec3.create();
@@ -192,8 +192,8 @@ function draw() {
     gl.flush();
 }
 
-function animate() {
-    draw();
+function animate(timestamp) {
+    draw(timestamp);
     requestAnimationFrame(animate);
 }
 
