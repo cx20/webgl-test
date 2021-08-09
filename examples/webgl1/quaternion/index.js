@@ -187,9 +187,9 @@ function initBuffers() {
     gl.vertexAttribPointer(aLoc[1], 2, gl.FLOAT, false, 0, 0);
 }
 
-function draw() {
-
-    rad += Math.PI * 1.0 / 180.0;
+function draw(timestamp) {
+    //rad += Math.PI * 1.0 / 180.0;
+    rad = timestamp / 1000; // Seconds since the first requestAnimationFrame (ms)
     
     // １つ目のキューブ
     mat4.identity(mvMatrix);
@@ -224,8 +224,8 @@ function draw() {
     gl.flush();
 }
 
-function animate() {
-    draw();
+function animate(timestamp) {
+    draw(timestamp);
     requestAnimationFrame(animate);
 }
 
