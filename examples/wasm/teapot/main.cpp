@@ -186,16 +186,10 @@ int main()
 
     GLfloat rad = 0.0;
 
-    clock_t start, now;
-    double timestamp;
-    start = clock();
-    
     loop = [&]
     {
         //rad += M_PI * 1.0 / 180.0;
-        now = clock();
-        timestamp = (double)(now - start);
-        rad = timestamp / CLOCKS_PER_SEC;
+        rad = (double)clock() / CLOCKS_PER_SEC;
         
         mat4x4_perspective(projection_matrix, 45, (float)w / (float)h, 1, 100);
         mat4x4_identity(model_view_matrix);
