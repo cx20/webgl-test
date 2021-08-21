@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <math.h>
+#include <time.h>
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <GLES2/gl2.h>
@@ -178,9 +179,16 @@ int main()
 
     GLfloat rad = 0.0;
 
+    clock_t start, now;
+    double timestamp;
+    start = clock();
+    
     loop = [&]
     {
-        rad += M_PI * 1.0 / 180.0;
+        //rad += M_PI * 1.0 / 180.0;
+        now = clock();
+        timestamp = (double)(now - start);
+        rad = timestamp / CLOCKS_PER_SEC;
         
         mat4x4_perspective(projection_matrix, 45, (float)w / (float)h, 1, 100);
         mat4x4_identity(model_view_matrix);
