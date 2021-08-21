@@ -46,24 +46,25 @@ function init() {
     scene.add( directionalLight );
 }
 
-function animate() {
-
+function animate(timestamp) {
     requestAnimationFrame( animate );
-
-    render();
-
+    render(timestamp);
 }
 
-function render() {
+function render(timestamp) {
+    //angle += Math.PI / 180;
+    angle = timestamp / 1000; // Seconds since the first requestAnimationFrame (ms)
 
     // rotate
-    mesh1.rotation.x += Math.PI / 180;
-    mesh1.rotation.y += Math.PI / 180;
-    mesh1.rotation.z += Math.PI / 180;
+    //mesh1.rotation.x += Math.PI / 180;
+    //mesh1.rotation.y += Math.PI / 180;
+    //mesh1.rotation.z += Math.PI / 180;
+    mesh1.rotation.x = angle;
+    mesh1.rotation.y = angle;
+    mesh1.rotation.z = angle;
     
     // quaternion
     let axis = new THREE.Vector3(1,1,1).normalize();
-    angle += Math.PI / 180;
     let q = new THREE.Quaternion();
     q.setFromAxisAngle(axis,angle);
     mesh2.quaternion.copy(q);
