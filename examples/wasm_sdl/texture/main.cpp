@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <math.h>
+#include <time.h>
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #include <SDL.h>
@@ -207,7 +208,8 @@ int main()
 
     loop = [&]
     {
-        rad += M_PI * 1.0 / 180.0;
+        //rad += M_PI * 1.0 / 180.0;
+        rad = (double)clock() / CLOCKS_PER_SEC;
         
         mat4x4_perspective(projection_matrix, 45, (float)w / (float)h, 1, 100);
         mat4x4_identity(model_view_matrix);
