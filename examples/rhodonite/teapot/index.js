@@ -104,7 +104,7 @@ promise.then(function() {
         renderPass.cameraComponent = cameraComponent;
         renderPass.toClearColorBuffer = true;
         renderPass.toClearDepthBuffer = true;
-        renderPass.clearColor = new Rn.Vector4(0, 0, 0, 1);
+        renderPass.clearColor = Rn.Vector4.fromCopyArray4([0, 0, 0, 1]);
         renderPass.addEntities(entities);
 
         // expression

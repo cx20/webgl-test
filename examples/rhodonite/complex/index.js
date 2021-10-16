@@ -108,7 +108,7 @@ const load = async function () {
     renderPass.addEntities(rootGroups);
     renderPass.toClearColorBuffer = true;
     renderPass.toClearDepthBuffer = true;
-    renderPass.clearColor = new Rn.Vector4(0.2, 0.2, 0.2, 1);
+    renderPass.clearColor = Rn.Vector4.fromCopyArray4([0.2, 0.2, 0.2, 1]);
 
     // gamma correction
     const gammaTargetFramebuffer = Rn.RenderableHelper.createTexturesForRenderTarget(1024, 1024, 1, {});
@@ -150,7 +150,7 @@ const load = async function () {
   
     const renderPass = new Rn.RenderPass();
     renderPass.toClearColorBuffer = true;
-    renderPass.clearColor = new Rn.Vector4(0.0, 0.0, 0.0, 1.0);
+    renderPass.clearColor = Rn.Vector4.fromCopyArray4([0.0, 0.0, 0.0, 1.0]);
     renderPass.cameraComponent = createPostEffectRenderPass.cameraComponent;
     renderPass.addEntities([boardEntity]);
   
