@@ -170,7 +170,7 @@ const load = async function () {
     cameraComponent.setFovyAndChangeFocalLength(45);
     cameraComponent.aspect = window.innerWidth / window.innerHeight;
     const cameraEntity = cameraComponent.entity;
-    cameraEntity.getTransform().translate = new Rn.Vector3(0, 0, 3);
+    cameraEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0, 0, 3]);
 
     // renderPass
     const renderPass = new Rn.RenderPass();
@@ -195,10 +195,7 @@ const load = async function () {
 
         const rotation = 0.001 * (date.getTime() - startTime);
         entities.forEach(function (entity) {
-            //rotationVec3.x = rotation;
-            rotationVec3.y = rotation;
-            rotationVec3.z = rotation;
-            entity.getTransform().rotate = rotationVec3;
+            entity.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, rotation]);
         });
 
         gl.disable(gl.CULL_FACE); // TODO:
