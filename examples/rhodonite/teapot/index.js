@@ -40,14 +40,17 @@ let vertexNormals;
 let vertexTextureCoords;
 let indices;
 
-const promise = Rn.ModuleManager.getInstance().loadModule('webgl');
-promise.then(function() {
+const promise1 = Rn.ModuleManager.getInstance().loadModule('webgl');
+const promise2 = Rn.ModuleManager.getInstance().loadModule('pbr');
+Promise.all([promise1, promise2]).then(function() {
     // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
     $.getJSON("../../../assets/json/teapot.json", function (data) {
         const system = Rn.System.getInstance();
         const c = document.getElementById('world');
         const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
         //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
+        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL2, c);
+        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
         gl.enable(gl.DEPTH_TEST);
 
         resizeCanvas();
@@ -96,7 +99,7 @@ promise.then(function() {
         const lightComponent = lightEntity.getComponent(Rn.LightComponent);
         //lightComponent.type = Rn.LightType.Directional;
         lightComponent.type = Rn.LightType.Point;
-        lightComponent.intensity = new Rn.Vector3(1.0, 1.0, 1.0);
+        lightComponent.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
         lightEntity.getTransform().translate = Rn.Vector3.fromCopyArray([100, 0, 100]);
 
         // renderPass
