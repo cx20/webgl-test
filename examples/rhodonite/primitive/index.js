@@ -35,6 +35,9 @@ const load = async function () {
     const system = Rn.System.getInstance();
     const c = document.getElementById('world');
     const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
+    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
+    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL2, c);
+    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
     gl.enable(gl.DEPTH_TEST);
 
     resizeCanvas();
@@ -72,11 +75,11 @@ const load = async function () {
 
     meshComponent1.setMesh(mesh1);
     entity1.getTransform().toUpdateAllTransform = false;
-    entity1.getTransform().translate = new Rn.Vector3(-1.5, 0, 0);
+    entity1.getTransform().translate = Rn.Vector3.fromCopyArray([-1.5, 0, 0]);
 
     meshComponent2.setMesh(mesh2);
     entity2.getTransform().toUpdateAllTransform = false;
-    entity2.getTransform().translate = new Rn.Vector3(1.5, 0, 0);
+    entity2.getTransform().translate = Rn.Vector3.fromCopyArray([1.5, 0, 0]);
 
     const startTime = Date.now();
     let p = null;
@@ -91,7 +94,7 @@ const load = async function () {
     cameraComponent.setFovyAndChangeFocalLength(45);
     cameraComponent.aspect = window.innerWidth / window.innerHeight;
     const cameraEntity = cameraComponent.entity;
-    cameraEntity.getTransform().translate = new Rn.Vector3(0, 0, 8);
+    cameraEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0, 0, 8]);
 
     // renderPass
     const renderPass = new Rn.RenderPass();
@@ -111,7 +114,7 @@ const load = async function () {
         return cameraComponent;
     }
 
-    let axis = new Rn.Vector3(1, 1, 1);
+    let axis = Rn.Vector3.fromCopyArray([1, 1, 1]);
 
     const draw = function(time) {
 
@@ -119,18 +122,8 @@ const load = async function () {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
-        rotation1.x = -Math.PI / 2;
-        rotation1.y = rotation;
-        rotation1.z = 0;
-
-        rotation2.x = 0;
-        rotation2.y = rotation;
-        rotation2.z = 0;
-        
-        entity1.getTransform().rotate = rotation1;
-        
-        entity2.getTransform().rotate = rotation2;
-
+        entity1.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, rotation, 0]);
+        entity2.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, 0]);
 
         gl.disable(gl.CULL_FACE); // TODO:
         system.process([expression]);
