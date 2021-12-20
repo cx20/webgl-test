@@ -48,16 +48,16 @@ const load = async function () {
 
   // Lights
   const lightEntity1 = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
-  lightEntity1.getTransform().translate = new Rn.Vector3(1.0, 1.0, 100000.0);
+  lightEntity1.getTransform().translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
   lightEntity1.getComponent(Rn.LightComponent).intensity = new Rn.Vector3(1, 1, 1);
   lightEntity1.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
-  lightEntity1.getTransform().rotate = new Rn.Vector3(-Math.PI / 2, -Math.PI / 4, Math.PI / 4);
+  lightEntity1.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, -Math.PI / 4, Math.PI / 4]);
 
   const lightEntity2 = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
-  lightEntity2.getTransform().translate = new Rn.Vector3(1.0, 1.0, 100000.0);
+  lightEntity2.getTransform().translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
   lightEntity2.getComponent(Rn.LightComponent).intensity = new Rn.Vector3(1, 1, 1);
   lightEntity2.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
-  lightEntity2.getTransform().rotate = new Rn.Vector3(Math.PI / 2, Math.PI / 4, -Math.PI / 4);
+  lightEntity2.getTransform().rotate = Rn.Vector3.fromCopyArray([Math.PI / 2, Math.PI / 4, -Math.PI / 4]);
 
   // expressions
   const expressions = [];
@@ -82,9 +82,9 @@ const load = async function () {
     for (let i = 0; i < modelInfoSet.length; i++) {
       let modelInfo = modelInfoSet[i];
       const rootGroup = modelConverter.convertToRhodoniteObject(gltfModels[i]);
-      rootGroup.getTransform().scale = new Rn.Vector3(modelInfo.scale, modelInfo.scale, modelInfo.scale);
-      rootGroup.getTransform().rotate = new Rn.Vector3(modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]);
-      rootGroup.getTransform().translate = new Rn.Vector3(modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]);
+      rootGroup.getTransform().scale = Rn.Vector3.fromCopyArray([modelInfo.scale, modelInfo.scale, modelInfo.scale]);
+      rootGroup.getTransform().rotate = Rn.Vector3.fromCopyArray([modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]]);
+      rootGroup.getTransform().translate = Rn.Vector3.fromCopyArray([modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]]);
 
       if (modelInfo.name == "Fox") {
       //if (modelInfo.name == "Rex") {
@@ -132,8 +132,8 @@ const load = async function () {
     });
   
     const boardEntity = generateEntity();
-    boardEntity.getTransform().rotate = new Rn.Vector3(Math.PI / 2, 0.0, 0.0);
-    boardEntity.getTransform().translate = new Rn.Vector3(0.0, 0.0, -0.5);
+    boardEntity.getTransform().rotate = Rn.Vector3.fromCopyArray([Math.PI / 2, 0.0, 0.0]);
+    boardEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0.0, 0.0, -0.5]);
   
     const boardMesh = new Rn.Mesh();
     boardMesh.addPrimitive(boardPrimitive);

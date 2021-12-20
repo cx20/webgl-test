@@ -87,7 +87,7 @@ promise.then(function() {
         cameraComponent.setFovyAndChangeFocalLength(45);
         cameraComponent.aspect = window.innerWidth / window.innerHeight;
         const cameraEntity = cameraComponent.entity;
-        cameraEntity.getTransform().translate = new Rn.Vector3(0, 0, 35);
+        cameraEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0, 0, 35]);
 
         // TODO: Light is not applied correctly
         // Lights
@@ -97,7 +97,7 @@ promise.then(function() {
         //lightComponent.type = Rn.LightType.Directional;
         lightComponent.type = Rn.LightType.Point;
         lightComponent.intensity = new Rn.Vector3(1.0, 1.0, 1.0);
-        lightEntity.getTransform().translate = new Rn.Vector3(100.0, 0.0, 100.0);
+        lightEntity.getTransform().translate = Rn.Vector3.fromCopyArray([100, 0, 100]);
 
         // renderPass
         const renderPass = new Rn.RenderPass();
@@ -124,10 +124,7 @@ promise.then(function() {
 
             const rotation = 0.001 * (date.getTime() - startTime);
             entities.forEach(function (entity) {
-                //rotationVec3.x = rotation;
-                rotationVec3.y = rotation;
-                //rotationVec3.z = rotation;
-                entity.getTransform().rotate = rotationVec3;
+                entity.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, 0]);
             });
 
             system.process([expression]);
