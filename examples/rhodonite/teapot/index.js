@@ -40,6 +40,7 @@ let vertexNormals;
 let vertexTextureCoords;
 let indices;
 
+Rn.Config.isUboEnabled = false; // TODO: Currently, using UBO in Safari causes an error, so it is temporarily turned off.
 const promise1 = Rn.ModuleManager.getInstance().loadModule('webgl');
 const promise2 = Rn.ModuleManager.getInstance().loadModule('pbr');
 Promise.all([promise1, promise2]).then(function() {
