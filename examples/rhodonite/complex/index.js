@@ -29,7 +29,6 @@ c.width = window.innerWidth;
 c.height = window.innerHeight;
 
 const load = async function () {
-  Rn.Config.isUboEnabled = false; // TODO: Currently, using UBO in Safari causes an error, so it is temporarily turned off.
   await Rn.ModuleManager.getInstance().loadModule('webgl');
   await Rn.ModuleManager.getInstance().loadModule('pbr');
   const system = Rn.System.getInstance();
