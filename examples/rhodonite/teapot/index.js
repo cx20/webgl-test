@@ -7,8 +7,8 @@ function readyTeapotVerticesData(data) {
         
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
-        attributeSemantics: [Rn.VertexAttribute.Position.XYZ, Rn.VertexAttribute.Texcoord0.XY],
-        attributes: [positions, texcoords],
+        attributeSemantics: [Rn.VertexAttribute.Position.XYZ, Rn.VertexAttribute.Normal.XYZ, Rn.VertexAttribute.Texcoord0.XY],
+        attributes: [positions, normals, texcoords],
         material: void 0,
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
