@@ -22,6 +22,20 @@ function readySphereVerticesData() {
     return primitive;
 }
 
+function readyCubeVerticesData() {
+    let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
+    const primitive = new Rn.Cube();
+    //primitive.generate({ radius: 1, widthSegments: 40, heightSegments: 40, material: modelMaterial });
+    primitive.generate({ widthVector: Rn.Vector3.fromCopy3(1, 1, 1) });
+
+    const texture = new Rn.Texture();
+    texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
+    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+
+    return primitive;
+}
+
+
 const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
@@ -51,35 +65,47 @@ const load = async function () {
 
     const primitivePlane  = readyPlaneVerticesData();
     const primitiveSphere = readySphereVerticesData();
+    const primitiveCube = readyCubeVerticesData();
 
     Rn.MeshRendererComponent.manualTransparentSids = [];
 
     const entities = [];
     const mesh1 = new Rn.Mesh();
     const mesh2 = new Rn.Mesh();
+    const mesh3 = new Rn.Mesh();
     mesh1.addPrimitive(primitivePlane);
     mesh2.addPrimitive(primitiveSphere);
+    mesh3.addPrimitive(primitiveCube);
 
     const entity1 = Rn.EntityHelper.createMeshEntity();
     const entity2 = Rn.EntityHelper.createMeshEntity();
+    const entity3 = Rn.EntityHelper.createMeshEntity();
 
     entities.push(entity1);
     entities.push(entity2);
+    entities.push(entity3);
     const meshComponent1 = entity1.getComponent(Rn.MeshComponent);
     const meshComponent2 = entity2.getComponent(Rn.MeshComponent);
+    const meshComponent3 = entity3.getComponent(Rn.MeshComponent);
 
     meshComponent1.setMesh(mesh1);
     entity1.getTransform().toUpdateAllTransform = false;
-    entity1.getTransform().translate = Rn.Vector3.fromCopyArray([-1.5, 0, 0]);
+    entity1.getTransform().translate = Rn.Vector3.fromCopyArray([-3.0, 0, 0]);
 
     meshComponent2.setMesh(mesh2);
     entity2.getTransform().toUpdateAllTransform = false;
-    entity2.getTransform().translate = Rn.Vector3.fromCopyArray([1.5, 0, 0]);
+    entity2.getTransform().translate = Rn.Vector3.fromCopyArray([0.0, 0, 0]);
+
+    meshComponent3.setMesh(mesh3);
+    entity3.getTransform().toUpdateAllTransform = false;
+    entity3.getTransform().translate = Rn.Vector3.fromCopyArray([3.0, 0, 0]);
+
 
     const startTime = Date.now();
     let p = null;
     const rotation1 = Rn.MutableVector3.zero();
     const rotation2 = Rn.MutableVector3.zero();
+    const rotation3 = Rn.MutableVector3.zero();
     let count = 0
 
     // camera
@@ -112,6 +138,7 @@ const load = async function () {
 
         entity1.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, rotation, 0]);
         entity2.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, 0]);
+        entity3.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI, rotation, 0]);
 
         gl.disable(gl.CULL_FACE); // TODO:
         system.process([expression]);
