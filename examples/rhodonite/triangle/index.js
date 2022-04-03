@@ -1,9 +1,3 @@
-function generateEntity() {
-    const repo = Rn.EntityRepository.getInstance();
-    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    return entity;
-}
-
 function readyBasicVerticesData() {
 
     const positions = new Float32Array([
@@ -24,9 +18,9 @@ function readyBasicVerticesData() {
 
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
-        attributeCompositionTypes: [Rn.CompositionType.Vec3, Rn.CompositionType.Vec3],
-        attributeSemantics: [Rn.VertexAttribute.Position, Rn.VertexAttribute.Color0],
+        attributeSemantics: [Rn.VertexAttribute.Position.XYZ, Rn.VertexAttribute.Color0.XYZ],
         attributes: [positions, colors],
+        material: void 0,
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
 
@@ -64,40 +58,15 @@ const load = async function () {
 
     Rn.MeshRendererComponent.manualTransparentSids = [];
 
-    const entities = [];
     const originalMesh = new Rn.Mesh();
     originalMesh.addPrimitive(primitive);
-    const entity = generateEntity();
-
-    entities.push(entity);
-    const meshComponent = entity.getComponent(Rn.MeshComponent);
-
+    
+    const firstEntity = Rn.EntityHelper.createMeshEntity();
+    const meshComponent = firstEntity.getMesh();
     meshComponent.setMesh(originalMesh);
-    entity.getTransform().toUpdateAllTransform = false;
-
-    const startTime = Date.now();
-    let p = null;
-    const rotationVec3 = Rn.MutableVector3.zero();
-    let count = 0
-
-    // renderPass
-    const renderPass = new Rn.RenderPass();
-    renderPass.toClearColorBuffer = true;
-    renderPass.addEntities(entities);
-
-    // expression
-    const expression = new Rn.Expression();
-    expression.addRenderPasses([renderPass]);
 
     const draw = function(time) {
-
-        const date = new Date();
-
-        if (window.isAnimating) {}
-
-        system.process([expression]);
-
-        count++;
+        system.processAuto();
         requestAnimationFrame(draw);
     }
 

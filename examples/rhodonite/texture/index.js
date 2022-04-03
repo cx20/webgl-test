@@ -1,9 +1,3 @@
-function generateEntity() {
-    const repo = Rn.EntityRepository.getInstance();
-    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    return entity;
-}
-
 function readyBasicVerticesData() {
 
     // Cube data
@@ -106,9 +100,9 @@ function readyBasicVerticesData() {
         
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
-        attributeCompositionTypes: [Rn.CompositionType.Vec3, Rn.CompositionType.Vec2],
-        attributeSemantics: [Rn.VertexAttribute.Position, Rn.VertexAttribute.Texcoord0],
+        attributeSemantics: [Rn.VertexAttribute.Position.XYZ, Rn.VertexAttribute.Texcoord0.XY],
         attributes: [positions, texcoords],
+        material: void 0,
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
 
@@ -153,28 +147,26 @@ const load = async function () {
     const entities = [];
     const originalMesh = new Rn.Mesh();
     originalMesh.addPrimitive(primitive);
-    const entity = generateEntity();
-
-    entities.push(entity);
-    const meshComponent = entity.getComponent(Rn.MeshComponent);
-
-    meshComponent.setMesh(originalMesh);
-    entity.getTransform().toUpdateAllTransform = false;
 
     const startTime = Date.now();
     let p = null;
     const rotationVec3 = Rn.MutableVector3.zero();
     let count = 0
 
+    const firstEntity = Rn.EntityHelper.createMeshEntity();
+    const meshComponent = firstEntity.getMesh();
+    meshComponent.setMesh(originalMesh);
+    entities.push(firstEntity);
+
     // camera
-    const cameraComponent = createCameraComponent();
+    const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+    cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 3]);
+    const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
     cameraComponent.zFar = 1000;
     cameraComponent.setFovyAndChangeFocalLength(45);
     cameraComponent.aspect = window.innerWidth / window.innerHeight;
-    const cameraEntity = cameraComponent.entity;
-    cameraEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0, 0, 3]);
-
+ 
     // renderPass
     const renderPass = new Rn.RenderPass();
     renderPass.cameraComponent = cameraComponent;
@@ -185,15 +177,7 @@ const load = async function () {
     const expression = new Rn.Expression();
     expression.addRenderPasses([renderPass]);
 
-    function createCameraComponent() {
-        const entityRepository = Rn.EntityRepository.getInstance();
-        const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent]);
-        const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
-        return cameraComponent;
-    }
-    
     const draw = function(time) {
-
         const date = new Date();
 
         const rotation = 0.001 * (date.getTime() - startTime);

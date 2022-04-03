@@ -1,9 +1,3 @@
-function generateEntity() {
-    const repo = Rn.EntityRepository.getInstance();
-    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    return entity;
-}
-
 function readyPlaneVerticesData() {
     let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
     const primitive = new Rn.Plane();
@@ -65,8 +59,9 @@ const load = async function () {
     const mesh2 = new Rn.Mesh();
     mesh1.addPrimitive(primitivePlane);
     mesh2.addPrimitive(primitiveSphere);
-    const entity1 = generateEntity();
-    const entity2 = generateEntity();
+
+    const entity1 = Rn.EntityHelper.createMeshEntity();
+    const entity2 = Rn.EntityHelper.createMeshEntity();
 
     entities.push(entity1);
     entities.push(entity2);
@@ -88,13 +83,13 @@ const load = async function () {
     let count = 0
 
     // camera
-    const cameraComponent = createCameraComponent();
+    const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+    cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 8]);
+    const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
     cameraComponent.zFar = 1000;
     cameraComponent.setFovyAndChangeFocalLength(45);
     cameraComponent.aspect = window.innerWidth / window.innerHeight;
-    const cameraEntity = cameraComponent.entity;
-    cameraEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0, 0, 8]);
 
     // renderPass
     const renderPass = new Rn.RenderPass();
@@ -106,13 +101,6 @@ const load = async function () {
     // expression
     const expression = new Rn.Expression();
     expression.addRenderPasses([renderPass]);
-
-    function createCameraComponent() {
-        const entityRepository = Rn.EntityRepository.getInstance();
-        const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent]);
-        const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
-        return cameraComponent;
-    }
 
     let axis = Rn.Vector3.fromCopyArray([1, 1, 1]);
 

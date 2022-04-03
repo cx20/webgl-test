@@ -1,4 +1,3 @@
-
 let modelInfoSet = [
 {
     name: "CesiumMilkTruck",
@@ -39,27 +38,28 @@ const load = async function () {
   //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
     
   // camera
-  const entityRepository = Rn.EntityRepository.getInstance();
-  const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent, Rn.CameraControllerComponent]);
-  const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
+  const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+  const cameraComponent = cameraEntity.getCamera();
   cameraComponent.zNear = 0.1;
-  cameraComponent.zFar = 1000.0;
-  cameraComponent.setFovyAndChangeFocalLength(60.0);
-  cameraComponent.aspect = c.width / c.height;
-  const cameraControllerComponent = cameraEntity.getComponent(Rn.CameraControllerComponent);
+  cameraComponent.zFar = 1000;
+  cameraComponent.setFovyAndChangeFocalLength(60);
+  cameraComponent.aspect = window.innerWidth / window.innerHeight;
+  const cameraControllerComponent = cameraEntity.getCameraController();
 
   // Lights
-  const lightEntity1 = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
-  lightEntity1.getTransform().translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
-  lightEntity1.getComponent(Rn.LightComponent).intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-  lightEntity1.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
-  lightEntity1.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, -Math.PI / 4, Math.PI / 4]);
+  const lightEntity1 = Rn.EntityHelper.createLightEntity();
+  const lightComponent1 = lightEntity1.getLight();
+  lightComponent1.type = Rn.LightType.Directional;
+  lightComponent1.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
+  lightEntity1.translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
+  lightEntity1.rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, -Math.PI / 4, Math.PI / 4]);
 
-  const lightEntity2 = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
-  lightEntity2.getTransform().translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
-  lightEntity2.getComponent(Rn.LightComponent).intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-  lightEntity2.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
-  lightEntity2.getTransform().rotate = Rn.Vector3.fromCopyArray([Math.PI / 2, Math.PI / 4, -Math.PI / 4]);
+  const lightEntity2 = Rn.EntityHelper.createLightEntity();
+  const lightComponent2 = lightEntity2.getLight();
+  lightComponent2.type = Rn.LightType.Directional;
+  lightComponent2.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
+  lightEntity2.translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
+  lightEntity2.rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, Math.PI / 4, Math.PI / 4]);
 
   // expressions
   const expressions = [];
@@ -88,16 +88,11 @@ const load = async function () {
       rootGroup.getTransform().rotate = Rn.Vector3.fromCopyArray([modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]]);
       rootGroup.getTransform().translate = Rn.Vector3.fromCopyArray([modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]]);
 
-      if (modelInfo.name == "Fox") {
-      //if (modelInfo.name == "Rex") {
+      //if (modelInfo.name == "Fox") {
+      if (modelInfo.name == "Rex") {
         cameraControllerComponent.controller.setTarget(rootGroup);
-        //cameraControllerComponent.controller.autoCalculateZNearAndZFar = false;
-        //cameraControllerComponent.controller.zNearLimitFactor = 0.1;
-        //cameraControllerComponent.controller.zFarScalingFactor = 1000;
-         
-        const entityRepository = Rn.EntityRepository.getInstance();
-        const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent, Rn.CameraControllerComponent]);
-        const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
+        const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+        const cameraComponent = cameraEntity.getCamera();
         cameraComponent.zNear = 0.1;
         cameraComponent.zFar = 1000.0;
       }
@@ -133,7 +128,7 @@ const load = async function () {
       material: Rn.MaterialHelper[materialHelperFunctionStr].apply(this, arrayOfHelperFunctionArgument)
     });
   
-    const boardEntity = generateEntity();
+    const boardEntity = Rn.EntityHelper.createMeshEntity();
     boardEntity.getTransform().rotate = Rn.Vector3.fromCopyArray([Math.PI / 2, 0.0, 0.0]);
     boardEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0.0, 0.0, -0.5]);
   
@@ -143,9 +138,8 @@ const load = async function () {
     boardMeshComponent.setMesh(boardMesh);
   
     if (createPostEffectRenderPass.cameraComponent == null) {
-      const entityRepository = Rn.EntityRepository.getInstance();
-      const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent]);
-      const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
+      const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+      const cameraComponent = cameraEntity.getCamera();
       cameraComponent.zFarInner = 1.0;
       createPostEffectRenderPass.cameraComponent = cameraComponent;
     }
@@ -159,12 +153,6 @@ const load = async function () {
     return renderPass;
   }
 
-  function generateEntity() {
-    const repo = Rn.EntityRepository.getInstance();
-    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    return entity;
-  }
-  
   function setTextureParameterForMeshComponents(meshComponents, shaderSemantic, value) {
     for (let i = 0; i < meshComponents.length; i++) {
       const mesh = meshComponents[i].mesh;

@@ -1,9 +1,3 @@
-function generateEntity() {
-    const repo = Rn.EntityRepository.getInstance();
-    const entity = repo.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.MeshComponent, Rn.MeshRendererComponent]);
-    return entity;
-}
-
 function readyTeapotVerticesData(data) {
 
     const positions = new Float32Array(data.vertexPositions);
@@ -13,9 +7,9 @@ function readyTeapotVerticesData(data) {
         
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
-        attributeCompositionTypes: [Rn.CompositionType.Vec3, Rn.CompositionType.Vec3, Rn.CompositionType.Vec2],
-        attributeSemantics: [Rn.VertexAttribute.Position, Rn.VertexAttribute.Normal, Rn.VertexAttribute.Texcoord0],
-        attributes: [positions, normals, texcoords],
+        attributeSemantics: [Rn.VertexAttribute.Position.XYZ, Rn.VertexAttribute.Texcoord0.XY],
+        attributes: [positions, texcoords],
+        material: void 0,
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
 
@@ -72,7 +66,7 @@ Promise.all([promise1, promise2]).then(function() {
         const entities = [];
         const originalMesh = new Rn.Mesh();
         originalMesh.addPrimitive(primitive);
-        const entity = generateEntity();
+        const entity = Rn.EntityHelper.createMeshEntity();
 
         entities.push(entity);
         const meshComponent = entity.getComponent(Rn.MeshComponent);
@@ -84,23 +78,21 @@ Promise.all([promise1, promise2]).then(function() {
         const rotationVec3 = Rn.MutableVector3.zero();
 
         // camera
-        const cameraComponent = createCameraComponent();
+        const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+        cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 35]);
+        const cameraComponent = cameraEntity.getCamera();
         cameraComponent.zNear = 0.1;
         cameraComponent.zFar = 1000;
         cameraComponent.setFovyAndChangeFocalLength(45);
         cameraComponent.aspect = window.innerWidth / window.innerHeight;
-        const cameraEntity = cameraComponent.entity;
-        cameraEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0, 0, 35]);
 
         // TODO: Light is not applied correctly
         // Lights
-        const entityRepository = Rn.EntityRepository.getInstance();
-        const lightEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.LightComponent])
-        const lightComponent = lightEntity.getComponent(Rn.LightComponent);
-        //lightComponent.type = Rn.LightType.Directional;
+        const lightEntity = Rn.EntityHelper.createLightEntity();
+        const lightComponent = lightEntity.getLight();
         lightComponent.type = Rn.LightType.Point;
         lightComponent.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-        lightEntity.getTransform().translate = Rn.Vector3.fromCopyArray([100, 0, 100]);
+        lightEntity.translate = Rn.Vector3.fromCopyArray([100, 0, 100]);
 
         // renderPass
         const renderPass = new Rn.RenderPass();
@@ -113,13 +105,6 @@ Promise.all([promise1, promise2]).then(function() {
         // expression
         const expression = new Rn.Expression();
         expression.addRenderPasses([renderPass]);
-
-        function createCameraComponent() {
-            const entityRepository = Rn.EntityRepository.getInstance();
-            const cameraEntity = entityRepository.createEntity([Rn.TransformComponent, Rn.SceneGraphComponent, Rn.CameraComponent]);
-            const cameraComponent = cameraEntity.getComponent(Rn.CameraComponent);
-            return cameraComponent;
-        }
 
         const draw = function(time) {
 
