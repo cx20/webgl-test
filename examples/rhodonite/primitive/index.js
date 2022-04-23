@@ -40,13 +40,14 @@ const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
-    const system = Rn.System.getInstance();
     const c = document.getElementById('world');
-    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
-    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
-    const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL2, c);
-    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
-    gl.enable(gl.DEPTH_TEST);
+    const gl = await Rn.System.init({
+      //approach: Rn.ProcessApproach.UniformWebGL1,
+      //approach: Rn.ProcessApproach.FastestWebGL1,
+      //approach: Rn.ProcessApproach.UniformWebGL2,
+      approach: Rn.ProcessApproach.FastestWebGL2,
+      canvas: c,
+    });
 
     resizeCanvas();
     
@@ -141,7 +142,7 @@ const load = async function () {
         entity3.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI, rotation, 0]);
 
         gl.disable(gl.CULL_FACE); // TODO:
-        system.process([expression]);
+        Rn.System.process([expression]);
 
         count++;
         requestAnimationFrame(draw);
