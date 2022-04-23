@@ -34,30 +34,38 @@ let vertexNormals;
 let vertexTextureCoords;
 let indices;
 
-const promise1 = Rn.ModuleManager.getInstance().loadModule('webgl');
-const promise2 = Rn.ModuleManager.getInstance().loadModule('pbr');
-Promise.all([promise1, promise2]).then(function() {
-    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
-    $.getJSON("../../../assets/json/teapot.json", function (data) {
-        const system = Rn.System.getInstance();
-        const c = document.getElementById('world');
-        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
-        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
-        const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL2, c);
-        //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
-        gl.enable(gl.DEPTH_TEST);
+const load = async function () {
+    const c = document.getElementById('world');
+    const gl = await Rn.System.init({
+      //approach: Rn.ProcessApproach.UniformWebGL1,
+      //approach: Rn.ProcessApproach.FastestWebGL1,
+      //approach: Rn.ProcessApproach.UniformWebGL2,
+      approach: Rn.ProcessApproach.FastestWebGL2,
+      canvas: c,
+    });
 
+    function resizeCanvas() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+        gl.viewport(0, 0, c.width, c.height);
+    }
+    
+    const promise1 = Rn.ModuleManager.getInstance().loadModule('webgl');
+    const promise2 = Rn.ModuleManager.getInstance().loadModule('pbr');
+    Promise.all([promise1, promise2]).then(function() {
+        // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
+        $.getJSON("../../../assets/json/teapot.json", function (data) {
+            init(data);
+        });
+
+    });
+    
+    function init(data) {
         resizeCanvas();
         
         window.addEventListener("resize", function(){
             resizeCanvas();
         });
-        
-        function resizeCanvas() {
-            c.width = window.innerWidth;
-            c.height = window.innerHeight;
-            gl.viewport(0, 0, c.width, c.height);
-        }
         
         const primitive = readyTeapotVerticesData(data);
 
@@ -115,12 +123,13 @@ Promise.all([promise1, promise2]).then(function() {
                 entity.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, 0]);
             });
 
-            system.process([expression]);
+            Rn.System.process([expression]);
 
             requestAnimationFrame(draw);
         }
 
         draw();
-    });
+    }
+}
 
-});
+document.body.onload = load;

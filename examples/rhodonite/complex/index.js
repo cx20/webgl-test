@@ -32,11 +32,14 @@ const load = async function () {
   await Rn.ModuleManager.getInstance().loadModule('pbr');
   const system = Rn.System.getInstance();
   const c = document.getElementById('world');
-  //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
-  //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
-  const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL2, c);
-  //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
-    
+  const gl = await Rn.System.init({
+    //approach: Rn.ProcessApproach.UniformWebGL1,
+    //approach: Rn.ProcessApproach.FastestWebGL1,
+    //approach: Rn.ProcessApproach.UniformWebGL2,
+    approach: Rn.ProcessApproach.FastestWebGL2,
+    canvas: c,
+  });
+  
   // camera
   const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
   const cameraComponent = cameraEntity.getCamera();
@@ -64,10 +67,9 @@ const load = async function () {
   // expressions
   const expressions = [];
 
-  const importer = Rn.Gltf2Importer.getInstance();
   let promises = [];
   for (let i = 0; i < modelInfoSet.length; i++ ) {
-    const promise = importer.import(modelInfoSet[i].url, {
+    const promise = await Rn.Gltf2Importer.import(modelInfoSet[i].url, {
       defaultMaterialHelperArgumentArray: [
         {
           makeOutputSrgb: false,
@@ -78,12 +80,11 @@ const load = async function () {
   }
   
   Promise.all(promises).then(function (gltfModels) {
-    const modelConverter = Rn.ModelConverter.getInstance();
     const rootGroups = [];
 
     for (let i = 0; i < modelInfoSet.length; i++) {
       let modelInfo = modelInfoSet[i];
-      const rootGroup = modelConverter.convertToRhodoniteObject(gltfModels[i]);
+      const rootGroup = Rn.ModelConverter.convertToRhodoniteObject(gltfModels[i]);
       rootGroup.getTransform().scale = Rn.Vector3.fromCopyArray([modelInfo.scale, modelInfo.scale, modelInfo.scale]);
       rootGroup.getTransform().rotate = Rn.Vector3.fromCopyArray([modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]]);
       rootGroup.getTransform().translate = Rn.Vector3.fromCopyArray([modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]]);
@@ -179,7 +180,7 @@ const load = async function () {
     
     cameraControllerComponent.controller.rotX = -angle;
     
-    system.process(expressions);
+    Rn.System.process(expressions);
     requestAnimationFrame(draw);
   };
 }

@@ -31,13 +31,14 @@ const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
-    const system = Rn.System.getInstance();
     const c = document.getElementById('world');
-    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL1, c);
-    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL1, c);
-    const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.FastestWebGL2, c);
-    //const gl = system.setProcessApproachAndCanvas(Rn.ProcessApproach.UniformWebGL2, c);
-    gl.enable(gl.DEPTH_TEST);
+    const gl = await Rn.System.init({
+      //approach: Rn.ProcessApproach.UniformWebGL1,
+      //approach: Rn.ProcessApproach.FastestWebGL1,
+      //approach: Rn.ProcessApproach.UniformWebGL2,
+      approach: Rn.ProcessApproach.FastestWebGL2,
+      canvas: c,
+    });
 
     resizeCanvas();
     
@@ -51,9 +52,6 @@ const load = async function () {
         gl.viewport(0, 0, c.width, c.height);
     }
     
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
     const primitive = readyBasicVerticesData();
 
     Rn.MeshRendererComponent.manualTransparentSids = [];
@@ -66,7 +64,7 @@ const load = async function () {
     meshComponent.setMesh(originalMesh);
 
     const draw = function(time) {
-        system.processAuto();
+        Rn.System.processAuto();
         requestAnimationFrame(draw);
     }
 
