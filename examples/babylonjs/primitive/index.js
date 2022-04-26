@@ -81,7 +81,7 @@ function init() {
 
     let rad = 0.0;
     engine.runRenderLoop(function () {
-        rad += Math.PI * 1.0 / 180.0;
+        rad += Math.PI * 1.0 / 180.0 * scene.getAnimationRatio();
 
         plane.rotation.y = rad;
         cube.rotation.y = rad;

@@ -36,7 +36,7 @@ function init() {
         const scene = createScene(engine);
 
         engine.runRenderLoop(function () {
-            teapotMesh.rotate(BABYLON.Axis.Y, -Math.PI * 1.0 / 180.0, BABYLON.Space.LOCAL);
+            teapotMesh.rotate(BABYLON.Axis.Y, -Math.PI * 1.0 / 180.0 * scene.getAnimationRatio(), BABYLON.Space.LOCAL);
             scene.render();
         });
 
