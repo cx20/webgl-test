@@ -162,15 +162,15 @@ function init() {
     let rad = 0;
     engine.runRenderLoop(function () {
         // rotate
-        rad += Math.PI * 1.0 / 180.0;
+        rad += Math.PI * 1.0 / 180.0 * scene.getAnimationRatio();
         cube1.rotation.x = rad;
         cube1.rotation.y = rad;
         cube1.rotation.z = rad;
 
         // quaternion
-        cube2.rotate(BABYLON.Axis.X, Math.PI * 1.0 / 180.0, BABYLON.Space.LOCAL);
-        cube2.rotate(BABYLON.Axis.Y, Math.PI * 1.0 / 180.0, BABYLON.Space.LOCAL);
-        cube2.rotate(BABYLON.Axis.Z, Math.PI * 1.0 / 180.0, BABYLON.Space.LOCAL);
+        cube2.rotate(BABYLON.Axis.X, Math.PI * 1.0 / 180.0 * scene.getAnimationRatio(), BABYLON.Space.LOCAL);
+        cube2.rotate(BABYLON.Axis.Y, Math.PI * 1.0 / 180.0 * scene.getAnimationRatio(), BABYLON.Space.LOCAL);
+        cube2.rotate(BABYLON.Axis.Z, Math.PI * 1.0 / 180.0 * scene.getAnimationRatio(), BABYLON.Space.LOCAL);
 
         scene.render();
     });

@@ -133,7 +133,7 @@ function init() {
             particleLeftFront .start();
 
             engine.runRenderLoop(function() {
-                scene.activeCamera.alpha -= 0.005;
+                scene.activeCamera.alpha -= 0.005 * scene.getAnimationRatio();
                 scene.render();
             });
         });
