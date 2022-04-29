@@ -128,7 +128,7 @@ var Viewer = function (canvas) {
 
     // load orbit script
     app.assets.loadFromUrl(
-        "https://cx20.github.io/gltf-test/libs/playcanvas/v1.52.4/orbit-camera.js",
+        "https://cx20.github.io/gltf-test/libs/playcanvas/v1.53.4/orbit-camera.js",
         "script",
         function (err, asset) {
             // setup orbit script component
