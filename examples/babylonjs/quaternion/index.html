@@ -6,25 +6,26 @@
   <script src="https://cx20.github.io/gltf-test/libs/babylonjs/5.4.0/babylon.js"></script>
 </head>
 <body>
-<script id="vs" type="x-shader/x-vertex">
-attribute vec3 position;
-attribute vec2 uv;
-uniform   mat4 worldViewProjection;
-varying   vec2 vTexCoord;
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 position;
+in  vec2 uv;
+uniform mat4 worldViewProjection;
+out vec2 vTextureCoord;
 
 void main() {
-    vTexCoord = uv;
+    vTextureCoord = uv;
     gl_Position = worldViewProjection * vec4(position, 1.0);
 }
 </script>
 
-<script id="fs" type="x-shader/x-fragment">
+<script id="fs" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 uniform sampler2D texture_;
-varying   vec2 vTexCoord;
+in  vec2 vTextureCoord;
+out vec4 fragColor;
 
 void main() {
-    gl_FragColor = texture2D(texture_, vTexCoord);
+    fragColor = texture(texture_, vTextureCoord);
 }
 </script>
 

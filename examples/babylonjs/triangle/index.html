@@ -6,19 +6,20 @@
   <script src="https://cx20.github.io/gltf-test/libs/babylonjs/5.4.0/babylon.js"></script>
 </head>
 <body>
-<script id="vs" type="x-shader/x-vertex">
-attribute vec3 position;
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in  vec3 position;
 
 void main() {
     gl_Position = vec4(position, 1.0);
 }
 </script>
 
-<script id="fs" type="x-shader/x-fragment">
+<script id="fs" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
+out vec4 fragColor;
 
 void main() {
-    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+    fragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }
 </script>
 
