@@ -66,11 +66,11 @@ class App {
             .build(engine, sunlight);
         this.scene.addEntity(sunlight);
 
-        const indirectLight = this.ibl = engine.createIblFromKtx(ibl_url);
+        const indirectLight = this.ibl = engine.createIblFromKtx1(ibl_url);
         this.scene.setIndirectLight(indirectLight);
         indirectLight.setIntensity(50000);
 
-        const skybox = engine.createSkyFromKtx(sky_url);
+        const skybox = engine.createSkyFromKtx1(sky_url);
         this.scene.setSkybox(skybox);
         this.assets = [];
         this.animators = [];
