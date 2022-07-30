@@ -136,7 +136,8 @@ const load = async function () {
     boardMeshComponent.setMesh(boardMesh);
   
     if (createPostEffectRenderPass.cameraComponent == null) {
-      const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+      //const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+      const cameraEntity = Rn.EntityHelper.createCameraEntity();
       const cameraComponent = cameraEntity.getCamera();
       cameraComponent.zFarInner = 1.0;
       createPostEffectRenderPass.cameraComponent = cameraComponent;
