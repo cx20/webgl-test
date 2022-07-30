@@ -89,7 +89,8 @@ const load = async function () {
       //if (modelInfo.name == "Fox") {
       if (modelInfo.name == "Rex") {
         cameraControllerComponent.controller.setTarget(rootGroup);
-        const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+        //const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+        const cameraEntity = Rn.EntityHelper.createCameraEntity();
         const cameraComponent = cameraEntity.getCamera();
         cameraComponent.zNear = 0.1;
         cameraComponent.zFar = 1000.0;
