@@ -37,10 +37,7 @@ let indices;
 const load = async function () {
     const c = document.getElementById('world');
     const gl = await Rn.System.init({
-      //approach: Rn.ProcessApproach.UniformWebGL1,
-      //approach: Rn.ProcessApproach.FastestWebGL1,
-      //approach: Rn.ProcessApproach.UniformWebGL2,
-      approach: Rn.ProcessApproach.FastestWebGL2,
+      approach: Rn.ProcessApproach.DataTexture,
       canvas: c,
     });
 
