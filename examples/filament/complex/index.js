@@ -82,7 +82,7 @@ class App {
             let basePath = convertRelativeToAbsUrl(getPathNameFromUrl(url)) + "/";
 
             const loader = engine.createAssetLoader();
-            this.assets.push( loader.createAssetFromJson(url) );
+            this.assets.push( loader.createAsset(url) );
             const asset = this.assets[i];
             const messages = document.getElementById('messages');
 
