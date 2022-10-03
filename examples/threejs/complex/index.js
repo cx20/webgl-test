@@ -209,7 +209,7 @@ function getEnvMap() {
     let loader = new THREE.CubeTextureLoader();
     loader.setCrossOrigin('anonymous');
     let envMap = loader.load(urls);
-    envMap.format = THREE.RGBFormat;
+    envMap.format = THREE.RGBAFormat;
     return envMap;
 }
 
