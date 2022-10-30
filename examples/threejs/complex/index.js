@@ -1,6 +1,6 @@
-//import * as THREE from 'https://cx20.github.io/gltf-test/libs/three.js/r145/build/three.module.js';
-//import { OrbitControls } from 'https://cx20.github.io/gltf-test/libs/three.js/r145/examples/jsm/controls/OrbitControls.js';
-//import { GLTFLoader } from 'https://cx20.github.io/gltf-test/libs/three.js/r145/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 let modelInfoSet = [
 {
@@ -135,7 +135,7 @@ function init() {
     light.castShadow = true;
     scene.add(light);
 
-    let loader = new THREE.GLTFLoader();
+    let loader = new GLTFLoader();
     loader.setCrossOrigin('anonymous');
     var envMap = getEnvMap();
     scene.background = envMap;
@@ -185,7 +185,7 @@ function init() {
     scene.add( particleGroup.mesh );
 
     renderer = new THREE.WebGLRenderer();
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.userPan = false;
     controls.userPanSpeed = 0.0;
     controls.maxDistance = 5000.0;
