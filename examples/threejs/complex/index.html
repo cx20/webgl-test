@@ -3,17 +3,20 @@
 <head>
   <title>[WIP] Testing Composite sample Using three.js</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <script src="https://cx20.github.io/gltf-test/libs/three.js/r145/build/three.js"></script>
-  <script src="https://cx20.github.io/gltf-test/libs/three.js/r145/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cx20.github.io/gltf-test/libs/three.js/r145/examples/js/loaders/GLTFLoader.js"></script>
-  <!-- The original library has not been recently maintained and will not work with r125 and above. -->
-  <!-- <script src="https://rawcdn.githack.com/squarefeet/ShaderParticleEngine/ecc2886c/build/SPE.js"></script> -->
-  <!-- <script src="https://rawcdn.githack.com/blaze33/ShaderParticleEngine/d019c8bf3766997f39dccda943fcee9586e84d94/build/SPE.js"></script> -->
+  <script src="https://cx20.github.io/gltf-test/libs/three.js/r146/build/three.js"></script>
   <script src="./SPE.js"></script>
 </head>
 <body>
 
 <div id="container"></div>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cx20.github.io/gltf-test/libs/three.js/r146/build/three.module.js",
+        "three/addons/": "https://cx20.github.io/gltf-test/libs/three.js/r146/examples/jsm/"
+    }
+}
+</script>
 
 <script type="module" src="index.js"></script>
 </body>
