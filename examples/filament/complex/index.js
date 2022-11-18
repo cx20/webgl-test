@@ -84,6 +84,8 @@ class App {
             const loader = engine.createAssetLoader();
             this.assets.push( loader.createAsset(url) );
             const asset = this.assets[i];
+            this.instance = asset.getInstance();
+            const instance = this.instance;
             const messages = document.getElementById('messages');
 
             // Crudely indicate progress by printing the URI of each resource as it is loaded.
@@ -94,7 +96,7 @@ class App {
                 const entities = asset.getEntities();
                 scene.addEntities(entities);
                 //messages.remove();
-                this.animators.push( asset.getAnimator() );
+                this.animators.push( instance.getAnimator() );
                 this.animationStartTimes.push( Date.now() );
             };
             asset.loadResources(onDone, onFetched, basePath);
@@ -138,7 +140,7 @@ class App {
 
             if (this.animators[i]) {
                 const ms = Date.now() - this.animationStartTimes[i];
-                for (let j = 0; j < this.assets[i].getAnimator().getAnimationCount(); j++ ) {
+                for (let j = 0; j < this.assets[i].getInstance().getAnimator().getAnimationCount(); j++ ) {
                     //this.animators[i].applyAnimation(j, (ms / 1000) % 1.0); // TODO: not animated correctly
                     this.animators[i].applyAnimation(j, ms / 1000);
                     this.animators[i].updateBoneMatrices();
