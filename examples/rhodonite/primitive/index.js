@@ -88,15 +88,15 @@ const load = async function () {
 
     meshComponent1.setMesh(mesh1);
     entity1.getTransform().toUpdateAllTransform = false;
-    entity1.getTransform().translate = Rn.Vector3.fromCopyArray([-3.0, 0, 0]);
+    entity1.getTransform().localPosition = Rn.Vector3.fromCopyArray([-3.0, 0, 0]);
 
     meshComponent2.setMesh(mesh2);
     entity2.getTransform().toUpdateAllTransform = false;
-    entity2.getTransform().translate = Rn.Vector3.fromCopyArray([0.0, 0, 0]);
+    entity2.getTransform().localPosition = Rn.Vector3.fromCopyArray([0.0, 0, 0]);
 
     meshComponent3.setMesh(mesh3);
     entity3.getTransform().toUpdateAllTransform = false;
-    entity3.getTransform().translate = Rn.Vector3.fromCopyArray([3.0, 0, 0]);
+    entity3.getTransform().localPosition = Rn.Vector3.fromCopyArray([3.0, 0, 0]);
 
 
     const startTime = Date.now();
@@ -108,7 +108,7 @@ const load = async function () {
 
     // camera
     const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
-    cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 8]);
+    cameraEntity.localPosition = Rn.Vector3.fromCopyArray([0, 0, 8]);
     const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
     cameraComponent.zFar = 1000;
@@ -134,9 +134,9 @@ const load = async function () {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
-        entity1.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, rotation, 0]);
-        entity2.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, 0]);
-        entity3.getTransform().rotate = Rn.Vector3.fromCopyArray([-Math.PI, rotation, 0]);
+        entity1.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI / 2, rotation, 0]);
+        entity2.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
+        entity3.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI, rotation, 0]);
 
         gl.disable(gl.CULL_FACE); // TODO:
         Rn.System.process([expression]);

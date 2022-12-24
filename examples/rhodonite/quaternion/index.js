@@ -155,10 +155,10 @@ const load = async function () {
     meshComponent2.setMesh(mesh2);
 
     entity1.getTransform().toUpdateAllTransform = false;
-    entity1.getTransform().translate = Rn.Vector3.fromCopyArray([-1, 0, 0]);
+    entity1.getTransform().localPosition = Rn.Vector3.fromCopyArray([-1, 0, 0]);
 
     entity2.getTransform().toUpdateAllTransform = false;
-    entity2.getTransform().translate = Rn.Vector3.fromCopyArray([1, 0, 0]);
+    entity2.getTransform().localPosition = Rn.Vector3.fromCopyArray([1, 0, 0]);
 
     entities.push(entity1);
     entities.push(entity2);
@@ -169,7 +169,7 @@ const load = async function () {
 
     // camera
     const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
-    cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 5]);
+    cameraEntity.localPosition = Rn.Vector3.fromCopyArray([0, 0, 5]);
     const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
     cameraComponent.zFar = 1000;
@@ -199,10 +199,10 @@ const load = async function () {
         rotationVec3.z = rotation;
         
         // Rotation by Euler angles
-        entity1.getTransform().rotate = Rn.Vector3.fromCopyArray([rotation, rotation, rotation]);
+        entity1.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([rotation, rotation, rotation]);
         
         // Rotation by Qaternions
-        entity2.getTransform().quaternion = Rn.MutableQuaternion.axisAngle(axis, rotation);
+        entity2.getTransform().localRotation = Rn.MutableQuaternion.axisAngle(axis, rotation);
 
         gl.disable(gl.CULL_FACE); // TODO:
         Rn.System.process([expression]);

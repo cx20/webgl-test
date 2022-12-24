@@ -50,7 +50,6 @@ const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
-    const system = Rn.System.getInstance();
     const c = document.getElementById('world');
     const gl = await Rn.System.init({
       approach: Rn.ProcessApproach.DataTexture,

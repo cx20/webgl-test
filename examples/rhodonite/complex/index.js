@@ -30,7 +30,6 @@ c.height = window.innerHeight;
 const load = async function () {
   await Rn.ModuleManager.getInstance().loadModule('webgl');
   await Rn.ModuleManager.getInstance().loadModule('pbr');
-  const system = Rn.System.getInstance();
   const c = document.getElementById('world');
   const gl = await Rn.System.init({
     approach: Rn.ProcessApproach.DataTexture,
@@ -51,14 +50,14 @@ const load = async function () {
   const lightComponent1 = lightEntity1.getLight();
   lightComponent1.type = Rn.LightType.Directional;
   lightComponent1.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-  lightEntity1.translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
+  lightEntity1.localPosition = Rn.Vector3.fromCopyArray([1, 1, 100000]);
   lightEntity1.rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, -Math.PI / 4, Math.PI / 4]);
 
   const lightEntity2 = Rn.EntityHelper.createLightEntity();
   const lightComponent2 = lightEntity2.getLight();
   lightComponent2.type = Rn.LightType.Directional;
   lightComponent2.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-  lightEntity2.translate = Rn.Vector3.fromCopyArray([1, 1, 100000]);
+  lightEntity2.localPosition = Rn.Vector3.fromCopyArray([1, 1, 100000]);
   lightEntity2.rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, Math.PI / 4, Math.PI / 4]);
 
   // expressions
@@ -84,9 +83,9 @@ const load = async function () {
     for (let i = 0; i < modelInfoSet.length; i++) {
       let modelInfo = modelInfoSet[i];
       const rootGroup = Rn.ModelConverter.convertToRhodoniteObject(gltfModels[i]);
-      rootGroup.getTransform().scale = Rn.Vector3.fromCopyArray([modelInfo.scale, modelInfo.scale, modelInfo.scale]);
-      rootGroup.getTransform().rotate = Rn.Vector3.fromCopyArray([modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]]);
-      rootGroup.getTransform().translate = Rn.Vector3.fromCopyArray([modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]]);
+      rootGroup.getTransform().localScale = Rn.Vector3.fromCopyArray([modelInfo.scale, modelInfo.scale, modelInfo.scale]);
+      rootGroup.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([modelInfo.rotation[0], modelInfo.rotation[1], modelInfo.rotation[2]]);
+      rootGroup.getTransform().localPosition = Rn.Vector3.fromCopyArray([modelInfo.position[0], modelInfo.position[1], modelInfo.position[2]]);
 
       //if (modelInfo.name == "Fox") {
       if (modelInfo.name == "Rex") {
@@ -130,8 +129,8 @@ const load = async function () {
     });
   
     const boardEntity = Rn.EntityHelper.createMeshEntity();
-    boardEntity.getTransform().rotate = Rn.Vector3.fromCopyArray([Math.PI / 2, 0.0, 0.0]);
-    boardEntity.getTransform().translate = Rn.Vector3.fromCopyArray([0.0, 0.0, -0.5]);
+    boardEntity.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([Math.PI / 2, 0.0, 0.0]);
+    boardEntity.getTransform().localPosition = Rn.Vector3.fromCopyArray([0.0, 0.0, -0.5]);
   
     const boardMesh = new Rn.Mesh();
     boardMesh.addPrimitive(boardPrimitive);
