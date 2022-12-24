@@ -1,41 +1,3 @@
-function readyPlaneVerticesData() {
-    let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
-    const primitive = new Rn.Plane();
-    primitive.generate({ width: 2, height: 2, uSpan: 1, vSpan: 1, isUVRepeat: false, flipTextureCoordinateY: false, material: modelMaterial });
-
-    const texture = new Rn.Texture();
-    texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
-    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
-
-    return primitive;
-}
-
-function readySphereVerticesData() {
-    let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
-    const primitive = new Rn.Sphere();
-    primitive.generate({ radius: 1, widthSegments: 40, heightSegments: 40, material: modelMaterial });
-
-    const texture = new Rn.Texture();
-    texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
-    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
-
-    return primitive;
-}
-
-function readyCubeVerticesData() {
-    let modelMaterial = Rn.MaterialHelper.createClassicUberMaterial();
-    const primitive = new Rn.Cube();
-    //primitive.generate({ radius: 1, widthSegments: 40, heightSegments: 40, material: modelMaterial });
-    primitive.generate({ widthVector: Rn.Vector3.fromCopy3(1, 1, 1) });
-
-    const texture = new Rn.Texture();
-    texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
-    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
-
-    return primitive;
-}
-
-
 const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
@@ -61,49 +23,38 @@ const load = async function () {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const primitivePlane  = readyPlaneVerticesData();
-    const primitiveSphere = readySphereVerticesData();
-    const primitiveCube = readyCubeVerticesData();
-
-    Rn.MeshRendererComponent.manualTransparentSids = [];
+    const texture = new Rn.Texture();
+    texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
 
     const entities = [];
-    const mesh1 = new Rn.Mesh();
-    const mesh2 = new Rn.Mesh();
-    const mesh3 = new Rn.Mesh();
-    mesh1.addPrimitive(primitivePlane);
-    mesh2.addPrimitive(primitiveSphere);
-    mesh3.addPrimitive(primitiveCube);
 
-    const entity1 = Rn.EntityHelper.createMeshEntity();
-    const entity2 = Rn.EntityHelper.createMeshEntity();
-    const entity3 = Rn.EntityHelper.createMeshEntity();
+    const entity1 = Rn.MeshHelper.createPlane();
+    const entity2 = Rn.MeshHelper.createSphere();
+    const entity3 = Rn.MeshHelper.createCube();
+    const entity4 = Rn.MeshHelper.createGrid();
+    const entity5 = Rn.MeshHelper.createAxis();
+    const entity6 = Rn.MeshHelper.createJoint();
+
+    entity1.localPosition = Rn.Vector3.fromCopyArray([-3.0,  1.5, 0]);
+    entity2.localPosition = Rn.Vector3.fromCopyArray([ 0.0,  1.5, 0]);
+    entity3.localPosition = Rn.Vector3.fromCopyArray([ 3.0,  1.5, 0]);
+    entity4.localPosition = Rn.Vector3.fromCopyArray([-3.0, -1.5, 0]);
+    entity5.localPosition = Rn.Vector3.fromCopyArray([ 0.0, -1.5, 0]);
+    entity6.localPosition = Rn.Vector3.fromCopyArray([ 3.0, -1.5, 0]);
+
+    entity1.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+    entity2.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+    entity3.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
 
     entities.push(entity1);
     entities.push(entity2);
     entities.push(entity3);
-    const meshComponent1 = entity1.getComponent(Rn.MeshComponent);
-    const meshComponent2 = entity2.getComponent(Rn.MeshComponent);
-    const meshComponent3 = entity3.getComponent(Rn.MeshComponent);
-
-    meshComponent1.setMesh(mesh1);
-    entity1.getTransform().toUpdateAllTransform = false;
-    entity1.getTransform().localPosition = Rn.Vector3.fromCopyArray([-3.0, 0, 0]);
-
-    meshComponent2.setMesh(mesh2);
-    entity2.getTransform().toUpdateAllTransform = false;
-    entity2.getTransform().localPosition = Rn.Vector3.fromCopyArray([0.0, 0, 0]);
-
-    meshComponent3.setMesh(mesh3);
-    entity3.getTransform().toUpdateAllTransform = false;
-    entity3.getTransform().localPosition = Rn.Vector3.fromCopyArray([3.0, 0, 0]);
-
+    entities.push(entity4);
+    entities.push(entity5);
+    entities.push(entity6);
 
     const startTime = Date.now();
     let p = null;
-    const rotation1 = Rn.MutableVector3.zero();
-    const rotation2 = Rn.MutableVector3.zero();
-    const rotation3 = Rn.MutableVector3.zero();
     let count = 0
 
     // camera
@@ -134,11 +85,13 @@ const load = async function () {
 
         const rotation = 0.001 * (date.getTime() - startTime);
 
-        entity1.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI / 2, rotation, 0]);
-        entity2.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
-        entity3.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI, rotation, 0]);
+        entity1.localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI / 2, rotation, 0]);
+        entity2.localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
+        entity3.localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI, rotation, 0]);
+        entity4.localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
+        entity5.localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
+        entity6.localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
 
-        gl.disable(gl.CULL_FACE); // TODO:
         Rn.System.process([expression]);
 
         count++;
