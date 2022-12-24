@@ -25,18 +25,19 @@ const load = async function () {
 
     const entities = [];
 
-    const cube1 = Rn.MeshHelper.createCube();
+    const texture = new Rn.Texture();
+    texture.generateTextureFromUri('../../../assets/textures/frog.jpg');
+    
+    const material = Rn.MaterialHelper.createClassicUberMaterial();
+    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+
+    const cube1 = Rn.MeshHelper.createCube({widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
     cube1.localScale = Rn.Vector3.fromCopyArray([0.5, 0.5, 0.5]);
     cube1.getTransform().localPosition = Rn.Vector3.fromCopyArray([-1.0, 0, 0]);
 
-    const cube2 = Rn.MeshHelper.createCube();
+    const cube2 = Rn.MeshHelper.createCube({widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
     cube2.localScale = Rn.Vector3.fromCopyArray([0.5, 0.5, 0.5]);
     cube2.getTransform().localPosition = Rn.Vector3.fromCopyArray([1.0, 0, 0]);
-    
-    const texture = new Rn.Texture();
-    texture.generateTextureFromUri('../../../assets/textures/frog.jpg');
-    cube1.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
-    cube2.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
 
     entities.push(cube1);
     entities.push(cube2);
