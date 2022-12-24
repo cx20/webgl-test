@@ -102,7 +102,6 @@ const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
-    const system = Rn.System.getInstance();
     const c = document.getElementById('world');
     const gl = await Rn.System.init({
       approach: Rn.ProcessApproach.DataTexture,
@@ -141,7 +140,7 @@ const load = async function () {
 
     // camera
     const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
-    cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 3]);
+    cameraEntity.localPosition = Rn.Vector3.fromCopyArray([0, 0, 3]);
     const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
     cameraComponent.zFar = 1000;
@@ -163,7 +162,7 @@ const load = async function () {
 
         const rotation = 0.001 * (date.getTime() - startTime);
         entities.forEach(function (entity) {
-            entity.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, rotation]);
+            entity.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, rotation]);
         });
 
         gl.disable(gl.CULL_FACE); // TODO:

@@ -84,7 +84,7 @@ const load = async function () {
 
         // camera
         const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
-        cameraEntity.translate = Rn.Vector3.fromCopyArray([0, 0, 35]);
+        cameraEntity.localPosition = Rn.Vector3.fromCopyArray([0, 0, 35]);
         const cameraComponent = cameraEntity.getCamera();
         cameraComponent.zNear = 0.1;
         cameraComponent.zFar = 1000;
@@ -97,7 +97,7 @@ const load = async function () {
         const lightComponent = lightEntity.getLight();
         lightComponent.type = Rn.LightType.Point;
         lightComponent.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-        lightEntity.translate = Rn.Vector3.fromCopyArray([100, 0, 100]);
+        lightEntity.localPosition = Rn.Vector3.fromCopyArray([100, 0, 100]);
 
         // renderPass
         const renderPass = new Rn.RenderPass();
@@ -117,7 +117,7 @@ const load = async function () {
 
             const rotation = 0.001 * (date.getTime() - startTime);
             entities.forEach(function (entity) {
-                entity.getTransform().rotate = Rn.Vector3.fromCopyArray([0, rotation, 0]);
+                entity.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, 0]);
             });
 
             Rn.System.process([expression]);
