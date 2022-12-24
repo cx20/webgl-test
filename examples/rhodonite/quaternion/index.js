@@ -164,7 +164,6 @@ const load = async function () {
     entities.push(entity2);
 
     const startTime = Date.now();
-    const rotationVec3 = Rn.MutableVector3.zero();
     let count = 0
 
     // camera
@@ -194,10 +193,6 @@ const load = async function () {
         const date = new Date();
         const rotation = 0.001 * (date.getTime() - startTime);
 
-        rotationVec3.x = rotation;
-        rotationVec3.y = rotation;
-        rotationVec3.z = rotation;
-        
         // Rotation by Euler angles
         entity1.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([rotation, rotation, rotation]);
         
