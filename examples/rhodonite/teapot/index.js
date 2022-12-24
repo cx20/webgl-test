@@ -1,22 +1,23 @@
 function readyTeapotVerticesData(data) {
 
     const positions = new Float32Array(data.vertexPositions);
-    const normals = new Float32Array(data.vertexNormals);
+    const normals   = new Float32Array(data.vertexNormals);
     const texcoords = new Float32Array(data.vertexTextureCoords);
-    const indices = new Uint32Array(data.indices);
-        
+    const indices   = new Uint32Array(data.indices);
+    
+    const material = Rn.MaterialHelper.createClassicUberMaterial();
+    const texture = new Rn.Texture();
+    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
+    texture.generateTextureFromUri('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
+    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
         attributeSemantics: [Rn.VertexAttribute.Position.XYZ, Rn.VertexAttribute.Normal.XYZ, Rn.VertexAttribute.Texcoord0.XY],
         attributes: [positions, normals, texcoords],
-        material: void 0,
+        material: material,
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
-
-    const texture = new Rn.Texture();
-    // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
-    texture.generateTextureFromUri('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
-    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
 
     // https://github.com/actnwit/RhodoniteTS/blob/master/src/foundation/definitions/ShadingModel.ts
     // ShadingModel enum has the following values.
