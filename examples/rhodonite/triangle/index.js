@@ -1,3 +1,5 @@
+import Rn from 'rhodonite';
+
 function readyBasicVerticesData() {
 
     const positions = new Float32Array([

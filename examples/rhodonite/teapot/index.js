@@ -1,3 +1,5 @@
+import Rn from 'rhodonite';
+
 function readyTeapotVerticesData(data) {
 
     const positions = new Float32Array(data.vertexPositions);

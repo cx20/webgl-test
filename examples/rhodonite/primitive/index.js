@@ -1,3 +1,5 @@
+import Rn from 'rhodonite';
+
 const load = async function () {
     Rn.Config.maxCameraNumber = 20;
     await Rn.ModuleManager.getInstance().loadModule('webgl');
@@ -26,11 +28,14 @@ const load = async function () {
     const texture = new Rn.Texture();
     texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
 
+    const material = Rn.MaterialHelper.createClassicUberMaterial();
+    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+    
     const entities = [];
 
-    const entity1 = Rn.MeshHelper.createPlane();
-    const entity2 = Rn.MeshHelper.createSphere();
-    const entity3 = Rn.MeshHelper.createCube();
+    const entity1 = Rn.MeshHelper.createPlane({material: material});
+    const entity2 = Rn.MeshHelper.createSphere({material: material});
+    const entity3 = Rn.MeshHelper.createCube({material: material});
     const entity4 = Rn.MeshHelper.createGrid();
     const entity5 = Rn.MeshHelper.createAxis();
     const entity6 = Rn.MeshHelper.createJoint();
@@ -41,10 +46,6 @@ const load = async function () {
     entity4.localPosition = Rn.Vector3.fromCopyArray([-3.0, -1.5, 0]);
     entity5.localPosition = Rn.Vector3.fromCopyArray([ 0.0, -1.5, 0]);
     entity6.localPosition = Rn.Vector3.fromCopyArray([ 3.0, -1.5, 0]);
-
-    entity1.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
-    entity2.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
-    entity3.getMesh().mesh.getPrimitiveAt(0).material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
 
     entities.push(entity1);
     entities.push(entity2);
