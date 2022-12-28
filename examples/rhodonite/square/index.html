@@ -3,11 +3,16 @@
 <head>
   <title>[WIP] Testing Square Using Rhodonite</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <!-- rhodonite.js -->
-  <script src="https://cx20.github.io/gltf-test/libs/rhodonite/v0.11.0/rhodonite.min.js"></script>
 </head>
 <body>
+<script type="importmap">
+{
+    "imports": {
+        "rhodonite": "https://cx20.github.io/gltf-test/libs/rhodonite/v0.11.2/esm/index.js"
+    }
+}
+</script>
 <canvas id="world" width="465" height="465"></canvas>
-<script src="index.js"></script>
+<script type="module" src="index.js"></script>
 </body>
 </html>

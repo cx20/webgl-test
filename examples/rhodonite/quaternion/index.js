@@ -1,3 +1,5 @@
+import Rn from 'rhodonite';
+
 const load = async function () {
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
