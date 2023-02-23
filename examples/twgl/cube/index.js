@@ -112,7 +112,7 @@ let up = [0, 1, 0];
 
 let camera = m4.lookAt(eye, target, up);
 let view = m4.inverse(camera);
-let viewProjection = m4.multiply(view, projection);
+let viewProjection = m4.multiply(projection, view);
 
 let rad = 0;
 function render() {
@@ -121,12 +121,12 @@ function render() {
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    let world = m4.create();
-    world = m4.rotateX(world, rad);
+    let world = m4.identity();
+	world = m4.rotateX(world, rad);
     world = m4.rotateY(world, rad);
     world = m4.rotateZ(world, rad);
-    
-    uniforms.u_worldViewProjection = m4.multiply(world, viewProjection);
+
+    uniforms.u_worldViewProjection = m4.multiply(viewProjection, world);
     
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);

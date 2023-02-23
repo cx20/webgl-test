@@ -25,7 +25,7 @@ let bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 function render() {
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-    twgl.drawBufferInfo(gl, gl.TRIANGLES, bufferInfo);
+    twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLES);
     requestAnimationFrame(render);
 }
 
