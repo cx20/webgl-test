@@ -49,7 +49,7 @@ function render() {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-    twgl.drawBufferInfo(gl, gl.TRIANGLE_STRIP, bufferInfo);
+    twgl.drawBufferInfo(gl, bufferInfo, gl.TRIANGLE_STRIP);
     requestAnimationFrame(render);
 }
 
