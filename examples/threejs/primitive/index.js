@@ -88,6 +88,7 @@ function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0x000000);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // See: https://github.com/mrdoob/three.js/wiki/Migration-Guide#151--152
     container.appendChild(renderer.domElement);
 
     controls = new OrbitControls( camera, renderer.domElement );
