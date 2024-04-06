@@ -56,7 +56,10 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
         material.cull = pc.CULLFACE_NONE;
 
         function getTexture () {
-            let texture = new pc.gfx.Texture(app.graphicsDevice);
+            let texture = new pc.gfx.Texture(app.graphicsDevice, {
+                width: 1024,
+                height: 512
+            });
             
             let img = new Image();
             img.onload = function () {

@@ -128,11 +128,15 @@ Cube.prototype.initialize = function () {
     let mesh = pc.createMesh(app.graphicsDevice, positions, options);
 
     let material = new pc.StandardMaterial();
-    material.diffuseMap = getTexture();
+    let newTexture = getTexture();
+    material.diffuseMap = newTexture;
     material.cull = pc.CULLFACE_NONE;
 
     function getTexture () {
-        let texture = new pc.gfx.Texture(app.graphicsDevice);
+        let texture = new pc.gfx.Texture(app.graphicsDevice, {
+            width: 256,
+            height: 256
+        });
         
         let img = new Image();
         img.onload = function () {
