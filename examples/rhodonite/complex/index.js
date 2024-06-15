@@ -33,10 +33,22 @@ const load = async function () {
   await Rn.ModuleManager.getInstance().loadModule('webgl');
   await Rn.ModuleManager.getInstance().loadModule('pbr');
   const c = document.getElementById('world');
-  const gl = await Rn.System.init({
+
+  await Rn.System.init({
     approach: Rn.ProcessApproach.DataTexture,
     canvas: c,
   });
+
+  resizeCanvas();
+  
+  window.addEventListener("resize", function(){
+      resizeCanvas();
+  });
+
+  function resizeCanvas() {
+      Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
+  }
+
   
   // camera
   const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
@@ -157,6 +169,14 @@ const load = async function () {
   }
 
   function setTextureParameterForMeshComponents(meshComponents, shaderSemantic, value) {
+    const sampler = new Rn.Sampler({
+      magFilter: Rn.TextureParameter.Linear,
+      minFilter: Rn.TextureParameter.Linear,
+      wrapS: Rn.TextureParameter.ClampToEdge,
+      wrapT: Rn.TextureParameter.ClampToEdge,
+    });
+    sampler.create();
+    
     for (let i = 0; i < meshComponents.length; i++) {
       const mesh = meshComponents[i].mesh;
       if (!mesh) continue;
@@ -164,7 +184,7 @@ const load = async function () {
       const primitiveNumber = mesh.getPrimitiveNumber();
       for (let j = 0; j < primitiveNumber; j++) {
         const primitive = mesh.getPrimitiveAt(j);
-        primitive.material.setTextureParameter(shaderSemantic, value);
+        primitive.material.setTextureParameter(shaderSemantic, value, sampler);
       }
     }
   }

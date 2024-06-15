@@ -110,7 +110,17 @@ function readyBasicVerticesData() {
 
     const texture = new Rn.Texture();
     texture.generateTextureFromUri('../../../assets/textures/frog.jpg');
-    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+    
+    const sampler = new Rn.Sampler({
+      magFilter: Rn.TextureParameter.Linear,
+      minFilter: Rn.TextureParameter.Linear,
+      wrapS: Rn.TextureParameter.ClampToEdge,
+      wrapT: Rn.TextureParameter.ClampToEdge,
+    });
+    sampler.create();
+        
+    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
+    primitive.material.cullFace = false;
 
     return primitive;
 }
@@ -120,7 +130,8 @@ const load = async function () {
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
     const c = document.getElementById('world');
-    const gl = await Rn.System.init({
+
+    await Rn.System.init({
       approach: Rn.ProcessApproach.DataTexture,
       canvas: c,
     });
@@ -130,11 +141,9 @@ const load = async function () {
     window.addEventListener("resize", function(){
         resizeCanvas();
     });
-    
+
     function resizeCanvas() {
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
-        gl.viewport(0, 0, c.width, c.height);
+        Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
     }
     
     const primitive = readyBasicVerticesData();
@@ -182,7 +191,7 @@ const load = async function () {
             entity.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([0, rotation, rotation]);
         });
 
-        gl.disable(gl.CULL_FACE); // TODO:
+        //gl.disable(gl.CULL_FACE); // TODO:
         Rn.System.process([expression]);
 
         count++;
