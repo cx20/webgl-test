@@ -34,7 +34,8 @@ const load = async function () {
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
     const c = document.getElementById('world');
-    const gl = await Rn.System.init({
+
+    await Rn.System.init({
       approach: Rn.ProcessApproach.DataTexture,
       canvas: c,
     });
@@ -44,11 +45,9 @@ const load = async function () {
     window.addEventListener("resize", function(){
         resizeCanvas();
     });
-    
+
     function resizeCanvas() {
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
-        gl.viewport(0, 0, c.width, c.height);
+        Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
     }
     
     const primitive = readyBasicVerticesData();

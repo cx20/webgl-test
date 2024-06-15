@@ -5,7 +5,8 @@ const load = async function () {
     await Rn.ModuleManager.getInstance().loadModule('webgl');
     await Rn.ModuleManager.getInstance().loadModule('pbr');
     const c = document.getElementById('world');
-    const gl = await Rn.System.init({
+
+    await Rn.System.init({
       approach: Rn.ProcessApproach.DataTexture,
       canvas: c,
     });
@@ -15,21 +16,24 @@ const load = async function () {
     window.addEventListener("resize", function(){
         resizeCanvas();
     });
-    
+
     function resizeCanvas() {
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
-        gl.viewport(0, 0, c.width, c.height);
+        Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
     }
-    
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     const texture = new Rn.Texture();
     texture.generateTextureFromUri('../../../assets/textures/earth.jpg');
 
+    const sampler = new Rn.Sampler({
+      magFilter: Rn.TextureParameter.Linear,
+      minFilter: Rn.TextureParameter.Linear,
+      wrapS: Rn.TextureParameter.ClampToEdge,
+      wrapT: Rn.TextureParameter.ClampToEdge,
+    });
+    sampler.create();
+
     const material = Rn.MaterialHelper.createClassicUberMaterial();
-    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
     
     const entities = [];
 
