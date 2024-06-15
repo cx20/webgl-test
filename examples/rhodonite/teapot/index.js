@@ -11,7 +11,16 @@ function readyTeapotVerticesData(data) {
     const texture = new Rn.Texture();
     // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
     texture.generateTextureFromUri('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
-    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture);
+
+    const sampler = new Rn.Sampler({
+      magFilter: Rn.TextureParameter.Linear,
+      minFilter: Rn.TextureParameter.Linear,
+      wrapS: Rn.TextureParameter.Repeat,
+      wrapT: Rn.TextureParameter.Repeat,
+    });
+    sampler.create();
+
+    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
 
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
@@ -39,15 +48,20 @@ let indices;
 
 const load = async function () {
     const c = document.getElementById('world');
-    const gl = await Rn.System.init({
+
+    await Rn.System.init({
       approach: Rn.ProcessApproach.DataTexture,
       canvas: c,
     });
 
+    resizeCanvas();
+    
+    window.addEventListener("resize", function(){
+        resizeCanvas();
+    });
+
     function resizeCanvas() {
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
-        gl.viewport(0, 0, c.width, c.height);
+        Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
     }
     
     const promise1 = Rn.ModuleManager.getInstance().loadModule('webgl');
