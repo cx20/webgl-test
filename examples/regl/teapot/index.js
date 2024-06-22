@@ -9,7 +9,7 @@ let img = new Image();
 img.src = "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg";
 img.onload = function(){
 
-    $.getJSON("https://rawcdn.githack.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
+    $.getJSON("https://raw.githubusercontent.com/gpjt/webgl-lessons/a227a62af468272a06d55d815971273628874067/lesson14/Teapot.json", function (data) {
         vertexPositions = data.vertexPositions;
         vertexTextureCoords = data.vertexTextureCoords;
         vertexNormals = data.vertexNormals;

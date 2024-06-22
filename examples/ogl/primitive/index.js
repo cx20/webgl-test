@@ -1,5 +1,5 @@
-import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh} from 'https://rawcdn.githack.com/oframe/ogl/c9842ecd96e7de54397b1add70709e1efd8ebf4d/src/Core.js';
-import {Plane, Box, Sphere} from 'https://rawcdn.githack.com/oframe/ogl/c9842ecd96e7de54397b1add70709e1efd8ebf4d/src/Extras.js';
+import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh} from 'https://raw.githubusercontent.com/oframe/ogl/c9842ecd96e7de54397b1add70709e1efd8ebf4d/src/Core.js';
+import {Plane, Box, Sphere} from 'https://raw.githubusercontent.com/oframe/ogl/c9842ecd96e7de54397b1add70709e1efd8ebf4d/src/Extras.js';
 
 {
     const renderer = new Renderer({dpr: 2});
