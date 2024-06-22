@@ -1,4 +1,4 @@
-import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh} from 'https://rawcdn.githack.com/oframe/ogl/1148a0941ce823dc6c342b3f54cce14cb6a14812/src/Core.js';
+import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh} from 'https://raw.githubusercontent.com/oframe/ogl/1148a0941ce823dc6c342b3f54cce14cb6a14812/src/Core.js';
 
 {
     const renderer = new Renderer();
