@@ -30,8 +30,8 @@ c.width = window.innerWidth;
 c.height = window.innerHeight;
 
 const load = async function () {
-  Rn.Config.dataTextureWidth  = 2 ** 9; // default: 2 ** 11;
-  Rn.Config.dataTextureHeight = 2 ** 9; // default: 2 ** 11;
+  Rn.Config.dataTextureWidth  = 2 ** 11; // default: 2 ** 11;
+  Rn.Config.dataTextureHeight = 2 ** 11; // default: 2 ** 11;
 
   await Rn.ModuleManager.getInstance().loadModule('webgl');
   await Rn.ModuleManager.getInstance().loadModule('pbr');
@@ -66,16 +66,18 @@ const load = async function () {
   const lightEntity1 = Rn.EntityHelper.createLightEntity();
   const lightComponent1 = lightEntity1.getLight();
   lightComponent1.type = Rn.LightType.Directional;
-  lightComponent1.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-  lightEntity1.localPosition = Rn.Vector3.fromCopyArray([1, 1, 100000]);
-  lightEntity1.rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, -Math.PI / 4, Math.PI / 4]);
+  lightEntity1.getTransform().localPosition = Rn.Vector3.fromCopyArray([1.0, 1.0, 100000.0]);
+  lightEntity1.getComponent(Rn.LightComponent).intensity = Rn.Vector3.fromCopyArray([0, 0, 0]);
+  lightEntity1.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
+  lightEntity1.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([-Math.PI / 2, -Math.PI / 4, Math.PI / 4]);
 
   const lightEntity2 = Rn.EntityHelper.createLightEntity();
   const lightComponent2 = lightEntity2.getLight();
-  lightComponent2.type = Rn.LightType.Directional;
-  lightComponent2.intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
-  lightEntity2.localPosition = Rn.Vector3.fromCopyArray([1, 1, 100000]);
-  lightEntity2.rotate = Rn.Vector3.fromCopyArray([-Math.PI / 2, Math.PI / 4, Math.PI / 4]);
+  lightComponent1.type = Rn.LightType.Directional;
+  lightEntity2.getTransform().localPosition = Rn.Vector3.fromCopyArray([1.0, 1.0, 100000.0]);
+  lightEntity2.getComponent(Rn.LightComponent).intensity = Rn.Vector3.fromCopyArray([0, 0, 0]);
+  lightEntity2.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
+  lightEntity2.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([Math.PI / 2, Math.PI / 4, -Math.PI / 4]);
 
   // expressions
   const expressions = [];
@@ -123,16 +125,19 @@ const load = async function () {
     renderPass.toClearColorBuffer = true;
     renderPass.toClearDepthBuffer = true;
     renderPass.clearColor = Rn.Vector4.fromCopyArray4([0.2, 0.2, 0.2, 1]);
-
+    
+    // TODO: 下記処理を通すと画面が真っ暗になる為、要調査
+/*
     // gamma correction
     const gammaTargetFramebuffer = Rn.RenderableHelper.createTexturesForRenderTarget(1024, 1024, 1, {});
     renderPass.setFramebuffer(gammaTargetFramebuffer);
 
     const gammaRenderPass = createPostEffectRenderPass('createGammaCorrectionMaterial');
     setTextureParameterForMeshComponents(gammaRenderPass.meshComponents, Rn.ShaderSemantics.BaseColorTexture, gammaTargetFramebuffer.colorAttachments[0]);
-
+*/
     const expression = new Rn.Expression();
-    expression.addRenderPasses([renderPass, gammaRenderPass]);
+    //expression.addRenderPasses([renderPass, gammaRenderPass]);
+    expression.addRenderPasses([renderPass]);
     expressions.push(expression);
   
     draw();
@@ -155,7 +160,6 @@ const load = async function () {
     boardMeshComponent.setMesh(boardMesh);
   
     if (createPostEffectRenderPass.cameraComponent == null) {
-      //const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
       const cameraEntity = Rn.EntityHelper.createCameraEntity();
       const cameraComponent = cameraEntity.getCamera();
       cameraComponent.zFarInner = 1.0;
