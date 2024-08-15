@@ -123,7 +123,7 @@ function init() {
         vertexShader: document.getElementById('vs').textContent,
         fragmentShader: document.getElementById('fs').textContent,
         side: THREE.DoubleSide,
-        vertexColors: THREE.VertexColors
+        vertexColors: true
     });
 
     mesh = new THREE.Mesh(geometry, material);
