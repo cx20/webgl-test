@@ -41,7 +41,7 @@ const load = async function () {
     sampler.create();
     
     const material = Rn.MaterialHelper.createClassicUberMaterial();
-    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
+    material.setTextureParameter('diffuseColorTexture', texture, sampler);
 
     const cube1 = Rn.MeshHelper.createCube({widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
     cube1.localScale = Rn.Vector3.fromCopyArray([0.5, 0.5, 0.5]);

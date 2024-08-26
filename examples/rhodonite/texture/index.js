@@ -119,7 +119,7 @@ function readyBasicVerticesData() {
     });
     sampler.create();
         
-    primitive.material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
+    primitive.material.setTextureParameter('diffuseColorTexture', texture, sampler);
     primitive.material.cullFace = false;
 
     return primitive;

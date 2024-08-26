@@ -36,7 +36,7 @@ const load = async function () {
     sampler.create();
 
     const material = Rn.MaterialHelper.createClassicUberMaterial();
-    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
+    material.setTextureParameter('diffuseColorTexture', texture, sampler);
     
     const entities = [];
 

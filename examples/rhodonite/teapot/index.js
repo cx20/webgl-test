@@ -20,7 +20,7 @@ function readyTeapotVerticesData(data) {
     });
     sampler.create();
 
-    material.setTextureParameter(Rn.ShaderSemantics.DiffuseColorTexture, texture, sampler);
+    material.setTextureParameter('diffuseColorTexture', texture, sampler);
 
     const primitive = Rn.Primitive.createPrimitive({
         indices: indices,
