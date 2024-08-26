@@ -125,8 +125,14 @@ const load = async function () {
     renderPass.clearColor = Rn.Vector4.fromCopyArray4([0.2, 0.2, 0.2, 1]);
 
     // gamma correction
-    const gammaTargetFramebuffer = Rn.RenderableHelper.createTexturesForRenderTarget(1024, 1024, 1, {});
-    renderPass.setFramebuffer(gammaTargetFramebuffer);
+	const gammaTargetFramebuffer = Rn.RenderableHelper.createFrameBuffer({
+		width: 1024,
+		height: 1024,
+		textureNum: 1,
+		textureFormats: [Rn.TextureParameter.RGBA8],
+		createDepthBuffer: true,
+	  });
+	renderPass.setFramebuffer(gammaTargetFramebuffer);
 
     const gammaCorrectionMaterial = Rn.MaterialHelper.createGammaCorrectionMaterial();
     const gammaRenderPass =
