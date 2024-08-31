@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 let canvas = document.getElementById('c');
 let app = new pc.Application(canvas, {
     mouse: new pc.Mouse(document.body),
