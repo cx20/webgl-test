@@ -1,3 +1,5 @@
+import * as twgl from 'twgl';
+
 let c = document.getElementById("c");
 let gl = twgl.getWebGLContext(c);
 resizeCanvas();
