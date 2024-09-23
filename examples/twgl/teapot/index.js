@@ -1,4 +1,5 @@
-"use strict";
+import * as twgl from 'twgl';
+
 let m4 = twgl.m4;
 let gl = twgl.getWebGLContext(document.getElementById("c"));
 let vertexPositions;

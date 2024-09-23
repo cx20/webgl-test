@@ -3,7 +3,6 @@
 <head>
   <title>Testing Cube Using TWGL.js</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twgl.js/5.3.0/twgl-full.js"></script>
 </head>
 <body>
 <script id="vs" type="x-shader/x-vertex">
@@ -29,6 +28,13 @@ void main() {
 
 <canvas id="c" width="465" height="465"></canvas>
 
-<script src="index.js"></script>
+<script type="importmap">
+{
+    "imports": {
+        "twgl": "https://cdnjs.cloudflare.com/ajax/libs/twgl.js/6.1.0/twgl-full.module.js"
+    }
+}
+</script>
+<script type="module" src="index.js"></script>
 </body>
 </html>
