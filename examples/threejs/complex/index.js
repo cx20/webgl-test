@@ -39,6 +39,8 @@ let height;
 init();
 animate();
 
+// TODO: https://github.com/cx20/webgl-test/issues/70
+/*
 function initParticles() {
     var texture = loader.load('../../../assets/textures/smokeparticle.png');
 
@@ -99,6 +101,7 @@ function initParticles() {
     emitters.push( emitterRightBack );
     emitters.push( emitterLeftBack );
 }
+*/
 
 function init() {
     width = window.innerWidth;
@@ -177,12 +180,15 @@ function init() {
         });
     }
 
-    initParticles();
+    // TODO: https://github.com/cx20/webgl-test/issues/70
+    //initParticles();
 
+/*
     for ( var i = 0; i < emitters.length; i++ ) {
         particleGroup.addEmitter( emitters[i] );
     }
     scene.add( particleGroup.mesh );
+*/
 
     renderer = new THREE.WebGLRenderer();
     controls = new OrbitControls(camera, renderer.domElement);
@@ -221,7 +227,7 @@ function animate() {
             mixer.update(delta);
         }
     }
-    particleGroup.tick( delta );
+    //particleGroup.tick( delta );
     controls.update();
     render();
     requestAnimationFrame(animate);
