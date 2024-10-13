@@ -78,7 +78,7 @@ app.on("update", function (dt) {
 });
 
 function createMaterial() {
-    let material = new pc.scene.PhongMaterial();
+    let material = new pc.StandardMaterial();
     material.diffuseMapTint = true;
     material.diffuseMap = getTexture("../../../assets/textures/earth.jpg");
     material.update()
@@ -86,16 +86,16 @@ function createMaterial() {
 }
 
 function getTexture(imageFile) {
-    let texture = new pc.gfx.Texture(app.graphicsDevice, {
+    let texture = new pc.Texture(app.graphicsDevice, {
         width: 1024,
         height: 512
     });
     let img = new Image();
     img.onload = function() {
-        texture.minFilter = pc.gfx.FILTER_LINEAR;
-        texture.magFilter = pc.gfx.FILTER_LINEAR;
-        texture.addressU = pc.gfx.ADDRESS_CLAMP_TO_EDGE;
-        texture.addressV = pc.gfx.ADDRESS_CLAMP_TO_EDGE;
+        texture.minFilter = pc.FILTER_LINEAR;
+        texture.magFilter = pc.FILTER_LINEAR;
+        texture.addressU = pc.ADDRESS_CLAMP_TO_EDGE;
+        texture.addressV = pc.ADDRESS_CLAMP_TO_EDGE;
         texture.setSource(img);
     };
     img.src = imageFile;
