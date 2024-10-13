@@ -27,7 +27,10 @@ app.on("update", function (dt) {
 
 let Square = pc.createScript('square');
 Square.prototype.initialize = function () {
-    let node = new pc.scene.GraphNode();
+    const device = this.app.graphicsDevice;
+
+    const mesh = new pc.Mesh(device);
+    
     // Square data
     //             1.0 y 
     //              ^  -1.0 
@@ -44,41 +47,47 @@ Square.prototype.initialize = function () {
     //         |        |
     //        [2]------[3]
     //
-    let positions = [ 
-        -0.5, 0.5, 0.0, // v0
-         0.5, 0.5, 0.0, // v1 
-        -0.5,-0.5, 0.0, // v2
-         0.5,-0.5, 0.0  // v3
-    ];
-    let indices = [
-         2, 0, 1, // v2-v0-v1
-         2, 1, 3  // v2-v1-v3
-    ];
-    let colors = [ 
-         1.0, 0.0, 0.0, 1.0, // v0
-         0.0, 1.0, 0.0, 1.0, // v1
-         0.0, 0.0, 1.0, 1.0, // v2
-         1.0, 1.0, 0.0, 1.0  // v3
-    ];
-    let options = {
-        indices: indices,
-        colors: colors.map(function(value){ return value * 255; })
-    };
-    let mesh = pc.createMesh(app.graphicsDevice, positions, options);
+    const positions = new Float32Array([
+        -0.5,  0.5, 0.0, // v0
+         0.5,  0.5, 0.0, // v1 
+        -0.5, -0.5, 0.0, // v2
+         0.5, -0.5, 0.0  // v3
+    ]);
 
-    let material = new pc.StandardMaterial();
+    const colors = new Float32Array([
+        1.0, 0.0, 0.0, 1.0, // v0
+        0.0, 1.0, 0.0, 1.0, // v1
+        0.0, 0.0, 1.0, 1.0, // v2
+        1.0, 1.0, 0.0, 1.0  // v3
+    ]);
+
+    const indices = new Uint16Array([
+        2, 0, 1, // v2-v0-v1
+        2, 1, 3  // v2-v1-v3
+    ]);
+
+    mesh.setPositions(positions);
+    mesh.setColors(colors);
+    mesh.setIndices(indices);
+    mesh.update();
+
+    const material = new pc.StandardMaterial();
     material.diffuseVertexColor = true;
     material.cull = pc.CULLFACE_NONE;
+    material.update();
 
-    let instance = new pc.scene.MeshInstance(node, mesh, material);
+    const node = new pc.GraphNode();
+    const instance = new pc.MeshInstance(mesh, material);
+    instance.node = node;
 
-    let model = new pc.scene.Model();
+    const model = new pc.Model();
     model.graph = node;
-    model.meshInstances = [ instance ];
+    model.meshInstances = [instance];
 
-    this.entity.addChild(node);
-    app.scene.addModel(model);
+    this.entity.addComponent("model");
+    this.entity.model.model = model;
 };
+
 Square.prototype.update = function () {
 };
 

@@ -25,35 +25,41 @@ app.root.addChild(camera);
 
 let Triangle = pc.createScript('triangle');
 Triangle.prototype.initialize = function () {
-    let node = new pc.scene.GraphNode();
-    let positions = [
-         0.0, 0.5, 0.0, // v0
-        -0.5,-0.5, 0.0, // v1
-         0.5,-0.5, 0.0  // v2
-    ];
-    let colors = [
+    const device = this.app.graphicsDevice;
+
+    const mesh = new pc.Mesh(device);
+    
+    const positions = new Float32Array([
+        0.0,  0.5, 0.0, // v0
+       -0.5, -0.5, 0.0, // v1
+        0.5, -0.5, 0.0  // v2
+    ]);
+    const colors = new Float32Array([
         0.0, 0.0, 1.0, 1.0, // v0
         0.0, 0.0, 1.0, 1.0, // v1
         0.0, 0.0, 1.0, 1.0  // v2
-    ];
-    let indices = [ 0, 1, 2 ];
-    let options = {
-        indices: indices,
-        colors: colors.map(function(value){ return value * 255; })
-    };
-    let mesh = pc.createMesh(app.graphicsDevice, positions, options);
+    ]);
 
-    let material = new pc.StandardMaterial();
+	const indices = new Uint16Array([0, 1, 2]);
+    mesh.setPositions(positions);
+    mesh.setColors(colors);
+    mesh.setIndices(indices);
+    mesh.update();
+
+    const material = new pc.StandardMaterial();
     material.diffuseVertexColor = true;
+    material.update();
 
-    let instance = new pc.scene.MeshInstance(node, mesh, material);
+    const node = new pc.GraphNode();
+    const instance = new pc.MeshInstance(mesh, material);
+    instance.node = node;
 
-    let model = new pc.scene.Model();
+    const model = new pc.Model();
     model.graph = node;
-    model.meshInstances = [ instance ];
+    model.meshInstances = [instance];
 
-    this.entity.addChild(node);
-    app.scene.addModel(model);
+    this.entity.addComponent("model");
+    this.entity.model.model = model;
 };
 
 Triangle.prototype.update = function () {

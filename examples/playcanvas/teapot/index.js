@@ -31,70 +31,66 @@ light.addComponent('light', {
 light.rotate(90, 30, 0);
 app.root.addChild(light);
 
-let vertexPositions;
-let vertexNormals;
-let vertexTextureCoords;
-let indices;
-
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {
-    vertexPositions = data.vertexPositions;
-    vertexTextureCoords = data.vertexTextureCoords;
-    vertexNormals = data.vertexNormals;
-    indices = data.indices;
+    const vertexPositions = new Float32Array(data.vertexPositions);
+    const vertexTextureCoords = new Float32Array(data.vertexTextureCoords);
+    const vertexNormals = new Float32Array(data.vertexNormals);
+    const indices = new Uint16Array(data.indices);
 
     let Teapot = pc.createScript('teapot');
     Teapot.prototype.initialize = function () {
-        let node = new pc.scene.GraphNode();
-        let options = {
-            indices: indices,
-            normals: vertexNormals,
-            uvs: vertexTextureCoords
-        };
-        let mesh = pc.createMesh(app.graphicsDevice, vertexPositions, options);
+        const device = this.app.graphicsDevice;
 
-        let material = new pc.StandardMaterial();
+        const mesh = new pc.Mesh(device);
+
+        mesh.setPositions(vertexPositions);
+        mesh.setUvs(0, vertexTextureCoords);
+        mesh.setNormals(vertexNormals);
+        mesh.setIndices(indices);
+        mesh.update();
+
+        const material = new pc.StandardMaterial();
         material.diffuseMap = getTexture();
         material.cull = pc.CULLFACE_NONE;
+        material.update();
 
-        function getTexture () {
-            let texture = new pc.gfx.Texture(app.graphicsDevice, {
-                width: 1024,
-                height: 512
-            });
+        function getTexture() {
+            const texture = new pc.Texture(device, { width: 1024, height: 512 });
             
-            let img = new Image();
+            const img = new Image();
             img.onload = function () {
-                texture.minFilter = pc.gfx.FILTER_LINEAR;
-                texture.magFilter = pc.gfx.FILTER_LINEAR;
-                texture.addressU = pc.gfx.ADDRESS_REPEAT;
-                texture.addressV = pc.gfx.ADDRESS_REPEAT;
+                texture.minFilter = pc.FILTER_LINEAR;
+                texture.magFilter = pc.FILTER_LINEAR;
+                texture.addressU = pc.ADDRESS_REPEAT;
+                texture.addressV = pc.ADDRESS_REPEAT;
                 texture.setSource(img);
             };
             // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/arroway.de_metal%2Bstructure%2B06_d100_flat.jpg
             img.src = "../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg";
             return texture;
-        }
+        };
 
-        let instance = new pc.scene.MeshInstance(node, mesh, material);
+        const node = new pc.GraphNode();
+        const instance = new pc.MeshInstance(mesh, material);
+        instance.node = node;
 
-        let model = new pc.scene.Model();
+        const model = new pc.Model();
         model.graph = node;
-        model.meshInstances = [ instance ];
+        model.meshInstances = [instance];
 
-        this.entity.addChild(node);
-        app.scene.addModel(model);
+        this.entity.addComponent("model");
+        this.entity.model.model = model;
     };
 
     Teapot.prototype.update = function (deltaTime) {
         this.entity.rotate(0, deltaTime * 50, 0);
     };
 
-    let teapot = new pc.Entity();
+    const teapot = new pc.Entity();
     app.root.addChild(teapot);
     teapot.addComponent('script');
     teapot.script.create('teapot');
-
 });
 
 window.addEventListener("resize", function () {
