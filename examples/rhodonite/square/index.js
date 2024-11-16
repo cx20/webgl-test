@@ -79,7 +79,7 @@ const load = async function () {
     const originalMesh = new Rn.Mesh();
     originalMesh.addPrimitive(primitive);
 
-    const firstEntity = Rn.EntityHelper.createMeshEntity();
+    const firstEntity = Rn.createMeshEntity();
     const meshComponent = firstEntity.getMesh();
     meshComponent.setMesh(originalMesh);
 
