@@ -25,7 +25,7 @@ const load = async function () {
     
     Rn.MeshRendererComponent.manualTransparentSids = [];
 
-    const group = Rn.EntityHelper.createGroupEntity();
+    const group = Rn.createGroupEntity();
 
     const entities = [];
 
@@ -61,7 +61,7 @@ const load = async function () {
     let count = 0
 
     // camera
-    const cameraEntity = Rn.EntityHelper.createCameraControllerEntity();
+    const cameraEntity = Rn.createCameraControllerEntity();
     cameraEntity.localPosition = Rn.Vector3.fromCopyArray([0, 0, 5]);
     const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
