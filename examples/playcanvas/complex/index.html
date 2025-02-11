@@ -3,12 +3,18 @@
 <head>
   <title>[WIP] Testing Complex sample Using PlayCanvas</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <!-- <script src='https://code.playcanvas.com/playcanvas-stable.js'></script> -->
-  <!-- <script src='https://code.playcanvas.com/playcanvas-latest.js'></script> -->
-  <script src="https://cx20.github.io/gltf-test/libs/playcanvas/v1.53.4/playcanvas-latest.js"></script>
+  <script type="importmap">
+    {
+        "imports": {
+            "playcanvas": "https://cx20.github.io/gltf-test/libs/playcanvas/v2.5.0/playcanvas-stable.min.mjs",
+            "camera-controls": "https://cx20.github.io/gltf-test/libs/playcanvas/v2.5.0/camera-controls.mjs",
+            "dat.gui": "https://cx20.github.io/gltf-test/libs/common/dat.gui.module.js"
+        }
+    }
+   </script>
 </head>
 <body>
 <canvas id="application"></canvas>
-<script src="index.js"></script>
+<script type="module" src="index.js"></script>
 </body>
 </html>
