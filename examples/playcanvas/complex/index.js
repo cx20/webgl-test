@@ -1,3 +1,18 @@
+import * as pc from 'playcanvas';
+import { CameraControls } from 'camera-controls';
+
+// Calculate entity bounding box
+const calcEntityAABB = (bbox, entity) => {
+    bbox.center.set(0, 0, 0);
+    bbox.halfExtents.set(0, 0, 0);
+    entity.findComponents('render').forEach((render) => {
+        render.meshInstances.forEach((mi) => {
+            bbox.add(mi.aabb);
+        });
+    });
+    return bbox;
+};
+
 let modelInfoSet = [
 {
     name: "CesiumMilkTruck",
@@ -22,197 +37,218 @@ let modelInfoSet = [
 
 let decoderModule;
 
-var getAbsolutePathFromRelativePath = function(href) {
+const getAbsolutePathFromRelativePath = function(href) {
     var link = document.createElement("a");
     link.href = href;
     return link.href;
 }
 
-var Viewer = function (canvas) {
+class Viewer {
+    constructor(canvas) {
+        const app = new pc.Application(canvas, {
+            mouse: new pc.Mouse(canvas),
+            touch: new pc.TouchDevice(canvas)
+        });
+        this.app = app;
 
-    var self = this;
-
-    // create the application
-    var app = new pc.Application(canvas, {
-        mouse: new pc.Mouse(canvas),
-        touch: new pc.TouchDevice(canvas)
-    });
-    
-    var getCanvasSize = function () {
-        return {
+        const getCanvasSize = () => ({
             width: window.innerWidth,
             height: window.innerHeight
-        };
-    };
-
-    app.graphicsDevice.maxPixelRatio = window.devicePixelRatio;
-
-    // Set the canvas to fill the window and automatically change resolution to be the same as the canvas size
-    var canvasSize = getCanvasSize();
-    app.setCanvasFillMode(pc.FILLMODE_NONE, canvasSize.width, canvasSize.height);
-    app.setCanvasResolution(pc.RESOLUTION_AUTO);
-    window.addEventListener("resize", function () {
-        var canvasSize = getCanvasSize();
-        app.resizeCanvas(canvasSize.width, canvasSize.height);
-    });
-
-    // set a prefiltered cubemap as the skybox
-    // Please refer to the following when setting a 6-sided texture different from the prefiltered texture
-    // 
-    // How to dynamically configure Skybox with JavaScript?
-    // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980
-    // 
-    // 1. rgbm specification of cubemap is changed to default
-    // 2. After constructing the cubemap asset, do cubemapAsset.loadFaces = true; then kick off asset load.
-    // 3. Leave resource[0] as `default` and set the rest (resource[1]...resource[6]) to `rgbm`.
-    // 
-    let cubemapAsset = new pc.Asset('papermill', 'cubemap', {
-        url: "https://cx20.github.io/gltf-test/textures/dds/papermill.dds"
-    }, {
-        "textures": [
-/*
-            "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_right_0.jpg",
-            "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_left_0.jpg",
-            "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_top_0.jpg",
-            "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_bottom_0.jpg",
-            "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_front_0.jpg",
-            "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_back_0.jpg",
-*/
-/*
-            "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/px.jpg",
-            "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nx.jpg",
-            "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/py.jpg",
-            "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/ny.jpg",
-            "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/pz.jpg",
-            "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nz.jpg",
-*/
-            "https://cx20.github.io/gltf-test/textures/cube/skybox/px.jpg",
-            "https://cx20.github.io/gltf-test/textures/cube/skybox/nx.jpg",
-            "https://cx20.github.io/gltf-test/textures/cube/skybox/py.jpg",
-            "https://cx20.github.io/gltf-test/textures/cube/skybox/ny.jpg",
-            "https://cx20.github.io/gltf-test/textures/cube/skybox/pz.jpg",
-            "https://cx20.github.io/gltf-test/textures/cube/skybox/nz.jpg",
-        ],
-        "magFilter": 1,
-        "minFilter": 5,
-        "anisotropy": 1,
-        "name": "Papermill",
-        // 1. rgbm specification of cubemap is changed to default
-        // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/8
-        //"rgbm": true,
-        "prefiltered": "papermill.dds"
-    });
-    cubemapAsset.ready(function () {
-        app.scene.gammaCorrection = pc.GAMMA_SRGB;
-        app.scene.toneMapping = pc.TONEMAP_ACES;
-        app.scene.skyboxMip = 0;
-        // 3. Leave resource[0] as `default` and set the rest (resource[1]...resource[6]) to `rgbm`.
-        // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/10
-        for (let i = 1; i < cubemapAsset.resources.length; i++ ) {
-            cubemapAsset.resources[i].type = "rgbm";
-        }
-        app.scene.setSkybox(cubemapAsset.resources);
-    });
-    app.assets.add(cubemapAsset);
-    // 2. After constructing the cubemap asset, do cubemapAsset.loadFaces = true; then kick off asset load.
-    // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/6
-    cubemapAsset.loadFaces = true;
-    app.assets.load(cubemapAsset);
-
-    // create the orbit camera
-    var camera = new pc.Entity("Camera");
-    camera.addComponent("camera", {
-        fov: 60,
-        clearColor: new pc.Color(0.4, 0.45, 0.5)
-    });
-
-    // load orbit script
-    app.assets.loadFromUrl(
-        "https://cx20.github.io/gltf-test/libs/playcanvas/v1.53.4/orbit-camera.js",
-        "script",
-        function (err, asset) {
-            // setup orbit script component
-            camera.addComponent("script");
-            camera.script.create("orbitCamera", {
-                attributes: {
-                    inertiaFactor: 0.1
-                }
-            });
-            camera.script.create("orbitCameraInputMouse");
-            camera.script.create("orbitCameraInputTouch");
-            app.root.addChild(camera);
-
-            for (let i = 0; i < modelInfoSet.length; i++) {
-                let m = modelInfoSet[i];
-                let url = m.url;
-                var filename = url.split('/').pop();
-                self.load(url, filename);
-            }
-
-            // start the application
-            app.start();
         });
 
-    // create the light
-    var light = new pc.Entity();
-    light.addComponent("light", {
-        type: "directional",
-        color: new pc.Color(1, 1, 1),
-        castShadows: true,
-        intensity: 2,
-        shadowBias: 0.2,
-        shadowDistance: 5,
-        normalOffsetBias: 0.05,
-        shadowResolution: 2048
-    });
-    light.setLocalEulerAngles(45, 30, 0);
-    app.root.addChild(light);
+        app.graphicsDevice.maxPixelRatio = window.devicePixelRatio;
 
-    let material = createMaterial();
+        // Set the canvas to fill the window and automatically change resolution to be the same as the canvas size
+        const canvasSize = getCanvasSize();
+        app.setCanvasFillMode(pc.FILLMODE_NONE, canvasSize.width, canvasSize.height);
+        app.setCanvasResolution(pc.RESOLUTION_AUTO);
+        window.addEventListener("resize", function () {
+            const canvasSize = getCanvasSize();
+            app.resizeCanvas(canvasSize.width, canvasSize.height);
+        });
 
-    let ground1 = new pc.Entity();
-    ground1.addComponent("model", {type: 'plane'});
-    ground1.model.material = material;
-    ground1.setLocalPosition(-49.5, 0.0, -1.6);
-    ground1.rotate(0, 0, 0);
-    var scale = ground1.getLocalScale();
-    scale.x = 100.0;
-    scale.y = 0.1;
-    scale.z = 0.1;
-    ground1.setLocalScale(scale);
-    app.root.addChild(ground1);
+        // set a prefiltered cubemap as the skybox
+        // Please refer to the following when setting a 6-sided texture different from the prefiltered texture
+        // 
+        // How to dynamically configure Skybox with JavaScript?
+        // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980
+        // 
+        // 1. rgbm specification of cubemap is changed to default
+        // 2. After constructing the cubemap asset, do cubemapAsset.loadFaces = true; then kick off asset load.
+        // 3. Leave resource[0] as `default` and set the rest (resource[1]...resource[6]) to `rgbm`.
+        // 
+        let cubemapAsset = new pc.Asset('papermill', 'cubemap', {
+            url: "https://cx20.github.io/gltf-test/textures/dds/papermill.dds"
+        }, {
+            "textures": [
+/*
+                "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_right_0.jpg",
+                "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_left_0.jpg",
+                "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_top_0.jpg",
+                "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_bottom_0.jpg",
+                "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_front_0.jpg",
+                "https://cx20.github.io/gltf-test/textures/papermill/specular/specular_back_0.jpg",
+*/
+/*
+                "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/px.jpg",
+                "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nx.jpg",
+                "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/py.jpg",
+                "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/ny.jpg",
+                "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/pz.jpg",
+                "https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/nz.jpg",
+*/
+                "https://cx20.github.io/gltf-test/textures/cube/skybox/px.jpg",
+                "https://cx20.github.io/gltf-test/textures/cube/skybox/nx.jpg",
+                "https://cx20.github.io/gltf-test/textures/cube/skybox/py.jpg",
+                "https://cx20.github.io/gltf-test/textures/cube/skybox/ny.jpg",
+                "https://cx20.github.io/gltf-test/textures/cube/skybox/pz.jpg",
+                "https://cx20.github.io/gltf-test/textures/cube/skybox/nz.jpg",
+            ],
+            "magFilter": 1,
+            "minFilter": 5,
+            "anisotropy": 1,
+            "name": "Papermill",
+            // 1. rgbm specification of cubemap is changed to default
+            // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/8
+            //"rgbm": true,
+            "prefiltered": "papermill.dds"
+        });
+        cubemapAsset.ready(function () {
+            app.scene.gammaCorrection = pc.GAMMA_SRGB;
+            app.scene.toneMapping = pc.TONEMAP_ACES;
+            app.scene.skyboxMip = 0;
+            // 3. Leave resource[0] as `default` and set the rest (resource[1]...resource[6]) to `rgbm`.
+            // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/10
+            for (let i = 1; i < cubemapAsset.resources.length; i++ ) {
+                cubemapAsset.resources[i].type = "rgbm";
+            }
+            app.scene.setSkybox(cubemapAsset.resources);
+        });
+        app.assets.add(cubemapAsset);
+        // 2. After constructing the cubemap asset, do cubemapAsset.loadFaces = true; then kick off asset load.
+        // https://forum.playcanvas.com/t/how-to-dynamically-configure-skybox-with-javascript/12980/6
+        cubemapAsset.loadFaces = true;
+        app.assets.load(cubemapAsset);
 
-    let ground2 = new pc.Entity();
-    ground2.addComponent("model", {type: 'plane'});
-    ground2.model.material = material;
-    ground2.setLocalPosition(-49.5, 0.0, -2.35);
-    ground2.rotate(0, 0, 0);
-    var scale = ground2.getLocalScale();
-    scale.x = 100.0;
-    scale.y = 0.1;
-    scale.z = 0.1;
-    ground2.setLocalScale(scale);
-    app.root.addChild(ground2);
+        // Create and setup camera
+        const camera = new pc.Entity('Camera');
+        camera.addComponent('camera', {
+            clearColor: new pc.Color(0.4, 0.45, 0.5),
+            fov: 60
+        });
+        camera.addComponent('script');
+        const start = new pc.Vec3(0, 1, 5);
+        camera.setPosition(start);
+        app.root.addChild(camera);
 
-    // disable autorender
-    app.autoRender = false;
-    self.prevCameraMat = new pc.Mat4();
-    app.on('update', self.update.bind(self));
+        // Setup camera controls
+        const script = camera.script.create(CameraControls, {
+            properties: {
+                enableFly: false,
+                focusPoint: new pc.Vec3(0, 0, 0),
+                sceneSize: 10,
+                enablePan: true,
+                focusDamping: 0.4,
+                pitchRange: new pc.Vec2(-89, 89),
+                rotateSpeed: 0.3,
+                rotateDamping: 0.4,
+                zoomSpeed: 0.005,
+                zoomPinchSens: 0.3,
+                zoomDamping: 0.4,
+                zoomMin: 1,
+                zoomMax: 100
+            }
+        });
 
-    // store things
-    this.app = app;
-    this.camera = camera;
-    this.light = light;
-    this.entity = null;
+        // Add keyboard controls for focus and reset
+        const onKeyDown = (e) => {
+            switch (e.key) {
+                case 'f': {
+                    if (this.entity) {
+                        const bbox = calcEntityAABB(new pc.BoundingBox(), this.entity);
+                        script.refocus(bbox.center, null, null, true);
+                    }
+                    break;
+                }
+                case 'r': {
+                    script.refocus(new pc.Vec3(0, 0, 0), start, 30, true);
+                    break;
+                }
+            }
+        };
+        window.addEventListener('keydown', onKeyDown);
+        app.on('destroy', () => {
+            window.removeEventListener('keydown', onKeyDown);
+        });
 
-};
+        for (let i = 0; i < modelInfoSet.length; i++) {
+            let m = modelInfoSet[i];
+            let url = m.url;
+            var filename = url.split('/').pop();
+            this.load(url, filename);
+        }
 
-Object.assign(Viewer.prototype, {
-    // reset the viewer, unloading resources
-    resetScene: function () {
-        var app = this.app;
+        // start the application
+        app.start();
 
-        var entity = this.entity;
+        // create the light
+        const light = new pc.Entity();
+        light.addComponent("light", {
+            type: "directional",
+            color: new pc.Color(1, 1, 1),
+            castShadows: true,
+            intensity: 2,
+            shadowBias: 0.2,
+            shadowDistance: 5,
+            normalOffsetBias: 0.05,
+            shadowResolution: 2048
+        });
+        light.setLocalEulerAngles(45, 30, 0);
+        app.root.addChild(light);
+
+        let material = createMaterial();
+
+        let ground1 = new pc.Entity();
+        ground1.addComponent("model", {type: 'plane'});
+        ground1.model.material = material;
+        ground1.setLocalPosition(-49.5, 0.0, -1.6);
+        ground1.rotate(0, 0, 0);
+        var scale = ground1.getLocalScale();
+        scale.x = 100.0;
+        scale.y = 0.1;
+        scale.z = 0.1;
+        ground1.setLocalScale(scale);
+        app.root.addChild(ground1);
+
+        let ground2 = new pc.Entity();
+        ground2.addComponent("model", {type: 'plane'});
+        ground2.model.material = material;
+        ground2.setLocalPosition(-49.5, 0.0, -2.35);
+        ground2.rotate(0, 0, 0);
+        var scale = ground2.getLocalScale();
+        scale.x = 100.0;
+        scale.y = 0.1;
+        scale.z = 0.1;
+        ground2.setLocalScale(scale);
+        app.root.addChild(ground2);
+
+        // disable autorender
+        app.autoRender = false;
+        this.prevCameraMat = new pc.Mat4();
+        app.on('update', this.update.bind(this));
+
+        // store things
+        this.app = app;
+        this.camera = camera;
+        this.cameraScript = script;
+        this.light = light;
+        this.entity = null;
+    }
+
+    resetScene() {
+        const app = this.app;
+
+        const entity = this.entity;
         if (entity) {
             app.root.removeChild(entity);
             entity.destroy();
@@ -227,33 +263,39 @@ Object.assign(Viewer.prototype, {
 
         this.animationMap = { };
         //onAnimationsLoaded([]);
-    },
+    }
 
-    // move the camera to view the loaded object
-    focusCamera: function () {
-        var entity = this.entity;
+    focusCamera() {
+        const entity = this.entity;
         if (entity) {
-            var camera = this.camera;
+            const camera = this.camera;
 
-            var orbitCamera = camera.script.orbitCamera;
+            const orbitCamera = camera.script.orbitCamera;
             orbitCamera.focus(entity);
 
-            var distance = orbitCamera.distance;
+            const distance = orbitCamera.distance;
             camera.camera.nearClip = distance / 10;
             camera.camera.farClip = distance * 10;
 
-            var light = this.light;
+            const light = this.light;
             light.light.shadowDistance = distance * 2;
         }
-    },
+    }
 
-    // load model at the url
-    load: function(url, filename) {
-        this.app.assets.loadFromUrlAndFilename(url, filename, "container", this._onLoaded.bind(this));
-    },
+    load(url, filename) {
+        // New way to load assets in PlayCanvas
+        const asset = new pc.Asset(filename, 'container', { url: url });
+        asset.on('load', () => {
+            this._onLoaded(null, asset);
+        });
+        asset.on('error', (err) => {
+            this._onLoaded(err, null);
+        });
+        this.app.assets.add(asset);
+        this.app.assets.load(asset);
+    }
 
-    // play the animation
-    play: function (animationName) {
+    play(animationName) {
         if (this.entity && this.entity.animation) {
             if (animationName) {
                 this.entity.animation.play(this.animationMap[animationName], 1);
@@ -261,26 +303,26 @@ Object.assign(Viewer.prototype, {
                 this.entity.animation.playing = true;
             }
         }
-    },
+    }
 
-    // stop playing animations
-    stop: function () {
+    stop() {
         if (this.entity && this.entity.animation) {
             this.entity.animation.playing = false;
         }
-    },
+    }
 
-    setSpeed: function (speed) {
+    setSpeed(speed) {
         if (this.entity && this.entity.animation) {
-            var entity = this.entity;
+            const entity = this.entity;
             if (entity) {
                 entity.animation.speed = speed;
             }
         }
-    },
-    update: function () {
+    }
+
+    update() {
         // if the camera has moved since the last render
-        var cameraWorldTransform = this.camera.getWorldTransform();
+        const cameraWorldTransform = this.camera.getWorldTransform();
         if (!this.prevCameraMat.equals(cameraWorldTransform)) {
             this.prevCameraMat.copy(cameraWorldTransform);
             this.app.renderNextFrame = true;
@@ -289,37 +331,37 @@ Object.assign(Viewer.prototype, {
         if (this.entity && this.entity.animation && this.entity.animation.playing) {
             this.app.renderNextFrame = true;
         }
-    },
+    }
 
-    _onLoaded: function (err, asset) {
-        if (!err) {
+    _onLoaded(err, asset) {
+        if (!err && asset.resource) {
 
             //this.resetScene();
 
-            var resource = asset.resource;
+            const resource = asset.resource;
 
             // create entity and add model
-            var entity = new pc.Entity();
+            const entity = new pc.Entity();
             entity.addComponent("model", {
                 type: "asset",
                 asset: resource.model,
                 castShadows: true
             });
-            	
-            if (resource.model.name == "CesiumMilkTruck.gltf/model/0") {
+                
+            if (asset.name === "CesiumMilkTruck.gltf") {
                 let m = modelInfoSet[0];
                 applyModelInfoToEntity(m, entity);
-            } else if (resource.model.name == "Fox.gltf/model/0") {
+            } else if (asset.name === "Fox.gltf") {
                 let m = modelInfoSet[1];
                 applyModelInfoToEntity(m, entity);
-            } else if (resource.model.name == "trex_running.gltf/model/0") {
+            } else if (asset.name === "trex.gltf") {
                 let m = modelInfoSet[2];
                 applyModelInfoToEntity(m, entity);
             }
             function applyModelInfoToEntity(m, entity) { 
-                var s = entity.getLocalScale();
-                var r = entity.getLocalRotation();
-                var p = entity.getLocalPosition();
+                const s = entity.getLocalScale();
+                const r = entity.getLocalRotation();
+                const p = entity.getLocalPosition();
                 s.x = s.x * m.scale;
                 s.y = s.y * m.scale;
                 s.z = s.z * m.scale;
@@ -344,9 +386,9 @@ Object.assign(Viewer.prototype, {
                     speed: 1
                 });
 
-                var animationMap = {};
-                for (var i = 0; i < resource.animations.length; ++i) {
-                    var animAsset = resource.animations[i];
+                const animationMap = {};
+                for (let i = 0; i < resource.animations.length; ++i) {
+                    const animAsset = resource.animations[i];
                     animationMap[animAsset.resource.name] = animAsset.name;
                 }
 
@@ -358,25 +400,24 @@ Object.assign(Viewer.prototype, {
             this.entity = entity;
             this.asset = asset;
 
-            if (resource.model.name == "Fox.gltf/model/0") {
-                this.focusCamera();
+            if (asset.name === "Fox.gltf") {
+                // Focus camera on loaded model
+                const bbox = calcEntityAABB(new pc.BoundingBox(), entity);
+                this.cameraScript.refocus(bbox.center, null, null, true);
                 this.play("Run");
             }
         }
     }
-});
+}
 
 function createMaterial() {
-    let material = new pc.scene.PhongMaterial();
-    material.diffuseMapTint = true;
+    let material = new pc.StandardMaterial();
+    //material.diffuseMapTint = true;
     material.update()
     return material;
 }
 
-var viewer;
-
-function main() {
-    viewer = new Viewer(document.getElementById("application"));
-}
-
-main();
+// Initialize the viewer when the DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+    new Viewer(document.getElementById("application"));
+});
