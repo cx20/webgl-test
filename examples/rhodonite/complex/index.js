@@ -67,7 +67,7 @@ const load = async function () {
   const lightComponent1 = lightEntity1.getLight();
   lightComponent1.type = Rn.LightType.Directional;
   lightEntity1.getTransform().localPosition = Rn.Vector3.fromCopyArray([1.0, 1.0, 100000.0]);
-  lightEntity1.getComponent(Rn.LightComponent).intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
+  lightEntity1.getComponent(Rn.LightComponent).intensity = 1;
   lightEntity1.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
   lightEntity1.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([Math.PI / 2, Math.PI / 4, Math.PI / 4]);
 /*
@@ -75,7 +75,7 @@ const load = async function () {
   const lightComponent2 = lightEntity2.getLight();
   lightComponent1.type = Rn.LightType.Directional;
   lightEntity2.getTransform().localPosition = Rn.Vector3.fromCopyArray([1.0, 1.0, 100000.0]);
-  lightEntity2.getComponent(Rn.LightComponent).intensity = Rn.Vector3.fromCopyArray([1, 1, 1]);
+  lightEntity2.getComponent(Rn.LightComponent).intensity = 1;
   lightEntity2.getComponent(Rn.LightComponent).type = Rn.LightType.Directional;
   lightEntity2.getTransform().localEulerAngles = Rn.Vector3.fromCopyArray([Math.PI / 2, Math.PI / 4, -Math.PI / 4]);
 */
