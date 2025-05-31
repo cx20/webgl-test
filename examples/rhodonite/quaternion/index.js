@@ -29,8 +29,9 @@ const load = async function () {
 
     const entities = [];
 
-    const texture = new Rn.Texture();
-    texture.generateTextureFromUri('../../../assets/textures/frog.jpg');
+	const assets = await Rn.defaultAssetLoader.load({
+		texture: Rn.Texture.loadFromUrl('../../../assets/textures/frog.jpg')
+	});
 
     const sampler = new Rn.Sampler({
       magFilter: Rn.TextureParameter.Linear,
@@ -41,7 +42,7 @@ const load = async function () {
     sampler.create();
     
     const material = Rn.MaterialHelper.createClassicUberMaterial();
-    material.setTextureParameter('diffuseColorTexture', texture, sampler);
+    material.setTextureParameter('diffuseColorTexture', assets.texture, sampler);
 
     const cube1 = Rn.MeshHelper.createCube({widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
     cube1.localScale = Rn.Vector3.fromCopyArray([0.5, 0.5, 0.5]);

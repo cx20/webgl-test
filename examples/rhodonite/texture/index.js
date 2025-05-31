@@ -1,6 +1,6 @@
 import Rn from 'rhodonite';
 
-function readyBasicVerticesData() {
+async function readyBasicVerticesData(texture) {
 
     // Cube data
     //             1.0 y 
@@ -108,9 +108,6 @@ function readyBasicVerticesData() {
         primitiveMode: Rn.PrimitiveMode.Triangles
     });
 
-    const texture = new Rn.Texture();
-    texture.generateTextureFromUri('../../../assets/textures/frog.jpg');
-    
     const sampler = new Rn.Sampler({
       magFilter: Rn.TextureParameter.Linear,
       minFilter: Rn.TextureParameter.Linear,
@@ -139,7 +136,11 @@ const load = async function () {
       canvas: c,
     });
 
-    resizeCanvas();
+    const assets = await Rn.defaultAssetLoader.load({
+    	texture: Rn.Texture.loadFromUrl('../../../assets/textures/frog.jpg')
+    });
+
+	resizeCanvas();
     
     window.addEventListener("resize", function(){
         resizeCanvas();
@@ -149,7 +150,7 @@ const load = async function () {
         Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
     }
     
-    const primitive = readyBasicVerticesData();
+    const primitive = await readyBasicVerticesData(assets.texture);
 
     Rn.MeshRendererComponent.manualTransparentSids = [];
 
