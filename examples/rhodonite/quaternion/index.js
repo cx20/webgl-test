@@ -1,11 +1,9 @@
 import Rn from 'rhodonite';
 
 const load = async function () {
-    await Rn.ModuleManager.getInstance().loadModule('webgl');
-    await Rn.ModuleManager.getInstance().loadModule('pbr');
     const c = document.getElementById('world');
 
-    await Rn.System.init({
+    const engine = await Rn.Engine.init({
       approach: Rn.ProcessApproach.DataTexture,
       canvas: c,
     });
@@ -17,20 +15,20 @@ const load = async function () {
     });
 
     function resizeCanvas() {
-        Rn.System.resizeCanvas(window.innerWidth, window.innerHeight);
+        engine.resizeCanvas(window.innerWidth, window.innerHeight);
     }
     
     Rn.MeshRendererComponent.manualTransparentSids = [];
 
-    const group = Rn.createGroupEntity();
+    const group = Rn.createGroupEntity(engine);
 
     const entities = [];
 
 	const assets = await Rn.defaultAssetLoader.load({
-		texture: Rn.Texture.loadFromUrl('../../../assets/textures/frog.jpg')
+		texture: Rn.Texture.loadFromUrl(engine, '../../../assets/textures/frog.jpg')
 	});
 
-    const sampler = new Rn.Sampler({
+    const sampler = new Rn.Sampler(engine, {
       magFilter: Rn.TextureParameter.Linear,
       minFilter: Rn.TextureParameter.Linear,
       wrapS: Rn.TextureParameter.ClampToEdge,
@@ -38,14 +36,14 @@ const load = async function () {
     });
     sampler.create();
     
-    const material = Rn.MaterialHelper.createClassicUberMaterial();
+    const material = Rn.MaterialHelper.createClassicUberMaterial(engine);
     material.setTextureParameter('diffuseColorTexture', assets.texture, sampler);
 
-    const cube1 = Rn.MeshHelper.createCube({widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
+    const cube1 = Rn.MeshHelper.createCube(engine, {widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
     cube1.localScale = Rn.Vector3.fromCopyArray([0.5, 0.5, 0.5]);
     cube1.getTransform().localPosition = Rn.Vector3.fromCopyArray([-1.0, 0, 0]);
 
-    const cube2 = Rn.MeshHelper.createCube({widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
+    const cube2 = Rn.MeshHelper.createCube(engine, {widthVector: Rn.Vector3.fromCopyArray([1, 1, 1]), material: material});
     cube2.localScale = Rn.Vector3.fromCopyArray([0.5, 0.5, 0.5]);
     cube2.getTransform().localPosition = Rn.Vector3.fromCopyArray([1.0, 0, 0]);
 
@@ -59,7 +57,7 @@ const load = async function () {
     let count = 0
 
     // camera
-    const cameraEntity = Rn.createCameraControllerEntity();
+    const cameraEntity = Rn.createCameraControllerEntity(engine);
     cameraEntity.localPosition = Rn.Vector3.fromCopyArray([0, 0, 5]);
     const cameraComponent = cameraEntity.getCamera();
     cameraComponent.zNear = 0.1;
@@ -70,14 +68,14 @@ const load = async function () {
     cameraEntity.getCameraController().controller.setTarget(group);
 
     // renderPass
-    const renderPass = new Rn.RenderPass();
+    const renderPass = new Rn.RenderPass(engine);
     renderPass.cameraComponent = cameraComponent;
     renderPass.toClearColorBuffer = true;
     renderPass.clearColor = Rn.Vector4.fromCopyArray4([0, 0, 0, 1]);
     renderPass.addEntities(entities);
 
     // expression
-    const expression = new Rn.Expression();
+    const expression = new Rn.Expression(engine);
     expression.addRenderPasses([renderPass]);
 
     let axis = Rn.Vector3.fromCopyArray3([1, 1, 1]);
@@ -93,7 +91,7 @@ const load = async function () {
         // Rotation by Qaternions
         cube2.getTransform().localRotation = Rn.MutableQuaternion.axisAngle(axis, rotation);
 
-        Rn.System.processAuto();
+        engine.processAuto();
 
         count++;
         requestAnimationFrame(draw);
