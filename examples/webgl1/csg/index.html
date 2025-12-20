@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>[WIP] Testing CSG Using WebGL</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<script id="vs-texture" type="x-shader/x-vertex">
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+uniform mat3 uNormalMatrix;
+varying vec3 vNormal;
+varying vec2 vTexCoord;
+void main() {
+  vNormal = uNormalMatrix * aNormal;
+  vTexCoord = aTexCoord;
+  gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+}
+</script>
+
+<script id="fs-texture" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 vNormal;
+varying vec2 vTexCoord;
+uniform sampler2D uTexture;
+
+void main() {
+  vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+  vec3 normal = normalize(vNormal);
+  vec4 texColor = texture2D(uTexture, vTexCoord);
+  
+  float diff = abs(dot(normal, lightDir));
+  float ambient = 1.0;
+  vec3 finalColor = texColor.rgb * (ambient + diff * 0.7);
+  gl_FragColor = vec4(finalColor, 1.0);
+}
+</script>
+
+<script id="vs-solid" type="x-shader/x-vertex">
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+uniform mat3 uNormalMatrix;
+varying vec3 vNormal;
+void main() {
+  vNormal = uNormalMatrix * aNormal;
+  gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+}
+</script>
+
+<script id="fs-solid" type="x-shader/x-fragment">
+precision mediump float;
+varying vec3 vNormal;
+uniform vec3 uColor;
+
+void main() {
+  vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+  vec3 normal = normalize(vNormal);
+  float diff = abs(dot(normal, lightDir));
+  float ambient = 0.4;
+  vec3 finalColor = uColor * (ambient + diff * 0.6);
+  gl_FragColor = vec4(finalColor, 1.0);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+<script type="module" src="index.js"></script>
+</body>
+</html>
