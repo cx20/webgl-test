@@ -70,6 +70,12 @@ function fixSeamUVs(uv0, uv1, uv2) {
   return [[u0, uv0[1]], [u1, uv1[1]], [u2, uv2[1]]];
 }
 
+function computeSmoothNormal(x, y, z) {
+  const len = Math.hypot(x, y, z);
+  if (len === 0) return [0, 1, 0];
+  return [x / len, y / len, z / len];
+}
+
 function manifoldToArrays(manifold, needsUV) {
   const mesh = manifold.getMesh();
   const vertProps = mesh.vertProperties;
@@ -83,10 +89,12 @@ function manifoldToArrays(manifold, needsUV) {
     const p1 = [vertProps[i1 * 3], vertProps[i1 * 3 + 1], vertProps[i1 * 3 + 2]];
     const p2 = [vertProps[i2 * 3], vertProps[i2 * 3 + 1], vertProps[i2 * 3 + 2]];
     
-    const normal = computeTriangleNormal(p0, p1, p2);
+    const n0 = computeSmoothNormal(...p0);
+    const n1 = computeSmoothNormal(...p1);
+    const n2 = computeSmoothNormal(...p2);
     
     positions.push(...p0, ...p1, ...p2);
-    normals.push(...normal, ...normal, ...normal);
+    normals.push(...n0, ...n1, ...n2);
     
     if (needsUV) {
       let uv0 = computeSphericalUV(...p0);
