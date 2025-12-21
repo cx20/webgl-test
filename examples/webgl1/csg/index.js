@@ -1,52 +1,6 @@
 import Module from 'https://esm.run/manifold-3d';
 
-const mat4 = {
-  create: () => new Float32Array(16),
-  perspective: (out, fovy, aspect, near, far) => {
-    const f = 1.0 / Math.tan(fovy / 2);
-    out.fill(0);
-    out[0] = f / aspect;
-    out[5] = f;
-    out[10] = (far + near) / (near - far);
-    out[11] = -1;
-    out[14] = (2 * far * near) / (near - far);
-    return out;
-  },
-  lookAt: (out, eye, center, up) => {
-    let z = [eye[0] - center[0], eye[1] - center[1], eye[2] - center[2]];
-    let len = Math.hypot(...z);
-    z = z.map(v => v / len);
-    let x = [up[1] * z[2] - up[2] * z[1], up[2] * z[0] - up[0] * z[2], up[0] * z[1] - up[1] * z[0]];
-    len = Math.hypot(...x);
-    x = x.map(v => v / len);
-    let y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]];
-    out[0] = x[0]; out[1] = y[0]; out[2] = z[0]; out[3] = 0;
-    out[4] = x[1]; out[5] = y[1]; out[6] = z[1]; out[7] = 0;
-    out[8] = x[2]; out[9] = y[2]; out[10] = z[2]; out[11] = 0;
-    out[12] = -(x[0] * eye[0] + x[1] * eye[1] + x[2] * eye[2]);
-    out[13] = -(y[0] * eye[0] + y[1] * eye[1] + y[2] * eye[2]);
-    out[14] = -(z[0] * eye[0] + z[1] * eye[1] + z[2] * eye[2]);
-    out[15] = 1;
-    return out;
-  },
-  rotateY: (out, a, rad) => {
-    const s = Math.sin(rad), c = Math.cos(rad);
-    const a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
-    const a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
-    out.set(a);
-    out[0] = a00 * c - a20 * s; out[1] = a01 * c - a21 * s;
-    out[2] = a02 * c - a22 * s; out[3] = a03 * c - a23 * s;
-    out[8] = a00 * s + a20 * c; out[9] = a01 * s + a21 * c;
-    out[10] = a02 * s + a22 * c; out[11] = a03 * s + a23 * c;
-    return out;
-  },
-  normalFromMat4: (out, a) => {
-    out[0] = a[0]; out[1] = a[4]; out[2] = a[8];
-    out[3] = a[1]; out[4] = a[5]; out[5] = a[9];
-    out[6] = a[2]; out[7] = a[6]; out[8] = a[10];
-    return out;
-  }
-};
+const { mat4, mat3 } = glMatrix;
 
 function createShader(gl, type, source) {
   const shader = gl.createShader(type);
@@ -313,7 +267,7 @@ async function main() {
   const projMatrix = mat4.create();
   const viewMatrix = mat4.create();
   const modelViewMatrix = mat4.create();
-  const normalMatrix = new Float32Array(9);
+  const normalMatrix = mat3.create();
   
   mat4.perspective(projMatrix, Math.PI / 4, canvas.width / canvas.height, 0.1, 1000);
   mat4.lookAt(viewMatrix, [0, 0, 4], [0, 0, 0], [0, 1, 0]);
@@ -325,7 +279,7 @@ async function main() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
     mat4.rotateY(modelViewMatrix, viewMatrix, angle);
-    mat4.normalFromMat4(normalMatrix, modelViewMatrix);
+    mat3.normalFromMat4(normalMatrix, modelViewMatrix);
     
     gl.useProgram(textureProgram);
     gl.uniformMatrix4fv(texLoc.uProjectionMatrix, false, projMatrix);
