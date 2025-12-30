@@ -4,7 +4,8 @@ const scene = new CZPG.Scene(renderer);
 
 let camera = new CZPG.PerspectiveCamera(45, context.canvas.width / context.canvas.height, 0.01, 1000);
 camera.transform.position = [0, 1, 50];
-camera.updateViewMatrix();
+camera.lookAt();
+scene.setCamera(camera);
 
 // copy from: https://github.com/gpjt/webgl-lessons/blob/master/lesson14/Teapot.json
 $.getJSON("../../../assets/json/teapot.json", function (data) {

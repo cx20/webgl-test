@@ -4,7 +4,8 @@ const scene = new CZPG.Scene(renderer);
 
 let camera = new CZPG.PerspectiveCamera(45, context.canvas.width/context.canvas.height, 0.01, 2000);
 camera.transform.position = [0, 1, 3];
-camera.updateViewMatrix();
+camera.lookAt();
+scene.setCamera(camera);
 
 // Cube data
 //             1.0 y 
