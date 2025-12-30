@@ -149,7 +149,7 @@ class App {
       Filament.MinFilter.LINEAR_MIPMAP_LINEAR,
       Filament.MagFilter.LINEAR,
       Filament.WrapMode.REPEAT);
-    const texture    = engine.createTextureFromJpeg('../../../assets/textures/frog.jpg'); // 256x256
+    const texture    = engine.createTextureFromJpeg('../../../assets/textures/frog.jpg', {nomips: true}); // 256x256
     matinst.setTextureParameter('texture',    texture,    sampler)
 
     Filament.RenderableManager.Builder(1)

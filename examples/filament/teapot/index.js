@@ -79,7 +79,7 @@ class App {
       Filament.MinFilter.LINEAR_MIPMAP_LINEAR,
       Filament.MagFilter.LINEAR,
       Filament.WrapMode.REPEAT);
-    const texture    = engine.createTextureFromJpeg('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg');
+    const texture    = engine.createTextureFromJpeg('../../../assets/textures/arroway.de_metal+structure+06_d100_flat.jpg', {nomips: true});
     matinst.setTextureParameter('texture',    texture,    sampler)
 
     Filament.RenderableManager.Builder(1)
