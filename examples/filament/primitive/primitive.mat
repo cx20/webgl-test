@@ -1,0 +1,21 @@
+material {
+    name : texture,
+    parameters : [
+        {
+           type : sampler2d,
+           name : texture
+        }
+    ],
+    requires : [
+        uv0
+    ],
+    shadingModel : unlit,
+    culling : none
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = texture(materialParams_texture, getUV0());
+    }
+}
