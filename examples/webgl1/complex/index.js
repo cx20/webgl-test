@@ -50,7 +50,48 @@ function createProgram(gl, vsSource, fsSource) {
     return program;
 }
 
-// ========== glTF/GLB Loader ==========
+// ========== CubeMap Loader ==========
+
+function loadCubeMap(gl, urls) {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+    const faces = [
+        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: urls[0] },
+        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: urls[1] },
+        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: urls[2] },
+        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: urls[3] },
+        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: urls[4] },
+        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: urls[5] },
+    ];
+
+    faces.forEach(face => {
+        gl.texImage2D(face.target, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    });
+
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    const promises = faces.map(face => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+                gl.texImage2D(face.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+                resolve();
+            };
+            img.onerror = reject;
+            img.src = face.url;
+        });
+    });
+
+    return Promise.all(promises).then(() => texture);
+}
+
+// ========== glTF/GLB Loader (変更なし) ==========
 async function loadGLTF(url) {
     const response = await fetch(url);
     const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
@@ -88,15 +129,11 @@ function parseGLB(buffer, baseUrl) {
     const version = dataView.getUint32(4, true);
     const length = dataView.getUint32(8, true);
     
-    if (magic !== 0x46546C67) { 
-        throw new Error('Invalid GLB file');
-    }
+    if (magic !== 0x46546C67) throw new Error('Invalid GLB file');
     
     let offset = 12;
     const jsonChunkLength = dataView.getUint32(offset, true);
-    const jsonChunkType = dataView.getUint32(offset + 4, true);
     offset += 8;
-    
     const jsonData = new Uint8Array(buffer, offset, jsonChunkLength);
     const jsonStr = new TextDecoder().decode(jsonData);
     const gltf = JSON.parse(jsonStr);
@@ -105,11 +142,9 @@ function parseGLB(buffer, baseUrl) {
     const buffers = [];
     if (offset < length) {
         const binChunkLength = dataView.getUint32(offset, true);
-        const binChunkType = dataView.getUint32(offset + 4, true);
         offset += 8;
         buffers.push(new Uint8Array(buffer, offset, binChunkLength));
     }
-    
     return { gltf, buffers, baseUrl };
 }
 
@@ -119,22 +154,14 @@ function getAccessorData(gltf, buffers, accessorIndex) {
     const bufferView = gltf.bufferViews[accessor.bufferView];
     const bufferIndex = bufferView.buffer || 0;
     const binData = buffers[bufferIndex];
-    
     const byteOffset = (bufferView.byteOffset || 0) + (accessor.byteOffset || 0);
     const count = accessor.count;
     
     const componentTypes = {
-        5120: Int8Array,
-        5121: Uint8Array,
-        5122: Int16Array,
-        5123: Uint16Array,
-        5125: Uint32Array,
-        5126: Float32Array
+        5120: Int8Array, 5121: Uint8Array, 5122: Int16Array,
+        5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array
     };
-    
-    const numComponents = {
-        'SCALAR': 1, 'VEC2': 2, 'VEC3': 3, 'VEC4': 4, 'MAT4': 16
-    };
+    const numComponents = { 'SCALAR': 1, 'VEC2': 2, 'VEC3': 3, 'VEC4': 4, 'MAT4': 16 };
     
     const TypedArray = componentTypes[accessor.componentType];
     const components = numComponents[accessor.type];
@@ -147,13 +174,9 @@ function getAccessorData(gltf, buffers, accessorIndex) {
             const srcOffset = byteOffset + i * byteStride;
             for (let j = 0; j < components; j++) {
                 const view = new DataView(binData.buffer, binData.byteOffset + srcOffset + j * elementSize, elementSize);
-                if (TypedArray === Float32Array) {
-                    result[i * components + j] = view.getFloat32(0, true);
-                } else if (TypedArray === Uint16Array) {
-                    result[i * components + j] = view.getUint16(0, true);
-                } else if (TypedArray === Uint32Array) {
-                    result[i * components + j] = view.getUint32(0, true);
-                }
+                if (TypedArray === Float32Array) result[i * components + j] = view.getFloat32(0, true);
+                else if (TypedArray === Uint16Array) result[i * components + j] = view.getUint16(0, true);
+                else if (TypedArray === Uint32Array) result[i * components + j] = view.getUint32(0, true);
             }
         }
         return result;
@@ -200,7 +223,6 @@ function loadTextureFromGLTF(gl, gltf, buffers, baseUrl, textureIndex) {
             const binData = buffers[bufferIndex];
             const byteOffset = bufferView.byteOffset || 0;
             const byteLength = bufferView.byteLength;
-            
             const imageData = new Uint8Array(binData.buffer, binData.byteOffset + byteOffset, byteLength);
             const blob = new Blob([imageData], { type: image.mimeType });
             img.src = URL.createObjectURL(blob);
@@ -208,8 +230,7 @@ function loadTextureFromGLTF(gl, gltf, buffers, baseUrl, textureIndex) {
     });
 }
 
-// ========== Mesh Processing ==========
-
+// ========== Mesh Processing & Helpers (変更なし) ==========
 function calculateBoundingBox(positions) {
     const min = [Infinity, Infinity, Infinity];
     const max = [-Infinity, -Infinity, -Infinity];
@@ -241,7 +262,6 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
         const normals = attrs.NORMAL !== undefined ? getAccessorData(gltf, buffers, attrs.NORMAL) : null;
         const texCoords = attrs.TEXCOORD_0 !== undefined ? getAccessorData(gltf, buffers, attrs.TEXCOORD_0) : null;
         const indices = primitive.indices !== undefined ? getAccessorData(gltf, buffers, primitive.indices) : null;
-        
         const bbox = calculateBoundingBox(positions);
         
         const vao = extVAO.createVertexArrayOES();
@@ -283,7 +303,6 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
         
         let texture = null;
         let baseColor = [1, 1, 1, 1];
-        
         if (primitive.material !== undefined) {
             const material = gltf.materials[primitive.material];
             if (material.pbrMetallicRoughness) {
@@ -297,26 +316,14 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
             }
         }
         
-        primitives.push({
-            vao,
-            indexCount,
-            indexType,
-            hasIndices: indices !== null,
-            texture,
-            baseColor,
-            bbox
-        });
+        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox });
     }
     
     let combinedBbox = primitives[0].bbox;
-    for (let i = 1; i < primitives.length; i++) {
-        combinedBbox = mergeBoundingBoxes(combinedBbox, primitives[i].bbox);
-    }
-    
+    for (let i = 1; i < primitives.length; i++) combinedBbox = mergeBoundingBoxes(combinedBbox, primitives[i].bbox);
     return { primitives, bbox: combinedBbox };
 }
 
-// ========== Node Transform ==========
 function getNodeTransform(node) {
     const matrix = mat4.create();
     if (node.matrix) {
@@ -350,6 +357,9 @@ async function main() {
     resize();
     window.addEventListener('resize', resize);
     
+    // ----------------------------------------------------------------
+    // Setup Standard Model Program
+    // ----------------------------------------------------------------
     const vsSource = document.getElementById('vs').textContent;
     const fsSource = document.getElementById('fs').textContent;
     const program = createProgram(gl, vsSource, fsSource);
@@ -367,10 +377,58 @@ async function main() {
         uBaseColor: gl.getUniformLocation(program, 'uBaseColor'),
         uLightDir: gl.getUniformLocation(program, 'uLightDir')
     };
+
+    // ----------------------------------------------------------------
+    // Setup Skybox Program & Geometry
+    // ----------------------------------------------------------------
+    const sbVsSource = document.getElementById('vs-skybox').textContent;
+    const sbFsSource = document.getElementById('fs-skybox').textContent;
+    const sbProgram = createProgram(gl, sbVsSource, sbFsSource);
+
+    const sbLoc = {
+        aPosition: gl.getAttribLocation(sbProgram, 'aPosition'),
+        uProjectionMatrix: gl.getUniformLocation(sbProgram, 'uProjectionMatrix'),
+        uViewMatrix: gl.getUniformLocation(sbProgram, 'uViewMatrix'),
+        uSkybox: gl.getUniformLocation(sbProgram, 'uSkybox'),
+    };
+
+    // Skybox Geometry
+    const skyboxVertices = new Float32Array([
+        -1,  1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1,  1,  1, -1, -1,  1, -1,
+        -1, -1,  1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1,  1,  1, -1, -1,  1,
+         1, -1, -1,  1, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1,  1, -1, -1,
+        -1, -1,  1, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1,  1, -1, -1,  1,
+        -1,  1, -1,  1,  1, -1,  1,  1,  1,  1,  1,  1, -1,  1,  1, -1,  1, -1,
+        -1, -1, -1, -1, -1,  1,  1, -1, -1,  1, -1, -1, -1, -1,  1,  1, -1,  1
+    ]);
     
+    const sbVao = extVAO.createVertexArrayOES();
+    extVAO.bindVertexArrayOES(sbVao);
+    const sbBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, sbBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(sbLoc.aPosition);
+    gl.vertexAttribPointer(sbLoc.aPosition, 3, gl.FLOAT, false, 0, 0);
+    extVAO.bindVertexArrayOES(null);
+
+    // ----------------------------------------------------------------
+    // Load Resources
+    // ----------------------------------------------------------------
     const allMeshData = [];
     let sceneBbox = { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
     
+    // Load Skybox Texture
+    const skyboxPath = 'https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/';
+    const skyboxFormat = '.jpg';
+    const skyboxUrls = [
+        skyboxPath + 'px' + skyboxFormat, skyboxPath + 'nx' + skyboxFormat,
+        skyboxPath + 'py' + skyboxFormat, skyboxPath + 'ny' + skyboxFormat,
+        skyboxPath + 'pz' + skyboxFormat, skyboxPath + 'nz' + skyboxFormat
+    ];
+    
+    const skyboxTexturePromise = loadCubeMap(gl, skyboxUrls);
+
+    // Load Models (as before)
     for (const modelInfo of modelInfoSet) {
         console.log(`Loading ${modelInfo.name}...`);
         const { gltf, buffers, baseUrl } = await loadGLTF(modelInfo.url);
@@ -397,16 +455,11 @@ async function main() {
                 allMeshData.push({ primitives, matrix: finalMatrix });
                 
                 const corners = [
-                    [bbox.min[0], bbox.min[1], bbox.min[2]],
-                    [bbox.max[0], bbox.min[1], bbox.min[2]],
-                    [bbox.min[0], bbox.max[1], bbox.min[2]],
-                    [bbox.max[0], bbox.max[1], bbox.min[2]],
-                    [bbox.min[0], bbox.min[1], bbox.max[2]],
-                    [bbox.max[0], bbox.min[1], bbox.max[2]],
-                    [bbox.min[0], bbox.max[1], bbox.max[2]],
-                    [bbox.max[0], bbox.max[1], bbox.max[2]]
+                    [bbox.min[0], bbox.min[1], bbox.min[2]], [bbox.max[0], bbox.min[1], bbox.min[2]],
+                    [bbox.min[0], bbox.max[1], bbox.min[2]], [bbox.max[0], bbox.max[1], bbox.min[2]],
+                    [bbox.min[0], bbox.min[1], bbox.max[2]], [bbox.max[0], bbox.min[1], bbox.max[2]],
+                    [bbox.min[0], bbox.max[1], bbox.max[2]], [bbox.max[0], bbox.max[1], bbox.max[2]]
                 ];
-                
                 for (const corner of corners) {
                     const transformed = vec3.transformMat4(vec3.create(), corner, finalMatrix);
                     sceneBbox.min[0] = Math.min(sceneBbox.min[0], transformed[0]);
@@ -417,20 +470,19 @@ async function main() {
                     sceneBbox.max[2] = Math.max(sceneBbox.max[2], transformed[2]);
                 }
             }
-            
             if (node.children) {
-                for (const childIndex of node.children) {
-                    await processNode(childIndex, worldMatrix);
-                }
+                for (const childIndex of node.children) await processNode(childIndex, worldMatrix);
             }
         }
         
         const rootMatrix = mat4.create();
-        for (const nodeIndex of scene.nodes) {
-            await processNode(nodeIndex, rootMatrix);
-        }
+        for (const nodeIndex of scene.nodes) await processNode(nodeIndex, rootMatrix);
     }
+    
+    const skyboxTexture = await skyboxTexturePromise;
+    console.log("Skybox loaded");
             
+    // Camera
     const center = [
         (sceneBbox.min[0] + sceneBbox.max[0]) / 2,
         (sceneBbox.min[1] + sceneBbox.max[1]) / 2,
@@ -448,7 +500,8 @@ async function main() {
     const viewMatrix = mat4.create();
     const modelMatrix = mat4.create();
     const normalMatrix = mat3.create();
-    
+    const viewMatrixNoTranslation = mat4.create();
+
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
     
@@ -466,6 +519,9 @@ async function main() {
         const cameraZ = center[2] + Math.cos(time * 0.5) * cameraDistance;
         mat4.lookAt(viewMatrix, [cameraX, cameraY, cameraZ], center, [0, 1, 0]);
         
+        // ----------------------------------------------------------------
+        // Draw Models
+        // ----------------------------------------------------------------
         gl.useProgram(program);
         gl.uniformMatrix4fv(loc.uProjectionMatrix, false, projectionMatrix);
         gl.uniformMatrix4fv(loc.uViewMatrix, false, viewMatrix);
@@ -498,6 +554,30 @@ async function main() {
                 }
             }
         }
+
+        // ----------------------------------------------------------------
+        // Draw Skybox
+        // ----------------------------------------------------------------
+        gl.depthFunc(gl.LEQUAL);
+        gl.useProgram(sbProgram);
+        
+        mat4.copy(viewMatrixNoTranslation, viewMatrix);
+        viewMatrixNoTranslation[12] = 0;
+        viewMatrixNoTranslation[13] = 0;
+        viewMatrixNoTranslation[14] = 0;
+        
+        gl.uniformMatrix4fv(sbLoc.uProjectionMatrix, false, projectionMatrix);
+        gl.uniformMatrix4fv(sbLoc.uViewMatrix, false, viewMatrixNoTranslation);
+        
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
+        gl.uniform1i(sbLoc.uSkybox, 0);
+        
+        extVAO.bindVertexArrayOES(sbVao);
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
+        extVAO.bindVertexArrayOES(null);
+        
+        gl.depthFunc(gl.LESS);
         
         requestAnimationFrame(render);
     }
