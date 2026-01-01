@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+body {
+  background: #fff;
+  font: 30px sans-serif;
+}
+
+canvas {
+  touch-action: none;
+  width: 100%;
+  height: 100%;
+}
