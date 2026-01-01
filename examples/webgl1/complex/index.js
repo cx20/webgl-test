@@ -1,5 +1,12 @@
 const { mat4, mat3, vec3, quat } = glMatrix;
 
+// Maximum joints supported by the skinning shader (must match index.html)
+const MAX_JOINTS = 180;
+
+// Dummy buffers to avoid stale VAO state when a primitive lacks skinning data
+let dummyJointsBuffer = null;
+let dummyWeightsBuffer = null;
+
 // Load glTF/GLB
 const modelInfoSet = [
     {
@@ -261,7 +268,17 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
         const positions = getAccessorData(gltf, buffers, attrs.POSITION);
         const normals = attrs.NORMAL !== undefined ? getAccessorData(gltf, buffers, attrs.NORMAL) : null;
         const texCoords = attrs.TEXCOORD_0 !== undefined ? getAccessorData(gltf, buffers, attrs.TEXCOORD_0) : null;
-        const indices = primitive.indices !== undefined ? getAccessorData(gltf, buffers, primitive.indices) : null;
+        const joints = attrs.JOINTS_0 !== undefined ? getAccessorData(gltf, buffers, attrs.JOINTS_0) : null;
+        const weights = attrs.WEIGHTS_0 !== undefined ? getAccessorData(gltf, buffers, attrs.WEIGHTS_0) : null;
+        let indices = null;
+        let indexType = gl.UNSIGNED_SHORT;
+        if (primitive.indices !== undefined) {
+            indices = getAccessorData(gltf, buffers, primitive.indices);
+            const indexAccessor = gltf.accessors[primitive.indices];
+            if (indexAccessor.componentType === 5121) indexType = gl.UNSIGNED_BYTE;      // UNSIGNED_BYTE
+            else if (indexAccessor.componentType === 5123) indexType = gl.UNSIGNED_SHORT; // UNSIGNED_SHORT
+            else if (indexAccessor.componentType === 5125) indexType = gl.UNSIGNED_INT;   // UNSIGNED_INT
+        }
         const bbox = calculateBoundingBox(positions);
         
         const vao = extVAO.createVertexArrayOES();
@@ -289,14 +306,64 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
             gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0);
         }
         
+        if (joints) {
+            const jointAccessor = gltf.accessors[attrs.JOINTS_0];
+            const jointType = jointAccessor.componentType === 5121 ? gl.UNSIGNED_BYTE : gl.UNSIGNED_SHORT; // glTF spec allows UBYTE or USHORT
+            const jointsBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, jointsBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, joints, gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(3);
+            gl.vertexAttribPointer(3, 4, jointType, false, 0, 0);
+        } else {
+            if (!dummyJointsBuffer) {
+                dummyJointsBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, dummyJointsBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Uint16Array(4), gl.STATIC_DRAW);
+            } else {
+                gl.bindBuffer(gl.ARRAY_BUFFER, dummyJointsBuffer);
+            }
+            gl.enableVertexAttribArray(3);
+            gl.vertexAttribPointer(3, 4, gl.UNSIGNED_SHORT, false, 0, 0);
+        }
+        
+        if (weights) {
+            const weightAccessor = gltf.accessors[attrs.WEIGHTS_0];
+            const compType = weightAccessor.componentType;
+            let glType = gl.FLOAT;
+            let normalized = false;
+            if (compType === 5121) { // UNSIGNED_BYTE
+                glType = gl.UNSIGNED_BYTE;
+                normalized = true;
+            } else if (compType === 5123) { // UNSIGNED_SHORT
+                glType = gl.UNSIGNED_SHORT;
+                normalized = true;
+            } else if (compType === 5126) { // FLOAT
+                glType = gl.FLOAT;
+                normalized = false;
+            }
+            const weightsBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, weightsBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, weights, gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(4);
+            gl.vertexAttribPointer(4, 4, glType, normalized, 0, 0);
+        } else {
+            if (!dummyWeightsBuffer) {
+                dummyWeightsBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, dummyWeightsBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 0, 1]), gl.STATIC_DRAW);
+            } else {
+                gl.bindBuffer(gl.ARRAY_BUFFER, dummyWeightsBuffer);
+            }
+            gl.enableVertexAttribArray(4);
+            gl.vertexAttribPointer(4, 4, gl.FLOAT, false, 0, 0);
+        }
+        
         let indexCount = positions.length / 3;
-        let indexType = gl.UNSIGNED_SHORT;
         if (indices) {
             const indexBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
             indexCount = indices.length;
-            indexType = indices instanceof Uint32Array ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT;
         }
         
         extVAO.bindVertexArrayOES(null);
@@ -315,8 +382,9 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
                 }
             }
         }
+        const hasSkinning = joints !== null && weights !== null;
         
-        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox });
+        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox, hasSkinning });
     }
     
     let combinedBbox = primitives[0].bbox;
@@ -335,6 +403,45 @@ function getNodeTransform(node) {
         mat4.fromRotationTranslationScale(matrix, rotation, translation, scale);
     }
     return matrix;
+}
+
+// ========== Skinning Processing ==========
+
+function loadSkins(gltf, buffers) {
+    if (!gltf.skins) return [];
+
+    return gltf.skins.map(skin => {
+        if (skin.joints.length > MAX_JOINTS) {
+            console.warn(`Skin joints (${skin.joints.length}) exceed MAX_JOINTS (${MAX_JOINTS}). Some bones may be ignored.`);
+        }
+
+        const inverseBindMatrices = skin.inverseBindMatrices !== undefined
+            ? getAccessorData(gltf, buffers, skin.inverseBindMatrices)
+            : null;
+
+        const matrices = [];
+        if (inverseBindMatrices) {
+            for (let i = 0; i < skin.joints.length; i++) {
+                matrices.push(mat4.clone(inverseBindMatrices.subarray(i * 16, i * 16 + 16)));
+            }
+        } else {
+            for (let i = 0; i < skin.joints.length; i++) matrices.push(mat4.create());
+        }
+
+        return {
+            joints: skin.joints,
+            inverseBindMatrices: matrices,
+            jointMatrices: skin.joints.map(() => mat4.create())
+        };
+    });
+}
+
+function updateSkinMatrices(skin, nodes) {
+    const jointCount = Math.min(skin.joints.length, MAX_JOINTS);
+    for (let i = 0; i < jointCount; i++) {
+        const jointNode = nodes[skin.joints[i]];
+        mat4.multiply(skin.jointMatrices[i], jointNode.worldMatrix, skin.inverseBindMatrices[i]);
+    }
 }
 
 // ========== Animation Processing ==========
@@ -442,6 +549,8 @@ async function main() {
         aPosition: gl.getAttribLocation(program, 'aPosition'),
         aNormal: gl.getAttribLocation(program, 'aNormal'),
         aTexCoord: gl.getAttribLocation(program, 'aTexCoord'),
+        aJoints: gl.getAttribLocation(program, 'aJoints'),
+        aWeights: gl.getAttribLocation(program, 'aWeights'),
         uModelMatrix: gl.getUniformLocation(program, 'uModelMatrix'),
         uViewMatrix: gl.getUniformLocation(program, 'uViewMatrix'),
         uProjectionMatrix: gl.getUniformLocation(program, 'uProjectionMatrix'),
@@ -449,7 +558,9 @@ async function main() {
         uTexture: gl.getUniformLocation(program, 'uTexture'),
         uHasTexture: gl.getUniformLocation(program, 'uHasTexture'),
         uBaseColor: gl.getUniformLocation(program, 'uBaseColor'),
-        uLightDir: gl.getUniformLocation(program, 'uLightDir')
+        uLightDir: gl.getUniformLocation(program, 'uLightDir'),
+        uJointMatrices: gl.getUniformLocation(program, 'uJointMatrices'),
+        uHasSkinning: gl.getUniformLocation(program, 'uHasSkinning')
     };
 
     // ----------------------------------------------------------------
@@ -517,6 +628,7 @@ async function main() {
                 matrix: mat4.create(),       
                 worldMatrix: mat4.create(),  
                 meshIndex: node.mesh,
+                skinIndex: node.skin !== undefined ? node.skin : null,
                 children: node.children || []
             };
         });
@@ -529,7 +641,17 @@ async function main() {
             }
         }
 
+        const skins = loadSkins(gltf, buffers);
         const animations = loadAnimations(gltf, buffers);
+
+        let currentAnimation = null;
+        if (animations.length > 0) {
+            if (modelInfo.name === 'Fox') {
+                currentAnimation = animations.find(a => a.name === 'Run') || animations[0];
+            } else {
+                currentAnimation = animations[0];
+            }
+        }
 
         const scene = gltf.scenes[gltf.scene || 0];
         
@@ -543,7 +665,9 @@ async function main() {
         loadedModels.push({
             nodes,
             meshes,
+            skins,
             animations,
+            currentAnimation,
             rootNodes: scene.nodes,
             baseTransform
         });
@@ -606,9 +730,11 @@ async function main() {
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
+
+    const startTime = Date.now() / 1000;
     
     function render() {
-        const time = Date.now() / 1000;
+        const time = Date.now() / 1000 - startTime;
         
         gl.clearColor(0.2, 0.2, 0.2, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -629,52 +755,81 @@ async function main() {
         gl.uniformMatrix4fv(loc.uViewMatrix, false, viewMatrix);
         gl.uniform3fv(loc.uLightDir, [1, 1, 1]);
         
-        for (const model of loadedModels) {
-            if (model.animations.length > 0) {
-                updateAnimation(model.animations[0], model.nodes, time);
+        const updateWorldMatrices = (model, nodeIndex, parentMatrix) => {
+            const node = model.nodes[nodeIndex];
+            mat4.fromRotationTranslationScale(node.matrix, node.rotation, node.translation, node.scale);
+            mat4.multiply(node.worldMatrix, parentMatrix, node.matrix);
+            for (const childId of node.children) {
+                updateWorldMatrices(model, childId, node.worldMatrix);
             }
+        };
 
-            const updateHierarchy = (nodeIndex, parentMatrix) => {
-                const node = model.nodes[nodeIndex];
-                
-                mat4.fromRotationTranslationScale(node.matrix, node.rotation, node.translation, node.scale);
-                
-                mat4.multiply(node.worldMatrix, parentMatrix, node.matrix);
+        const drawHierarchy = (model, nodeIndex) => {
+            const node = model.nodes[nodeIndex];
 
-                if (node.meshIndex !== undefined) {
-                    const mesh = model.meshes[node.meshIndex];
+            if (node.meshIndex !== undefined) {
+                const mesh = model.meshes[node.meshIndex];
+                const nodeSkin = node.skinIndex !== null ? model.skins[node.skinIndex] : null;
+                const hasSkinning = mesh.primitives.some(p => p.hasSkinning);
+                const modelMatrix = hasSkinning ? mat4.create() : node.worldMatrix;
+
+                mat3.normalFromMat4(normalMatrix, modelMatrix);
+                gl.uniformMatrix4fv(loc.uModelMatrix, false, modelMatrix);
+                gl.uniformMatrix3fv(loc.uNormalMatrix, false, normalMatrix);
+
+                for (const prim of mesh.primitives) {
+                    extVAO.bindVertexArrayOES(prim.vao);
+
+                    if (prim.hasSkinning && nodeSkin) {
+                        gl.uniform1i(loc.uHasSkinning, 1);
+                        const jointCount = Math.min(nodeSkin.jointMatrices.length, MAX_JOINTS);
+                        const jointMatrixArray = new Float32Array(jointCount * 16);
+                        for (let j = 0; j < jointCount; j++) {
+                            jointMatrixArray.set(nodeSkin.jointMatrices[j], j * 16);
+                        }
+                        gl.uniformMatrix4fv(loc.uJointMatrices, false, jointMatrixArray);
+                    } else {
+                        gl.uniform1i(loc.uHasSkinning, 0);
+                    }
+
+                    if (prim.texture) {
+                        gl.activeTexture(gl.TEXTURE0);
+                        gl.bindTexture(gl.TEXTURE_2D, prim.texture);
+                        gl.uniform1i(loc.uTexture, 0);
+                        gl.uniform1i(loc.uHasTexture, 1);
+                    } else {
+                        gl.uniform1i(loc.uHasTexture, 0);
+                    }
+                    gl.uniform4fv(loc.uBaseColor, prim.baseColor);
                     
-                    mat3.normalFromMat4(normalMatrix, node.worldMatrix);
-                    gl.uniformMatrix4fv(loc.uModelMatrix, false, node.worldMatrix);
-                    gl.uniformMatrix3fv(loc.uNormalMatrix, false, normalMatrix);
-
-                    for (const prim of mesh.primitives) {
-                        extVAO.bindVertexArrayOES(prim.vao);
-                        if (prim.texture) {
-                            gl.activeTexture(gl.TEXTURE0);
-                            gl.bindTexture(gl.TEXTURE_2D, prim.texture);
-                            gl.uniform1i(loc.uTexture, 0);
-                            gl.uniform1i(loc.uHasTexture, 1);
-                        } else {
-                            gl.uniform1i(loc.uHasTexture, 0);
-                        }
-                        gl.uniform4fv(loc.uBaseColor, prim.baseColor);
-                        
-                        if (prim.hasIndices) {
-                            gl.drawElements(gl.TRIANGLES, prim.indexCount, prim.indexType, 0);
-                        } else {
-                            gl.drawArrays(gl.TRIANGLES, 0, prim.indexCount);
-                        }
+                    if (prim.hasIndices) {
+                        gl.drawElements(gl.TRIANGLES, prim.indexCount, prim.indexType, 0);
+                    } else {
+                        gl.drawArrays(gl.TRIANGLES, 0, prim.indexCount);
                     }
                 }
+            }
 
-                for (const childId of node.children) {
-                    updateHierarchy(childId, node.worldMatrix);
-                }
-            };
+            for (const childId of node.children) {
+                drawHierarchy(model, childId);
+            }
+        };
+        
+        for (const model of loadedModels) {
+            if (model.currentAnimation) {
+                updateAnimation(model.currentAnimation, model.nodes, time);
+            }
 
             for (const rootNodeId of model.rootNodes) {
-                updateHierarchy(rootNodeId, model.baseTransform);
+                updateWorldMatrices(model, rootNodeId, model.baseTransform);
+            }
+
+            for (const skin of model.skins) {
+                updateSkinMatrices(skin, model.nodes);
+            }
+
+            for (const rootNodeId of model.rootNodes) {
+                drawHierarchy(model, rootNodeId);
             }
         }
 
