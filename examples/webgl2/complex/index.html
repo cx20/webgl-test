@@ -64,6 +64,39 @@ void main() {
 }
 </script>
 
+<!-- Skybox Vertex Shader -->
+<script id="vs-skybox" type="x-shader/x-vertex">#version 300 es
+layout(location = 0) in vec3 aPosition;
+
+out vec3 vTexCoord;
+
+uniform mat4 uProjectionMatrix;
+uniform mat4 uViewMatrix;
+
+void main() {
+    vTexCoord = aPosition;
+    
+    vec4 pos = uProjectionMatrix * uViewMatrix * vec4(aPosition, 1.0);
+    
+    gl_Position = pos.xyww;
+}
+</script>
+
+<!-- Skybox Fragment Shader -->
+<script id="fs-skybox" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+
+in vec3 vTexCoord;
+
+uniform samplerCube uSkybox;
+
+out vec4 fragColor;
+
+void main() {
+    fragColor = texture(uSkybox, vTexCoord);
+}
+</script>
+
 <canvas id="c" width="465" height="465"></canvas>
 <script type="module" src="index.js"></script>
 </body>
