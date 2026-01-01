@@ -59,8 +59,11 @@ void main() {
     } else {
         baseColor = uBaseColor;
     }
+
+    vec3 finalColor = baseColor.rgb * lighting;
+    finalColor = pow(finalColor, vec3(1.0 / 2.2));
     
-    fragColor = vec4(baseColor.rgb * lighting, baseColor.a);
+    fragColor = vec4(finalColor, baseColor.a);
 }
 </script>
 

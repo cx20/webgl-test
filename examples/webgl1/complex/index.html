@@ -58,7 +58,10 @@ void main() {
         baseColor = uBaseColor;
     }
     
-    gl_FragColor = vec4(baseColor.rgb * lighting, baseColor.a);
+    vec3 finalColor = baseColor.rgb * lighting;
+    finalColor = pow(finalColor, vec3(1.0 / 2.2));
+    
+    gl_FragColor = vec4(finalColor.rgb, baseColor.a);
 }
 </script>
 
