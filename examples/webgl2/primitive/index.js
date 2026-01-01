@@ -287,15 +287,10 @@ function createTorus(majorRadius, minorRadius, majorSegments = 32, minorSegments
 // ========== Main Application ==========
 
 async function main() {
-    const info = document.getElementById('info');
     const canvas = document.getElementById('c');
     
     // Initialize WebGL2
     const gl = canvas.getContext('webgl2');
-    if (!gl) {
-        info.textContent = 'WebGL2 not supported';
-        return;
-    }
     
     // Setup canvas size
     function resize() {
@@ -315,17 +310,14 @@ async function main() {
     const uTexture = gl.getUniformLocation(program, 'uTexture');
     
     // Load texture
-    info.textContent = 'Loading texture...';
     const texture = await loadTexture(gl, TEXTURE_URL);
     
     // Load Manifold
-    info.textContent = 'Loading Manifold-3D...';
     const wasm = await Module();
     wasm.setup();
     const { Manifold } = wasm;
     
     // Create primitives
-    info.textContent = 'Creating primitives...';
     
     const spacing = 2.5;
     const meshes = [];
@@ -398,10 +390,6 @@ async function main() {
         
         totalTriangles += prim.data.vertexCount / 3;
     }
-    
-    info.innerHTML = `<b>WebGL2 + Manifold-3D Primitives</b><br>
-        Shapes: ${primitives.length}<br>
-        Triangles: ${totalTriangles.toLocaleString()}`;
     
     // Setup matrices
     const projectionMatrix = mat4.create();
