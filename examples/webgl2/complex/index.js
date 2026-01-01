@@ -1,4 +1,4 @@
-const { mat4, mat3, vec3 } = glMatrix;
+const { mat4, mat3, vec3, quat } = glMatrix;
 
 // Load glTF/GLB
 const modelInfoSet = [
@@ -24,7 +24,6 @@ const modelInfoSet = [
 ];
 
 // ========== WebGL Helpers ==========
-
 function createShader(gl, type, source) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -84,23 +83,29 @@ function loadCubeMap(gl, urls) {
                 gl.texImage2D(face.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
                 resolve();
             };
-            img.onerror = reject;
+            img.onerror = (error) => {
+                console.error(`Failed to load cubemap face: ${face.url}`, error);
+                reject(error);
+            };
             img.src = face.url;
         });
     });
 
-    return Promise.all(promises).then(() => texture);
+    return Promise.all(promises).then(() => {
+        console.log('Cubemap loaded successfully');
+        return texture;
+    }).catch(error => {
+        console.error('Error loading cubemap:', error);
+        return texture;
+    });
 }
 
-// ========== glTF/GLB Loader (省略なし) ==========
+// ========== glTF/GLB Loader & Data Extraction ==========
 async function loadGLTF(url) {
     const response = await fetch(url);
     const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
-    
-    // Check if GLB or glTF
     const contentType = response.headers.get('content-type');
     const isGLB = url.endsWith('.glb') || (contentType && contentType.includes('model/gltf-binary'));
-    
     if (isGLB) {
         const buffer = await response.arrayBuffer();
         return parseGLB(buffer, baseUrl);
@@ -128,10 +133,8 @@ async function parseGLTF(gltf, baseUrl) {
 function parseGLB(buffer, baseUrl) {
     const dataView = new DataView(buffer);
     const magic = dataView.getUint32(0, true);
-    const version = dataView.getUint32(4, true);
-    const length = dataView.getUint32(8, true);
     if (magic !== 0x46546C67) throw new Error('Invalid GLB file');
-    
+    const length = dataView.getUint32(8, true);
     let offset = 12;
     const jsonChunkLength = dataView.getUint32(offset, true);
     offset += 8;
@@ -139,7 +142,6 @@ function parseGLB(buffer, baseUrl) {
     const jsonStr = new TextDecoder().decode(jsonData);
     const gltf = JSON.parse(jsonStr);
     offset += jsonChunkLength;
-    
     const buffers = [];
     if (offset < length) {
         const binChunkLength = dataView.getUint32(offset, true);
@@ -156,13 +158,8 @@ function getAccessorData(gltf, buffers, accessorIndex) {
     const binData = buffers[bufferIndex];
     const byteOffset = (bufferView.byteOffset || 0) + (accessor.byteOffset || 0);
     const count = accessor.count;
-    
-    const componentTypes = {
-        5120: Int8Array, 5121: Uint8Array, 5122: Int16Array,
-        5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array
-    };
+    const componentTypes = { 5120: Int8Array, 5121: Uint8Array, 5122: Int16Array, 5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array };
     const numComponents = { 'SCALAR': 1, 'VEC2': 2, 'VEC3': 3, 'VEC4': 4, 'MAT4': 16 };
-    
     const TypedArray = componentTypes[accessor.componentType];
     const components = numComponents[accessor.type];
     const byteStride = bufferView.byteStride || 0;
@@ -187,11 +184,9 @@ function getAccessorData(gltf, buffers, accessorIndex) {
 function loadTextureFromGLTF(gl, gltf, buffers, baseUrl, textureIndex) {
     const texture = gltf.textures[textureIndex];
     const image = gltf.images[texture.source];
-    
     const glTexture = gl.createTexture();
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    
     return new Promise((resolve) => {
         img.onload = () => {
             gl.bindTexture(gl.TEXTURE_2D, glTexture);
@@ -203,24 +198,20 @@ function loadTextureFromGLTF(gl, gltf, buffers, baseUrl, textureIndex) {
             gl.generateMipmap(gl.TEXTURE_2D);
             resolve(glTexture);
         };
-        
-        if (image.uri) {
-            img.src = new URL(image.uri, baseUrl).href;
-        } else if (image.bufferView !== undefined) {
+        if (image.uri) { img.src = new URL(image.uri, baseUrl).href; }
+        else if (image.bufferView !== undefined) {
             const bufferView = gltf.bufferViews[image.bufferView];
             const bufferIndex = bufferView.buffer || 0;
             const binData = buffers[bufferIndex];
             const byteOffset = bufferView.byteOffset || 0;
             const byteLength = bufferView.byteLength;
-            const imageData = new Uint8Array(binData.buffer, binData.byteOffset + byteOffset, byteLength);
-            const blob = new Blob([imageData], { type: image.mimeType });
+            const blob = new Blob([new Uint8Array(binData.buffer, binData.byteOffset + byteOffset, byteLength)], { type: image.mimeType });
             img.src = URL.createObjectURL(blob);
         }
     });
 }
 
-// ========== Mesh Processing & Helpers ==========
-
+// ========== Mesh Processing ==========
 function calculateBoundingBox(positions) {
     const min = [Infinity, Infinity, Infinity];
     const max = [-Infinity, -Infinity, -Infinity];
@@ -245,7 +236,6 @@ function mergeBoundingBoxes(a, b) {
 async function processMesh(gl, gltf, buffers, baseUrl, meshIndex) {
     const mesh = gltf.meshes[meshIndex];
     const primitives = [];
-    
     for (const primitive of mesh.primitives) {
         const attrs = primitive.attributes;
         const positions = getAccessorData(gltf, buffers, attrs.POSITION);
@@ -305,7 +295,6 @@ async function processMesh(gl, gltf, buffers, baseUrl, meshIndex) {
                 }
             }
         }
-        
         primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox });
     }
     
@@ -314,17 +303,78 @@ async function processMesh(gl, gltf, buffers, baseUrl, meshIndex) {
     return { primitives, bbox: combinedBbox };
 }
 
-function getNodeTransform(node) {
-    const matrix = mat4.create();
-    if (node.matrix) {
-        mat4.copy(matrix, node.matrix);
-    } else {
-        const translation = node.translation || [0, 0, 0];
-        const rotation = node.rotation || [0, 0, 0, 1];
-        const scale = node.scale || [1, 1, 1];
-        mat4.fromRotationTranslationScale(matrix, rotation, translation, scale);
-    }
-    return matrix;
+// ========== Animation Processing ==========
+
+function loadAnimations(gltf, buffers) {
+    if (!gltf.animations) return [];
+
+    return gltf.animations.map(anim => {
+        const channels = anim.channels.map(channel => {
+            const sampler = anim.samplers[channel.sampler];
+            const inputData = getAccessorData(gltf, buffers, sampler.input);
+            const outputData = getAccessorData(gltf, buffers, sampler.output);
+            
+            return {
+                targetNode: channel.target.node,
+                targetPath: channel.target.path, // 'translation', 'rotation', 'scale'
+                input: inputData,   // 時間 (Times)
+                output: outputData, // 値 (Values)
+                interpolation: sampler.interpolation || 'LINEAR'
+            };
+        });
+        
+        let maxTime = 0;
+        channels.forEach(ch => {
+            if (ch.input.length > 0) {
+                maxTime = Math.max(maxTime, ch.input[ch.input.length - 1]);
+            }
+        });
+
+        return {
+            name: anim.name,
+            channels: channels,
+            duration: maxTime
+        };
+    });
+}
+
+function updateAnimation(animation, nodes, time) {
+    const t = time % animation.duration;
+
+    animation.channels.forEach(channel => {
+        const node = nodes[channel.targetNode];
+        const times = channel.input;
+        const values = channel.output;
+        
+        let prevIndex = 0;
+        let nextIndex = 0;
+        
+        for (let i = 0; i < times.length - 1; i++) {
+            if (t >= times[i] && t < times[i + 1]) {
+                prevIndex = i;
+                nextIndex = i + 1;
+                break;
+            }
+        }
+        
+        const startTime = times[prevIndex];
+        const endTime = times[nextIndex];
+        const factor = (t - startTime) / (endTime - startTime);
+        
+        if (channel.targetPath === 'rotation') {
+            const prev = values.subarray(prevIndex * 4, prevIndex * 4 + 4);
+            const next = values.subarray(nextIndex * 4, nextIndex * 4 + 4);
+            quat.slerp(node.rotation, prev, next, factor);
+        } else if (channel.targetPath === 'translation') {
+            const prev = values.subarray(prevIndex * 3, prevIndex * 3 + 3);
+            const next = values.subarray(nextIndex * 3, nextIndex * 3 + 3);
+            vec3.lerp(node.translation, prev, next, factor);
+        } else if (channel.targetPath === 'scale') {
+            const prev = values.subarray(prevIndex * 3, prevIndex * 3 + 3);
+            const next = values.subarray(nextIndex * 3, nextIndex * 3 + 3);
+            vec3.lerp(node.scale, prev, next, factor);
+        }
+    });
 }
 
 // ========== Main ==========
@@ -341,9 +391,6 @@ async function main() {
     resize();
     window.addEventListener('resize', resize);
     
-    // ----------------------------------------------------------------
-    // Setup Standard Model Program
-    // ----------------------------------------------------------------
     const vsSource = document.getElementById('vs').textContent;
     const fsSource = document.getElementById('fs').textContent;
     const program = createProgram(gl, vsSource, fsSource);
@@ -361,6 +408,10 @@ async function main() {
         uBaseColor: gl.getUniformLocation(program, 'uBaseColor'),
         uLightDir: gl.getUniformLocation(program, 'uLightDir')
     };
+
+    let sceneBbox = { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
+    
+    const loadedModels = [];
 
     // ----------------------------------------------------------------
     // Setup Skybox Program & Geometry
@@ -399,7 +450,6 @@ async function main() {
     // Load Resources (GLTF & CubeMap)
     // ----------------------------------------------------------------
     const allMeshData = [];
-    let sceneBbox = { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
 
     // Load Skybox Texture
     const skyboxPath = 'https://raw.githubusercontent.com/mrdoob/three.js/3c13d929f8d9a02c89f010a487e73ff0e57437c4/examples/textures/cube/skyboxsun25deg/';
@@ -410,64 +460,86 @@ async function main() {
         skyboxPath + 'pz' + skyboxFormat, skyboxPath + 'nz' + skyboxFormat
     ];
     
-    const skyboxTexturePromise = loadCubeMap(gl, skyboxUrls);
-
-    // Load Models (Process as before)
+    const skyboxTexture = await loadCubeMap(gl, skyboxUrls);
     for (const modelInfo of modelInfoSet) {
         console.log(`Loading ${modelInfo.name}...`);
         const { gltf, buffers, baseUrl } = await loadGLTF(modelInfo.url);
         
-        const scene = gltf.scenes[gltf.scene || 0];
-        
-        async function processNode(nodeIndex, parentMatrix) {
-            const node = gltf.nodes[nodeIndex];
-            const localMatrix = getNodeTransform(node);
-            const worldMatrix = mat4.create();
-            mat4.multiply(worldMatrix, parentMatrix, localMatrix);
-            
-            if (node.mesh !== undefined) {
-                const { primitives, bbox } = await processMesh(gl, gltf, buffers, baseUrl, node.mesh);
-                
-                const finalMatrix = mat4.create();
-                mat4.translate(finalMatrix, finalMatrix, modelInfo.position);
-                mat4.rotateY(finalMatrix, finalMatrix, modelInfo.rotation[1]);
-                mat4.rotateX(finalMatrix, finalMatrix, modelInfo.rotation[0]);
-                mat4.rotateZ(finalMatrix, finalMatrix, modelInfo.rotation[2]);
-                mat4.scale(finalMatrix, finalMatrix, [modelInfo.scale, modelInfo.scale, modelInfo.scale]);
-                mat4.multiply(finalMatrix, finalMatrix, worldMatrix);
-                
-                allMeshData.push({ primitives, matrix: finalMatrix });
-                
-                // Update Scene BBox logic...
-                const corners = [
-                    [bbox.min[0], bbox.min[1], bbox.min[2]], [bbox.max[0], bbox.min[1], bbox.min[2]],
-                    [bbox.min[0], bbox.max[1], bbox.min[2]], [bbox.max[0], bbox.max[1], bbox.min[2]],
-                    [bbox.min[0], bbox.min[1], bbox.max[2]], [bbox.max[0], bbox.min[1], bbox.max[2]],
-                    [bbox.min[0], bbox.max[1], bbox.max[2]], [bbox.max[0], bbox.max[1], bbox.max[2]]
-                ];
-                for (const corner of corners) {
-                    const transformed = vec3.transformMat4(vec3.create(), corner, finalMatrix);
-                    sceneBbox.min[0] = Math.min(sceneBbox.min[0], transformed[0]);
-                    sceneBbox.min[1] = Math.min(sceneBbox.min[1], transformed[1]);
-                    sceneBbox.min[2] = Math.min(sceneBbox.min[2], transformed[2]);
-                    sceneBbox.max[0] = Math.max(sceneBbox.max[0], transformed[0]);
-                    sceneBbox.max[1] = Math.max(sceneBbox.max[1], transformed[1]);
-                    sceneBbox.max[2] = Math.max(sceneBbox.max[2], transformed[2]);
-                }
-            }
-            if (node.children) {
-                for (const childIndex of node.children) await processNode(childIndex, worldMatrix);
+        const nodes = gltf.nodes.map(node => {
+            return {
+                translation: node.translation ? vec3.clone(node.translation) : vec3.fromValues(0, 0, 0),
+                rotation: node.rotation ? quat.clone(node.rotation) : quat.fromValues(0, 0, 0, 1),
+                scale: node.scale ? vec3.clone(node.scale) : vec3.fromValues(1, 1, 1),
+                matrix: mat4.create(),       
+                worldMatrix: mat4.create(),  
+                meshIndex: node.mesh,
+                children: node.children || []
+            };
+        });
+
+        const meshes = [];
+        if (gltf.meshes) {
+            for (let i = 0; i < gltf.meshes.length; i++) {
+                const { primitives, bbox } = await processMesh(gl, gltf, buffers, baseUrl, i);
+                meshes.push({ primitives, bbox });
             }
         }
-        
-        const rootMatrix = mat4.create();
-        for (const nodeIndex of scene.nodes) await processNode(nodeIndex, rootMatrix);
-    }
-    
-    const skyboxTexture = await skyboxTexturePromise;
-    console.log("Skybox loaded");
 
-    // Camera setup
+        const animations = loadAnimations(gltf, buffers);
+
+        const scene = gltf.scenes[gltf.scene || 0];
+        
+        const baseTransform = mat4.create();
+        mat4.translate(baseTransform, baseTransform, modelInfo.position);
+        mat4.rotateY(baseTransform, baseTransform, modelInfo.rotation[1]);
+        mat4.rotateX(baseTransform, baseTransform, modelInfo.rotation[0]);
+        mat4.rotateZ(baseTransform, baseTransform, modelInfo.rotation[2]);
+        mat4.scale(baseTransform, baseTransform, [modelInfo.scale, modelInfo.scale, modelInfo.scale]);
+
+        loadedModels.push({
+            nodes,
+            meshes,
+            animations,
+            rootNodes: scene.nodes,
+            baseTransform
+        });
+
+        for (const nodeIndex of scene.nodes) {
+            function traverseBBox(idx, parentMat) {
+                const node = nodes[idx];
+                const localMat = mat4.create();
+                mat4.fromRotationTranslationScale(localMat, node.rotation, node.translation, node.scale);
+                const worldMat = mat4.create();
+                mat4.multiply(worldMat, parentMat, localMat);
+
+                if (node.meshIndex !== undefined) {
+                    const mesh = meshes[node.meshIndex];
+                    const corners = [
+                        [mesh.bbox.min[0], mesh.bbox.min[1], mesh.bbox.min[2]],
+                        [mesh.bbox.max[0], mesh.bbox.min[1], mesh.bbox.min[2]],
+                        [mesh.bbox.min[0], mesh.bbox.max[1], mesh.bbox.min[2]],
+                        [mesh.bbox.max[0], mesh.bbox.max[1], mesh.bbox.min[2]],
+                        [mesh.bbox.min[0], mesh.bbox.min[1], mesh.bbox.max[2]],
+                        [mesh.bbox.max[0], mesh.bbox.min[1], mesh.bbox.max[2]],
+                        [mesh.bbox.min[0], mesh.bbox.max[1], mesh.bbox.max[2]],
+                        [mesh.bbox.max[0], mesh.bbox.max[1], mesh.bbox.max[2]]
+                    ];
+                    for (const corner of corners) {
+                        const t = vec3.transformMat4(vec3.create(), corner, worldMat);
+                        sceneBbox.min[0] = Math.min(sceneBbox.min[0], t[0]);
+                        sceneBbox.min[1] = Math.min(sceneBbox.min[1], t[1]);
+                        sceneBbox.min[2] = Math.min(sceneBbox.min[2], t[2]);
+                        sceneBbox.max[0] = Math.max(sceneBbox.max[0], t[0]);
+                        sceneBbox.max[1] = Math.max(sceneBbox.max[1], t[1]);
+                        sceneBbox.max[2] = Math.max(sceneBbox.max[2], t[2]);
+                    }
+                }
+                for (const childId of node.children) traverseBBox(childId, worldMat);
+            }
+            traverseBBox(nodeIndex, baseTransform);
+        }
+    }
+
     const center = [
         (sceneBbox.min[0] + sceneBbox.max[0]) / 2,
         (sceneBbox.min[1] + sceneBbox.max[1]) / 2,
@@ -480,25 +552,22 @@ async function main() {
     ];
     const maxSize = Math.max(size[0], size[1], size[2]);
     const cameraDistance = maxSize * 1.5;
-    
-    // Matrices
+
     const projectionMatrix = mat4.create();
     const viewMatrix = mat4.create();
-    const modelMatrix = mat4.create();
     const normalMatrix = mat3.create();
-    const viewMatrixNoTranslation = mat4.create(); // Skybox用
-    
-    // GL state
+
+    const startTime = Date.now() / 1000;
+
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
-    
+
     function render() {
-        const time = Date.now() / 1000;
-        
-        // 1. Clear Screen
+        const time = Date.now() / 1000 - startTime;
+
         gl.clearColor(0.2, 0.2, 0.2, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        
+
         const aspect = canvas.width / canvas.height;
         mat4.perspective(projectionMatrix, Math.PI / 4, aspect, cameraDistance * 0.01, cameraDistance * 10);
         
@@ -506,67 +575,78 @@ async function main() {
         const cameraY = center[1] + cameraDistance * 0.3;
         const cameraZ = center[2] + Math.cos(time * 0.5) * cameraDistance;
         mat4.lookAt(viewMatrix, [cameraX, cameraY, cameraZ], center, [0, 1, 0]);
-        
-        // ----------------------------------------------------------------
-        // 2. Draw Models
-        // ----------------------------------------------------------------
+
+        // Draw Skybox
+        gl.depthFunc(gl.LEQUAL);
+        gl.useProgram(sbProgram);
+        const skyboxView = mat4.clone(viewMatrix);
+        skyboxView[12] = 0; skyboxView[13] = 0; skyboxView[14] = 0; // Remove translation
+        gl.uniformMatrix4fv(sbLoc.uProjectionMatrix, false, projectionMatrix);
+        gl.uniformMatrix4fv(sbLoc.uViewMatrix, false, skyboxView);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
+        gl.uniform1i(sbLoc.uSkybox, 0);
+        gl.bindVertexArray(sbVao);
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
+        gl.depthFunc(gl.LESS);
+
+        // Draw Models
         gl.useProgram(program);
         gl.uniformMatrix4fv(loc.uProjectionMatrix, false, projectionMatrix);
         gl.uniformMatrix4fv(loc.uViewMatrix, false, viewMatrix);
         gl.uniform3fv(loc.uLightDir, [1, 1, 1]);
-        
-        for (const mesh of allMeshData) {
-            mat4.copy(modelMatrix, mesh.matrix);
-            mat3.normalFromMat4(normalMatrix, modelMatrix);
-            gl.uniformMatrix4fv(loc.uModelMatrix, false, modelMatrix);
-            gl.uniformMatrix3fv(loc.uNormalMatrix, false, normalMatrix);
-            
-            for (const prim of mesh.primitives) {
-                gl.bindVertexArray(prim.vao);
-                if (prim.texture) {
-                    gl.activeTexture(gl.TEXTURE0);
-                    gl.bindTexture(gl.TEXTURE_2D, prim.texture);
-                    gl.uniform1i(loc.uTexture, 0);
-                    gl.uniform1i(loc.uHasTexture, 1);
-                } else {
-                    gl.uniform1i(loc.uHasTexture, 0);
+
+        for (const model of loadedModels) {
+            if (model.animations.length > 0) {
+                updateAnimation(model.animations[0], model.nodes, time);
+            }
+
+            const updateHierarchy = (nodeIndex, parentMatrix) => {
+                const node = model.nodes[nodeIndex];
+                
+                mat4.fromRotationTranslationScale(node.matrix, node.rotation, node.translation, node.scale);
+                
+                mat4.multiply(node.worldMatrix, parentMatrix, node.matrix);
+
+                if (node.meshIndex !== undefined) {
+                    const mesh = model.meshes[node.meshIndex];
+                    
+                    mat3.normalFromMat4(normalMatrix, node.worldMatrix);
+                    gl.uniformMatrix4fv(loc.uModelMatrix, false, node.worldMatrix);
+                    gl.uniformMatrix3fv(loc.uNormalMatrix, false, normalMatrix);
+
+                    for (const prim of mesh.primitives) {
+                        gl.bindVertexArray(prim.vao);
+                        if (prim.texture) {
+                            gl.activeTexture(gl.TEXTURE0);
+                            gl.bindTexture(gl.TEXTURE_2D, prim.texture);
+                            gl.uniform1i(loc.uTexture, 0);
+                            gl.uniform1i(loc.uHasTexture, 1);
+                        } else {
+                            gl.uniform1i(loc.uHasTexture, 0);
+                        }
+                        gl.uniform4fv(loc.uBaseColor, prim.baseColor);
+                        
+                        if (prim.hasIndices) {
+                            gl.drawElements(gl.TRIANGLES, prim.indexCount, prim.indexType, 0);
+                        } else {
+                            gl.drawArrays(gl.TRIANGLES, 0, prim.indexCount);
+                        }
+                    }
                 }
-                gl.uniform4fv(loc.uBaseColor, prim.baseColor);
-                if (prim.hasIndices) {
-                    gl.drawElements(gl.TRIANGLES, prim.indexCount, prim.indexType, 0);
-                } else {
-                    gl.drawArrays(gl.TRIANGLES, 0, prim.indexCount);
+
+                for (const childId of node.children) {
+                    updateHierarchy(childId, node.worldMatrix);
                 }
+            };
+
+            for (const rootNodeId of model.rootNodes) {
+                updateHierarchy(rootNodeId, model.baseTransform);
             }
         }
-        
-        // ----------------------------------------------------------------
-        // 3. Draw Skybox
-        // ----------------------------------------------------------------
-        gl.depthFunc(gl.LEQUAL);
-        gl.useProgram(sbProgram);
-        
-        mat4.copy(viewMatrixNoTranslation, viewMatrix);
-        viewMatrixNoTranslation[12] = 0;
-        viewMatrixNoTranslation[13] = 0;
-        viewMatrixNoTranslation[14] = 0;
-        
-        gl.uniformMatrix4fv(sbLoc.uProjectionMatrix, false, projectionMatrix);
-        gl.uniformMatrix4fv(sbLoc.uViewMatrix, false, viewMatrixNoTranslation);
-        
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
-        gl.uniform1i(sbLoc.uSkybox, 0);
-        
-        gl.bindVertexArray(sbVao);
-        gl.drawArrays(gl.TRIANGLES, 0, 36);
-        gl.bindVertexArray(null);
-        
-        gl.depthFunc(gl.LESS);
-        
+
         requestAnimationFrame(render);
     }
-    
     render();
 }
 

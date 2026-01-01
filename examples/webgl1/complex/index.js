@@ -1,4 +1,4 @@
-const { mat4, mat3, vec3 } = glMatrix;
+const { mat4, mat3, vec3, quat } = glMatrix;
 
 // Load glTF/GLB
 const modelInfoSet = [
@@ -337,6 +337,80 @@ function getNodeTransform(node) {
     return matrix;
 }
 
+// ========== Animation Processing ==========
+
+function loadAnimations(gltf, buffers) {
+    if (!gltf.animations) return [];
+
+    return gltf.animations.map(anim => {
+        const channels = anim.channels.map(channel => {
+            const sampler = anim.samplers[channel.sampler];
+            const inputData = getAccessorData(gltf, buffers, sampler.input);
+            const outputData = getAccessorData(gltf, buffers, sampler.output);
+            
+            return {
+                targetNode: channel.target.node,
+                targetPath: channel.target.path, // 'translation', 'rotation', 'scale'
+                input: inputData,   // 時間 (Times)
+                output: outputData, // 値 (Values)
+                interpolation: sampler.interpolation || 'LINEAR'
+            };
+        });
+        
+        let maxTime = 0;
+        channels.forEach(ch => {
+            if (ch.input.length > 0) {
+                maxTime = Math.max(maxTime, ch.input[ch.input.length - 1]);
+            }
+        });
+
+        return {
+            name: anim.name,
+            channels: channels,
+            duration: maxTime
+        };
+    });
+}
+
+function updateAnimation(animation, nodes, time) {
+    const t = time % animation.duration;
+
+    animation.channels.forEach(channel => {
+        const node = nodes[channel.targetNode];
+        const times = channel.input;
+        const values = channel.output;
+        
+        let prevIndex = 0;
+        let nextIndex = 0;
+        
+        for (let i = 0; i < times.length - 1; i++) {
+            if (t >= times[i] && t < times[i + 1]) {
+                prevIndex = i;
+                nextIndex = i + 1;
+                break;
+            }
+        }
+        
+        const startTime = times[prevIndex];
+        const endTime = times[nextIndex];
+        const factor = (t - startTime) / (endTime - startTime);
+        
+        if (channel.targetPath === 'rotation') {
+            const prev = values.subarray(prevIndex * 4, prevIndex * 4 + 4);
+            const next = values.subarray(nextIndex * 4, nextIndex * 4 + 4);
+            quat.slerp(node.rotation, prev, next, factor);
+        } else if (channel.targetPath === 'translation') {
+            const prev = values.subarray(prevIndex * 3, prevIndex * 3 + 3);
+            const next = values.subarray(nextIndex * 3, nextIndex * 3 + 3);
+            vec3.lerp(node.translation, prev, next, factor);
+        } else if (channel.targetPath === 'scale') {
+            const prev = values.subarray(prevIndex * 3, prevIndex * 3 + 3);
+            const next = values.subarray(nextIndex * 3, nextIndex * 3 + 3);
+            vec3.lerp(node.scale, prev, next, factor);
+        }
+    });
+}
+
 // ========== Main ==========
 
 async function main() {
@@ -414,7 +488,6 @@ async function main() {
     // ----------------------------------------------------------------
     // Load Resources
     // ----------------------------------------------------------------
-    const allMeshData = [];
     let sceneBbox = { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
     
     // Load Skybox Texture
@@ -426,61 +499,90 @@ async function main() {
         skyboxPath + 'pz' + skyboxFormat, skyboxPath + 'nz' + skyboxFormat
     ];
     
-    const skyboxTexturePromise = loadCubeMap(gl, skyboxUrls);
+    const skyboxTexture = await loadCubeMap(gl, skyboxUrls);
+    console.log("Skybox loaded");
+    
+    const loadedModels = [];
 
-    // Load Models (as before)
+    // Load Models with node hierarchy
     for (const modelInfo of modelInfoSet) {
         console.log(`Loading ${modelInfo.name}...`);
         const { gltf, buffers, baseUrl } = await loadGLTF(modelInfo.url);
         
-        const scene = gltf.scenes[gltf.scene || 0];
-        
-        async function processNode(nodeIndex, parentMatrix) {
-            const node = gltf.nodes[nodeIndex];
-            const localMatrix = getNodeTransform(node);
-            const worldMatrix = mat4.create();
-            mat4.multiply(worldMatrix, parentMatrix, localMatrix);
-            
-            if (node.mesh !== undefined) {
-                const { primitives, bbox } = await processMesh(gl, extVAO, gltf, buffers, baseUrl, node.mesh);
-                
-                const finalMatrix = mat4.create();
-                mat4.translate(finalMatrix, finalMatrix, modelInfo.position);
-                mat4.rotateY(finalMatrix, finalMatrix, modelInfo.rotation[1]);
-                mat4.rotateX(finalMatrix, finalMatrix, modelInfo.rotation[0]);
-                mat4.rotateZ(finalMatrix, finalMatrix, modelInfo.rotation[2]);
-                mat4.scale(finalMatrix, finalMatrix, [modelInfo.scale, modelInfo.scale, modelInfo.scale]);
-                mat4.multiply(finalMatrix, finalMatrix, worldMatrix);
-                
-                allMeshData.push({ primitives, matrix: finalMatrix });
-                
-                const corners = [
-                    [bbox.min[0], bbox.min[1], bbox.min[2]], [bbox.max[0], bbox.min[1], bbox.min[2]],
-                    [bbox.min[0], bbox.max[1], bbox.min[2]], [bbox.max[0], bbox.max[1], bbox.min[2]],
-                    [bbox.min[0], bbox.min[1], bbox.max[2]], [bbox.max[0], bbox.min[1], bbox.max[2]],
-                    [bbox.min[0], bbox.max[1], bbox.max[2]], [bbox.max[0], bbox.max[1], bbox.max[2]]
-                ];
-                for (const corner of corners) {
-                    const transformed = vec3.transformMat4(vec3.create(), corner, finalMatrix);
-                    sceneBbox.min[0] = Math.min(sceneBbox.min[0], transformed[0]);
-                    sceneBbox.min[1] = Math.min(sceneBbox.min[1], transformed[1]);
-                    sceneBbox.min[2] = Math.min(sceneBbox.min[2], transformed[2]);
-                    sceneBbox.max[0] = Math.max(sceneBbox.max[0], transformed[0]);
-                    sceneBbox.max[1] = Math.max(sceneBbox.max[1], transformed[1]);
-                    sceneBbox.max[2] = Math.max(sceneBbox.max[2], transformed[2]);
-                }
-            }
-            if (node.children) {
-                for (const childIndex of node.children) await processNode(childIndex, worldMatrix);
+        const nodes = gltf.nodes.map(node => {
+            return {
+                translation: node.translation ? vec3.clone(node.translation) : vec3.fromValues(0, 0, 0),
+                rotation: node.rotation ? quat.clone(node.rotation) : quat.fromValues(0, 0, 0, 1),
+                scale: node.scale ? vec3.clone(node.scale) : vec3.fromValues(1, 1, 1),
+                matrix: mat4.create(),       
+                worldMatrix: mat4.create(),  
+                meshIndex: node.mesh,
+                children: node.children || []
+            };
+        });
+
+        const meshes = [];
+        if (gltf.meshes) {
+            for (let i = 0; i < gltf.meshes.length; i++) {
+                const { primitives, bbox } = await processMesh(gl, extVAO, gltf, buffers, baseUrl, i);
+                meshes.push({ primitives, bbox });
             }
         }
+
+        const animations = loadAnimations(gltf, buffers);
+
+        const scene = gltf.scenes[gltf.scene || 0];
         
-        const rootMatrix = mat4.create();
-        for (const nodeIndex of scene.nodes) await processNode(nodeIndex, rootMatrix);
+        const baseTransform = mat4.create();
+        mat4.translate(baseTransform, baseTransform, modelInfo.position);
+        mat4.rotateY(baseTransform, baseTransform, modelInfo.rotation[1]);
+        mat4.rotateX(baseTransform, baseTransform, modelInfo.rotation[0]);
+        mat4.rotateZ(baseTransform, baseTransform, modelInfo.rotation[2]);
+        mat4.scale(baseTransform, baseTransform, [modelInfo.scale, modelInfo.scale, modelInfo.scale]);
+
+        loadedModels.push({
+            nodes,
+            meshes,
+            animations,
+            rootNodes: scene.nodes,
+            baseTransform
+        });
+
+        for (const nodeIndex of scene.nodes) {
+            function traverseBBox(idx, parentMat) {
+                const node = nodes[idx];
+                const localMat = mat4.create();
+                mat4.fromRotationTranslationScale(localMat, node.rotation, node.translation, node.scale);
+                const worldMat = mat4.create();
+                mat4.multiply(worldMat, parentMat, localMat);
+
+                if (node.meshIndex !== undefined) {
+                    const mesh = meshes[node.meshIndex];
+                    const corners = [
+                        [mesh.bbox.min[0], mesh.bbox.min[1], mesh.bbox.min[2]],
+                        [mesh.bbox.max[0], mesh.bbox.min[1], mesh.bbox.min[2]],
+                        [mesh.bbox.min[0], mesh.bbox.max[1], mesh.bbox.min[2]],
+                        [mesh.bbox.max[0], mesh.bbox.max[1], mesh.bbox.min[2]],
+                        [mesh.bbox.min[0], mesh.bbox.min[1], mesh.bbox.max[2]],
+                        [mesh.bbox.max[0], mesh.bbox.min[1], mesh.bbox.max[2]],
+                        [mesh.bbox.min[0], mesh.bbox.max[1], mesh.bbox.max[2]],
+                        [mesh.bbox.max[0], mesh.bbox.max[1], mesh.bbox.max[2]]
+                    ];
+                    for (const corner of corners) {
+                        const t = vec3.transformMat4(vec3.create(), corner, worldMat);
+                        sceneBbox.min[0] = Math.min(sceneBbox.min[0], t[0]);
+                        sceneBbox.min[1] = Math.min(sceneBbox.min[1], t[1]);
+                        sceneBbox.min[2] = Math.min(sceneBbox.min[2], t[2]);
+                        sceneBbox.max[0] = Math.max(sceneBbox.max[0], t[0]);
+                        sceneBbox.max[1] = Math.max(sceneBbox.max[1], t[1]);
+                        sceneBbox.max[2] = Math.max(sceneBbox.max[2], t[2]);
+                    }
+                }
+                for (const childId of node.children) traverseBBox(childId, worldMat);
+            }
+            traverseBBox(nodeIndex, baseTransform);
+        }
     }
-    
-    const skyboxTexture = await skyboxTexturePromise;
-    console.log("Skybox loaded");
             
     // Camera
     const center = [
@@ -527,31 +629,52 @@ async function main() {
         gl.uniformMatrix4fv(loc.uViewMatrix, false, viewMatrix);
         gl.uniform3fv(loc.uLightDir, [1, 1, 1]);
         
-        for (const mesh of allMeshData) {
-            mat4.copy(modelMatrix, mesh.matrix);
-            mat3.normalFromMat4(normalMatrix, modelMatrix);
-            
-            gl.uniformMatrix4fv(loc.uModelMatrix, false, modelMatrix);
-            gl.uniformMatrix3fv(loc.uNormalMatrix, false, normalMatrix);
-            
-            for (const prim of mesh.primitives) {
-                extVAO.bindVertexArrayOES(prim.vao);
+        for (const model of loadedModels) {
+            if (model.animations.length > 0) {
+                updateAnimation(model.animations[0], model.nodes, time);
+            }
+
+            const updateHierarchy = (nodeIndex, parentMatrix) => {
+                const node = model.nodes[nodeIndex];
                 
-                if (prim.texture) {
-                    gl.activeTexture(gl.TEXTURE0);
-                    gl.bindTexture(gl.TEXTURE_2D, prim.texture);
-                    gl.uniform1i(loc.uTexture, 0);
-                    gl.uniform1i(loc.uHasTexture, 1);
-                } else {
-                    gl.uniform1i(loc.uHasTexture, 0);
-                }
-                gl.uniform4fv(loc.uBaseColor, prim.baseColor);
+                mat4.fromRotationTranslationScale(node.matrix, node.rotation, node.translation, node.scale);
                 
-                if (prim.hasIndices) {
-                    gl.drawElements(gl.TRIANGLES, prim.indexCount, prim.indexType, 0);
-                } else {
-                    gl.drawArrays(gl.TRIANGLES, 0, prim.indexCount);
+                mat4.multiply(node.worldMatrix, parentMatrix, node.matrix);
+
+                if (node.meshIndex !== undefined) {
+                    const mesh = model.meshes[node.meshIndex];
+                    
+                    mat3.normalFromMat4(normalMatrix, node.worldMatrix);
+                    gl.uniformMatrix4fv(loc.uModelMatrix, false, node.worldMatrix);
+                    gl.uniformMatrix3fv(loc.uNormalMatrix, false, normalMatrix);
+
+                    for (const prim of mesh.primitives) {
+                        extVAO.bindVertexArrayOES(prim.vao);
+                        if (prim.texture) {
+                            gl.activeTexture(gl.TEXTURE0);
+                            gl.bindTexture(gl.TEXTURE_2D, prim.texture);
+                            gl.uniform1i(loc.uTexture, 0);
+                            gl.uniform1i(loc.uHasTexture, 1);
+                        } else {
+                            gl.uniform1i(loc.uHasTexture, 0);
+                        }
+                        gl.uniform4fv(loc.uBaseColor, prim.baseColor);
+                        
+                        if (prim.hasIndices) {
+                            gl.drawElements(gl.TRIANGLES, prim.indexCount, prim.indexType, 0);
+                        } else {
+                            gl.drawArrays(gl.TRIANGLES, 0, prim.indexCount);
+                        }
+                    }
                 }
+
+                for (const childId of node.children) {
+                    updateHierarchy(childId, node.worldMatrix);
+                }
+            };
+
+            for (const rootNodeId of model.rootNodes) {
+                updateHierarchy(rootNodeId, model.baseTransform);
             }
         }
 
