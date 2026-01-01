@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>[WIP] WebGL2 Primitives with Manifold-3D</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="info">Loading...</div>
+
+<script id="vs" type="x-shader/x-vertex">#version 300 es
+in vec3 aPosition;
+in vec2 aTexCoord;
+
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+
+out vec2 vTexCoord;
+
+void main() {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+    vTexCoord = aTexCoord;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+
+in vec2 vTexCoord;
+uniform sampler2D uTexture;
+
+out vec4 fragColor;
+
+void main() {
+    fragColor = texture(uTexture, vTexCoord);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+<script src="https://unpkg.com/gl-matrix@3.4.4/gl-matrix-min.js"></script>
+<script type="module" src="index.js"></script>
+</body>
+</html>
