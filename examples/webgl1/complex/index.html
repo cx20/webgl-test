@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>[WIP] Testing Composite sample Using WebGL 1.0</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="//code.jquery.com/jquery-3.4.0.js"></script>
+  <script src="https://unpkg.com/gl-matrix@3.4.4/gl-matrix-min.js"></script>
+</head>
+<body>
+
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;
+
+uniform mat4 uModelMatrix;
+uniform mat4 uViewMatrix;
+uniform mat4 uProjectionMatrix;
+uniform mat3 uNormalMatrix;
+
+varying vec3 vNormal;
+varying vec2 vTexCoord;
+varying vec3 vPosition;
+
+void main() {
+    vec4 worldPosition = uModelMatrix * vec4(aPosition, 1.0);
+    vPosition = worldPosition.xyz;
+    vNormal = uNormalMatrix * aNormal;
+    vTexCoord = aTexCoord;
+    gl_Position = uProjectionMatrix * uViewMatrix * worldPosition;
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+precision highp float;
+
+varying vec3 vNormal;
+varying vec2 vTexCoord;
+varying vec3 vPosition;
+
+uniform sampler2D uTexture;
+uniform bool uHasTexture;
+uniform vec4 uBaseColor;
+uniform vec3 uLightDir;
+
+void main() {
+    vec3 normal = normalize(vNormal);
+    vec3 lightDir = normalize(uLightDir);
+    
+    float diff = max(dot(normal, lightDir), 0.0);
+    float ambient = 0.3;
+    float lighting = ambient + diff * 0.7;
+    
+    vec4 baseColor;
+    if (uHasTexture) {
+        baseColor = texture2D(uTexture, vTexCoord);
+    } else {
+        baseColor = uBaseColor;
+    }
+    
+    gl_FragColor = vec4(baseColor.rgb * lighting, baseColor.a);
+}
+</script>
+
+<canvas id="c" width="465" height="465"></canvas>
+<script type="module" src="index.js"></script>
+</body>
+</html>
