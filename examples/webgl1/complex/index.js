@@ -597,6 +597,43 @@ async function main() {
     extVAO.bindVertexArrayOES(null);
 
     // ----------------------------------------------------------------
+    // Setup Tire Track Program & Geometry
+    // ----------------------------------------------------------------
+    const trackVsSource = document.getElementById('vs-track').textContent;
+    const trackFsSource = document.getElementById('fs-track').textContent;
+    const trackProgram = createProgram(gl, trackVsSource, trackFsSource);
+
+    const trackLoc = {
+        aPosition: gl.getAttribLocation(trackProgram, 'aPosition'),
+        uModelMatrix: gl.getUniformLocation(trackProgram, 'uModelMatrix'),
+        uViewMatrix: gl.getUniformLocation(trackProgram, 'uViewMatrix'),
+        uProjectionMatrix: gl.getUniformLocation(trackProgram, 'uProjectionMatrix'),
+        uColor: gl.getUniformLocation(trackProgram, 'uColor')
+    };
+
+    const trackLength = 100;
+    const trackWidth = 0.1;
+    const trackVertices = new Float32Array([
+        -trackLength / 2, 0, -trackWidth / 2,
+         trackLength / 2, 0, -trackWidth / 2,
+         trackLength / 2, 0,  trackWidth / 2,
+        -trackLength / 2, 0, -trackWidth / 2,
+         trackLength / 2, 0,  trackWidth / 2,
+        -trackLength / 2, 0,  trackWidth / 2,
+    ]);
+
+    const trackVao = extVAO.createVertexArrayOES();
+    extVAO.bindVertexArrayOES(trackVao);
+    const trackBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, trackBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, trackVertices, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(trackLoc.aPosition);
+    gl.vertexAttribPointer(trackLoc.aPosition, 3, gl.FLOAT, false, 0, 0);
+    extVAO.bindVertexArrayOES(null);
+
+    const trackColor = [255 / 255, 255 / 255, 255 / 255, 1.0];
+
+    // ----------------------------------------------------------------
     // Load Resources
     // ----------------------------------------------------------------
     let sceneBbox = { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
@@ -746,6 +783,28 @@ async function main() {
         const cameraY = center[1] + cameraDistance * 0.3;
         const cameraZ = center[2] + Math.cos(time * 0.5) * cameraDistance;
         mat4.lookAt(viewMatrix, [cameraX, cameraY, cameraZ], center, [0, 1, 0]);
+
+        // ----------------------------------------------------------------
+        // Draw Tire Tracks
+        // ----------------------------------------------------------------
+        gl.useProgram(trackProgram);
+        gl.uniformMatrix4fv(trackLoc.uProjectionMatrix, false, projectionMatrix);
+        gl.uniformMatrix4fv(trackLoc.uViewMatrix, false, viewMatrix);
+        gl.uniform4fv(trackLoc.uColor, trackColor);
+        extVAO.bindVertexArrayOES(trackVao);
+
+        const track1Matrix = mat4.create();
+        mat4.translate(track1Matrix, track1Matrix, [-49.5, 0, -1.6]);
+        mat4.rotateX(track1Matrix, track1Matrix, Math.PI);
+        gl.uniformMatrix4fv(trackLoc.uModelMatrix, false, track1Matrix);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        const track2Matrix = mat4.create();
+        mat4.translate(track2Matrix, track2Matrix, [-49.5, 0, -2.35]);
+        mat4.rotateX(track2Matrix, track2Matrix, Math.PI);
+        gl.uniformMatrix4fv(trackLoc.uModelMatrix, false, track2Matrix);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        extVAO.bindVertexArrayOES(null);
         
         // ----------------------------------------------------------------
         // Draw Models
