@@ -64,7 +64,9 @@ uniform vec3 uLightDir;
 out vec4 fragColor;
 
 void main() {
-    vec3 normal = normalize(vNormal);
+    // Flat shading: compute normal from surface derivatives
+    vec3 normal = normalize(cross(dFdx(vPosition), dFdy(vPosition)));
+    
     vec3 lightDir = normalize(uLightDir);
     
     float diff = max(dot(normal, lightDir), 0.0);

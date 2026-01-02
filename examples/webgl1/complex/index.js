@@ -259,6 +259,92 @@ function mergeBoundingBoxes(a, b) {
     };
 }
 
+// Compute flat shading normals (per-triangle)
+function computeFlatNormals(positions, indices) {
+    const normals = new Float32Array(positions.length);
+    const vertexNormals = Array.from({ length: positions.length / 3 }, () => [0, 0, 0]);
+    
+    // Calculate face normals and accumulate to vertices
+    if (indices) {
+        for (let i = 0; i < indices.length; i += 3) {
+            const i0 = indices[i] * 3;
+            const i1 = indices[i + 1] * 3;
+            const i2 = indices[i + 2] * 3;
+            
+            const p0 = [positions[i0], positions[i0 + 1], positions[i0 + 2]];
+            const p1 = [positions[i1], positions[i1 + 1], positions[i1 + 2]];
+            const p2 = [positions[i2], positions[i2 + 1], positions[i2 + 2]];
+            
+            const v1 = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]];
+            const v2 = [p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]];
+            
+            // Cross product
+            const normal = [
+                v1[1] * v2[2] - v1[2] * v2[1],
+                v1[2] * v2[0] - v1[0] * v2[2],
+                v1[0] * v2[1] - v1[1] * v2[0]
+            ];
+            
+            // Accumulate to all three vertices of the triangle
+            const vi0 = indices[i];
+            const vi1 = indices[i + 1];
+            const vi2 = indices[i + 2];
+            
+            vertexNormals[vi0][0] += normal[0];
+            vertexNormals[vi0][1] += normal[1];
+            vertexNormals[vi0][2] += normal[2];
+            
+            vertexNormals[vi1][0] += normal[0];
+            vertexNormals[vi1][1] += normal[1];
+            vertexNormals[vi1][2] += normal[2];
+            
+            vertexNormals[vi2][0] += normal[0];
+            vertexNormals[vi2][1] += normal[1];
+            vertexNormals[vi2][2] += normal[2];
+        }
+    } else {
+        // Non-indexed geometry
+        for (let i = 0; i < positions.length; i += 9) {
+            const p0 = [positions[i], positions[i + 1], positions[i + 2]];
+            const p1 = [positions[i + 3], positions[i + 4], positions[i + 5]];
+            const p2 = [positions[i + 6], positions[i + 7], positions[i + 8]];
+            
+            const v1 = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]];
+            const v2 = [p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]];
+            
+            const normal = [
+                v1[1] * v2[2] - v1[2] * v2[1],
+                v1[2] * v2[0] - v1[0] * v2[2],
+                v1[0] * v2[1] - v1[1] * v2[0]
+            ];
+            
+            for (let j = 0; j < 3; j++) {
+                const vi = i / 3 + j;
+                vertexNormals[vi][0] += normal[0];
+                vertexNormals[vi][1] += normal[1];
+                vertexNormals[vi][2] += normal[2];
+            }
+        }
+    }
+    
+    // Normalize
+    for (let i = 0; i < vertexNormals.length; i++) {
+        const n = vertexNormals[i];
+        const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+        if (len > 0) {
+            normals[i * 3] = n[0] / len;
+            normals[i * 3 + 1] = n[1] / len;
+            normals[i * 3 + 2] = n[2] / len;
+        } else {
+            normals[i * 3] = 0;
+            normals[i * 3 + 1] = 1;
+            normals[i * 3 + 2] = 0;
+        }
+    }
+    
+    return normals;
+}
+
 async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
     const mesh = gltf.meshes[meshIndex];
     const primitives = [];
@@ -266,7 +352,14 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
     for (const primitive of mesh.primitives) {
         const attrs = primitive.attributes;
         const positions = getAccessorData(gltf, buffers, attrs.POSITION);
-        const normals = attrs.NORMAL !== undefined ? getAccessorData(gltf, buffers, attrs.NORMAL) : null;
+        let normals = attrs.NORMAL !== undefined ? getAccessorData(gltf, buffers, attrs.NORMAL) : null;
+        // Compute flat shading normals if not provided
+        if (!normals) {
+            normals = computeFlatNormals(positions, primitive.indices !== undefined ? getAccessorData(gltf, buffers, primitive.indices) : null);
+        } else {
+            // Recalculate normals for flat shading (per-triangle)
+            normals = computeFlatNormals(positions, primitive.indices !== undefined ? getAccessorData(gltf, buffers, primitive.indices) : null);
+        }
         const texCoords = attrs.TEXCOORD_0 !== undefined ? getAccessorData(gltf, buffers, attrs.TEXCOORD_0) : null;
         const joints = attrs.JOINTS_0 !== undefined ? getAccessorData(gltf, buffers, attrs.JOINTS_0) : null;
         const weights = attrs.WEIGHTS_0 !== undefined ? getAccessorData(gltf, buffers, attrs.WEIGHTS_0) : null;
@@ -779,7 +872,7 @@ async function main() {
         const aspect = canvas.width / canvas.height;
         mat4.perspective(projectionMatrix, Math.PI / 4, aspect, cameraDistance * 0.01, cameraDistance * 10);
         
-        const cameraX = center[0] + Math.sin(time * 0.5) * cameraDistance;
+        const cameraX = center[0] - Math.sin(time * 0.5) * cameraDistance;
         const cameraY = center[1] + cameraDistance * 0.3;
         const cameraZ = center[2] + Math.cos(time * 0.5) * cameraDistance;
         mat4.lookAt(viewMatrix, [cameraX, cameraY, cameraZ], center, [0, 1, 0]);
