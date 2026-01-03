@@ -58,14 +58,21 @@ in vec3 vPosition;
 
 uniform sampler2D uTexture;
 uniform bool uHasTexture;
+uniform bool uHasNormals;
 uniform vec4 uBaseColor;
 uniform vec3 uLightDir;
 
 out vec4 fragColor;
 
 void main() {
-    // Flat shading: compute normal from surface derivatives
-    vec3 normal = normalize(cross(dFdx(vPosition), dFdy(vPosition)));
+    // Use interpolated normals if available, otherwise use flat shading
+    vec3 normal;
+    if (uHasNormals) {
+        normal = normalize(vNormal);
+    } else {
+        // Flat shading: compute normal from surface derivatives
+        normal = normalize(cross(dFdx(vPosition), dFdy(vPosition)));
+    }
     
     vec3 lightDir = normalize(uLightDir);
     

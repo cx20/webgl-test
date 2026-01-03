@@ -352,12 +352,10 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
     for (const primitive of mesh.primitives) {
         const attrs = primitive.attributes;
         const positions = getAccessorData(gltf, buffers, attrs.POSITION);
-        let normals = attrs.NORMAL !== undefined ? getAccessorData(gltf, buffers, attrs.NORMAL) : null;
+        const hasNormals = attrs.NORMAL !== undefined;
+        let normals = hasNormals ? getAccessorData(gltf, buffers, attrs.NORMAL) : null;
         // Compute flat shading normals if not provided
         if (!normals) {
-            normals = computeFlatNormals(positions, primitive.indices !== undefined ? getAccessorData(gltf, buffers, primitive.indices) : null);
-        } else {
-            // Recalculate normals for flat shading (per-triangle)
             normals = computeFlatNormals(positions, primitive.indices !== undefined ? getAccessorData(gltf, buffers, primitive.indices) : null);
         }
         const texCoords = attrs.TEXCOORD_0 !== undefined ? getAccessorData(gltf, buffers, attrs.TEXCOORD_0) : null;
@@ -477,7 +475,7 @@ async function processMesh(gl, extVAO, gltf, buffers, baseUrl, meshIndex) {
         }
         const hasSkinning = joints !== null && weights !== null;
         
-        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox, hasSkinning });
+        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox, hasSkinning, hasNormals });
     }
     
     let combinedBbox = primitives[0].bbox;
@@ -623,6 +621,10 @@ async function main() {
     const extUint = gl.getExtension('OES_element_index_uint');
     if (!extUint) { console.warn('OES_element_index_uint not supported. Large meshes may fail.'); }
     
+    // Enable derivatives for flat shading in fragment shader
+    const extDerivatives = gl.getExtension('OES_standard_derivatives');
+    if (!extDerivatives) { console.warn('OES_standard_derivatives not supported. Flat shading may not work.'); }
+    
     function resize() {
         canvas.width = window.innerWidth * devicePixelRatio;
         canvas.height = window.innerHeight * devicePixelRatio;
@@ -650,6 +652,7 @@ async function main() {
         uNormalMatrix: gl.getUniformLocation(program, 'uNormalMatrix'),
         uTexture: gl.getUniformLocation(program, 'uTexture'),
         uHasTexture: gl.getUniformLocation(program, 'uHasTexture'),
+        uHasNormals: gl.getUniformLocation(program, 'uHasNormals'),
         uBaseColor: gl.getUniformLocation(program, 'uBaseColor'),
         uLightDir: gl.getUniformLocation(program, 'uLightDir'),
         uJointMatrices: gl.getUniformLocation(program, 'uJointMatrices'),
@@ -943,6 +946,8 @@ async function main() {
                     } else {
                         gl.uniform1i(loc.uHasSkinning, 0);
                     }
+                    
+                    gl.uniform1i(loc.uHasNormals, prim.hasNormals ? 1 : 0);
 
                     if (prim.texture) {
                         gl.activeTexture(gl.TEXTURE0);

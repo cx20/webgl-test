@@ -49,6 +49,7 @@ void main() {
 </script>
 
 <script id="fs" type="x-shader/x-fragment">
+#extension GL_OES_standard_derivatives : enable
 precision highp float;
 
 varying vec3 vNormal;
@@ -57,11 +58,25 @@ varying vec3 vPosition;
 
 uniform sampler2D uTexture;
 uniform bool uHasTexture;
+uniform bool uHasNormals;
 uniform vec4 uBaseColor;
 uniform vec3 uLightDir;
 
 void main() {
-    vec3 normal = normalize(vNormal);
+    // Use interpolated normals if available, otherwise use flat shading
+    vec3 normal;
+    if (uHasNormals) {
+        normal = normalize(vNormal);
+    } else {
+        #ifdef GL_OES_standard_derivatives
+            // Flat shading: compute normal from surface derivatives
+            normal = normalize(cross(dFdx(vPosition), dFdy(vPosition)));
+        #else
+            // Fallback if derivatives not available
+            normal = normalize(vNormal);
+        #endif
+    }
+    
     vec3 lightDir = normalize(uLightDir);
     
     float diff = max(dot(normal, lightDir), 0.0);
