@@ -369,10 +369,12 @@ async function processMesh(gl, gltf, buffers, baseUrl, meshIndex) {
             }
         }
         const hasSkinning = joints !== null && weights !== null;
-        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox, hasSkinning });
+        const hasNormals = normals !== null;
+        primitives.push({ vao, indexCount, indexType, hasIndices: indices !== null, texture, baseColor, bbox, hasSkinning, hasNormals });
         console.debug('Primitive loaded', {
             meshIndex,
             hasSkinning,
+            hasNormals,
             indexType,
             indexCount,
             positions: positions.length / 3,
@@ -531,6 +533,7 @@ async function main() {
         uNormalMatrix: gl.getUniformLocation(program, 'uNormalMatrix'),
         uTexture: gl.getUniformLocation(program, 'uTexture'),
         uHasTexture: gl.getUniformLocation(program, 'uHasTexture'),
+        uHasNormals: gl.getUniformLocation(program, 'uHasNormals'),
         uBaseColor: gl.getUniformLocation(program, 'uBaseColor'),
         uLightDir: gl.getUniformLocation(program, 'uLightDir'),
         uJointMatrices: gl.getUniformLocation(program, 'uJointMatrices'),
@@ -844,6 +847,7 @@ async function main() {
                         } else {
                             gl.uniform1i(loc.uHasSkinning, 0);
                         }
+                        gl.uniform1i(loc.uHasNormals, prim.hasNormals ? 1 : 0);
                         if (prim.texture) {
                             gl.activeTexture(gl.TEXTURE0);
                             gl.bindTexture(gl.TEXTURE_2D, prim.texture);
