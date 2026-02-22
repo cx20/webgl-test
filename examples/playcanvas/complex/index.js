@@ -403,7 +403,9 @@ class Viewer {
             if (asset.name === "Fox.gltf") {
                 // Focus camera on loaded model
                 const bbox = calcEntityAABB(new pc.BoundingBox(), entity);
-                this.cameraScript.refocus(bbox.center, null, null, true);
+                if (this.cameraScript && typeof this.cameraScript.refocus === 'function') {
+                    this.cameraScript.refocus(bbox.center, null, null, true);
+                }
                 this.play("Run");
             }
         }
