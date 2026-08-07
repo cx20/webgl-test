@@ -1,0 +1,3 @@
+# Claude Code per-developer settings (permissions etc.); the shared
+# .claude/settings.json and .claude/skills/ are committed.
+.claude/settings.local.json
