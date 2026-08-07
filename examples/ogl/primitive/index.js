@@ -1,5 +1,4 @@
-import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh} from 'https://raw.githubusercontent.com/oframe/ogl/c9842ecd96e7de54397b1add70709e1efd8ebf4d/src/Core.js';
-import {Plane, Box, Sphere} from 'https://raw.githubusercontent.com/oframe/ogl/c9842ecd96e7de54397b1add70709e1efd8ebf4d/src/Extras.js';
+import {Renderer, Geometry, Transform, Camera, Texture, Program, Color, Mesh, Plane, Box, Sphere} from 'ogl';
 
 {
     const renderer = new Renderer({dpr: 2});
@@ -22,8 +21,8 @@ import {Plane, Box, Sphere} from 'https://raw.githubusercontent.com/oframe/ogl/c
     const scene = new Transform();
 
     const texture = new Texture(gl);
-    texture.wrapS = gl.REPEART;
-    texture.wrapT = gl.REPEART;
+    texture.wrapS = gl.REPEAT;
+    texture.wrapT = gl.REPEAT;
     const img = new Image();
 
     img.onload = () => texture.image = img;
