@@ -32,8 +32,8 @@ $.getJSON("../../../assets/json/teapot.json", function (data) {
     const scene = new Transform();
 
     const texture = new Texture(gl);
-    texture.wrapS = gl.REPEART;
-    texture.wrapT = gl.REPEART;
+    texture.wrapS = gl.REPEAT;
+    texture.wrapT = gl.REPEAT;
     const img = new Image();
 
     img.onload = () => texture.image = img;
