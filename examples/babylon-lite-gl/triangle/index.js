@@ -8,20 +8,8 @@ import {
 const canvas = document.getElementById("c");
 const engine = createGLEngine(canvas, { alpha: false });
 
-const vertexSource = `#version 300 es
-in vec3 position;
-
-void main() {
-    gl_Position = vec4(position, 1.0);
-}`;
-
-const fragmentSource = `#version 300 es
-precision highp float;
-out vec4 glFragColor;
-
-void main() {
-    glFragColor = vec4(0.0, 0.0, 1.0, 1.0);
-}`;
+const vertexSource = document.getElementById("vs").textContent;
+const fragmentSource = document.getElementById("fs").textContent;
 
 const effect = createEffect(engine, {
   name: "triangle",

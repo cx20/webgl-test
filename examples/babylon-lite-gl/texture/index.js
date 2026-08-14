@@ -10,26 +10,8 @@ const canvas = document.getElementById("c");
 const engine = createGLEngine(canvas, { alpha: false, depth: true });
 setDepthState(engine, { test: true, write: true });
 
-const vertexSource = `#version 300 es
-in vec3 position;
-in vec2 uv;
-uniform mat4 worldViewProjection;
-out vec2 vTextureCoord;
-
-void main() {
-    vTextureCoord = uv;
-    gl_Position = worldViewProjection * vec4(position, 1.0);
-}`;
-
-const fragmentSource = `#version 300 es
-precision highp float;
-uniform sampler2D texture_;
-in vec2 vTextureCoord;
-out vec4 glFragColor;
-
-void main() {
-    glFragColor = texture(texture_, vTextureCoord);
-}`;
+const vertexSource = document.getElementById("vs").textContent;
+const fragmentSource = document.getElementById("fs").textContent;
 
 const effect = createEffect(engine, {
   name: "texture",

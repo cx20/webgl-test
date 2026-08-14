@@ -10,35 +10,8 @@ const canvas = document.getElementById("c");
 const engine = createGLEngine(canvas, { alpha: false, depth: true });
 setDepthState(engine, { test: true, write: true });
 
-const vertexSource = `#version 300 es
-in vec3 position;
-in vec3 normal;
-in vec2 uv;
-uniform mat4 worldViewProjection;
-uniform mat4 world;
-out vec3 vNormal;
-out vec2 vTextureCoord;
-
-void main() {
-    vNormal = mat3(world) * normal;
-    vTextureCoord = uv;
-    gl_Position = worldViewProjection * vec4(position, 1.0);
-}`;
-
-const fragmentSource = `#version 300 es
-precision highp float;
-uniform sampler2D texture_;
-in vec3 vNormal;
-in vec2 vTextureCoord;
-out vec4 glFragColor;
-
-void main() {
-    vec3 lightDir = normalize(vec3(1.0, 0.0, 1.0));
-    float diffuse = max(dot(normalize(vNormal), lightDir), 0.0);
-    float lighting = 0.3 + 0.7 * diffuse;
-    vec4 baseColor = texture(texture_, vTextureCoord);
-    glFragColor = vec4(baseColor.rgb * lighting, baseColor.a);
-}`;
+const vertexSource = document.getElementById("vs").textContent;
+const fragmentSource = document.getElementById("fs").textContent;
 
 const effect = createEffect(engine, {
   name: "teapot",
