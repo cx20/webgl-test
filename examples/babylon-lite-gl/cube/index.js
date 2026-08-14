@@ -9,25 +9,8 @@ const canvas = document.getElementById("c");
 const engine = createGLEngine(canvas, { alpha: false, depth: true });
 setDepthState(engine, { test: true, write: true });
 
-const vertexSource = `#version 300 es
-in vec3 position;
-in vec4 color;
-uniform mat4 worldViewProjection;
-out vec4 vColor;
-
-void main() {
-    vColor = color;
-    gl_Position = worldViewProjection * vec4(position, 1.0);
-}`;
-
-const fragmentSource = `#version 300 es
-precision highp float;
-in vec4 vColor;
-out vec4 glFragColor;
-
-void main() {
-    glFragColor = vColor;
-}`;
+const vertexSource = document.getElementById("vs").textContent;
+const fragmentSource = document.getElementById("fs").textContent;
 
 const effect = createEffect(engine, {
   name: "cube",
